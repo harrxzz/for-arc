@@ -16,7 +16,35 @@ const ERC20_ABI = [
 
 // Chain icon as SVG component
 function ChainIcon({ icon, size = 18 }: { icon: string; size?: number }) {
-  return <span style={{ fontSize: size * 0.9 }}>{icon}</span>
+  if (icon === 'ethereum') return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="16" fill="#627EEA"/>
+      <path d="M16 5v8.5l7 3.1L16 5z" fill="white" fillOpacity="0.6"/>
+      <path d="M16 5L9 16.6l7-3.1V5z" fill="white"/>
+      <path d="M16 21.5v5.5l7-9.7-7 4.2z" fill="white" fillOpacity="0.6"/>
+      <path d="M16 27v-5.5l-7-4.2L16 27z" fill="white"/>
+      <path d="M16 20.3l7-4.2-7-3.1v7.3z" fill="white" fillOpacity="0.2"/>
+      <path d="M9 16.1l7 4.2v-7.3L9 16.1z" fill="white" fillOpacity="0.6"/>
+    </svg>
+  )
+  if (icon === 'base') return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="16" fill="#0052FF"/>
+      <path d="M16 6C10.477 6 6 10.477 6 16s4.477 10 10 10c5.185 0 9.449-3.947 9.95-9h-6.616a3.385 3.385 0 110-2H25.95C25.449 9.947 21.185 6 16 6z" fill="white"/>
+    </svg>
+  )
+  if (icon === 'arbitrum') return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="16" fill="#213147"/>
+      <path d="M16 6L7 11v10l9 5 9-5V11L16 6z" fill="#12AAFF" fillOpacity="0.2"/>
+      <path d="M13 19.5l-3 1.7 6 3.3v-3.3l-3-1.7z" fill="#12AAFF"/>
+      <path d="M19 19.5l3 1.7-6 3.3v-3.3l3-1.7z" fill="#9DCCED"/>
+      <path d="M13 12.5L7 21.2l3-1.7 6-10.5-3 3.5z" fill="white"/>
+      <path d="M19 12.5l6 8.7-3-1.7-6-10.5 3 3.5z" fill="white" fillOpacity="0.6"/>
+    </svg>
+  )
+  // fallback
+  return <span style={{ fontSize: size * 0.9 }} aria-hidden="true">{icon}</span>
 }
 
 export function BridgeCard() {
