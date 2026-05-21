@@ -3,231 +3,200 @@
 import { useEffect, useRef } from 'react'
 import { useTheme } from '@/components/ThemeProvider'
 
-interface Particle {
-  x: number
-  y: number
-  vx: number
-  vy: number
-  size: number
-  opacity: number
-  opacitySpeed: number
-  color: string
-  type: 'crystal' | 'mist' | 'spark'
-  rotation: number
-  rotationSpeed: number
-  life: number
-  maxLife: number
-}
-
 export function AnimatedBg() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const mountRef = useRef<HTMLDivElement>(null)
   const { theme } = useTheme()
   const isDark = theme === 'dark'
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!mountRef.current) return
 
     let animId: number
-    let particles: Particle[] = []
+    const mount = mountRef.current
 
-    const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-    resize()
-    window.addEventListener('resize', resize)
+    // Dynamic import Three.js
+    const init = async () => {
+      const THREE = await import('three')
 
-    const COLORS_DARK = [
-      'rgba(59,130,246,',   // blue-500
-      'rgba(96,165,250,',   // blue-400
-      'rgba(147,197,253,',  // blue-300
-      'rgba(186,230,253,',  // sky-200
-      'rgba(224,242,254,',  // sky-100
-      'rgba(99,102,241,',   // indigo-500
-    ]
-    const COLORS_LIGHT = [
-      'rgba(29,78,216,',    // blue-700
-      'rgba(59,130,246,',   // blue-500
-      'rgba(96,165,250,',   // blue-400
-      'rgba(147,197,253,',  // blue-300
-      'rgba(99,102,241,',   // indigo-500
-    ]
+      // Scene
+      const scene = new THREE.Scene()
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+      camera.position.z = 5
 
-    const COLORS = isDark ? COLORS_DARK : COLORS_LIGHT
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.setClearColor(0x000000, 0)
+      mount.appendChild(renderer.domElement)
 
-    const spawnParticle = (): Particle => {
-      const type = Math.random() < 0.5 ? 'mist' : Math.random() < 0.7 ? 'crystal' : 'spark'
-      const maxLife = type === 'mist' ? 200 + Math.random() * 200 : 100 + Math.random() * 150
-      return {
-        x: Math.random() * canvas.width,
-        y: canvas.height + 20,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: -(0.3 + Math.random() * 0.8),
-        size: type === 'mist' ? 40 + Math.random() * 80 : type === 'crystal' ? 3 + Math.random() * 8 : 1 + Math.random() * 3,
-        opacity: 0,
-        opacitySpeed: 0.005 + Math.random() * 0.01,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        type,
-        rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.02,
-        life: 0,
-        maxLife,
+      // Colors
+      const blueColors = isDark
+        ? [0x3b82f6, 0x6366f1, 0x60a5fa, 0x818cf8, 0x93c5fd]
+        : [0x1d4ed8, 0x3b82f6, 0x6366f1, 0x2563eb, 0x4f46e5]
+
+      const objects: import('three').Mesh[] = []
+
+      // Create floating crystal/geometric shapes
+      const geometries = [
+        new THREE.OctahedronGeometry(0.3, 0),
+        new THREE.IcosahedronGeometry(0.25, 0),
+        new THREE.TetrahedronGeometry(0.3, 0),
+        new THREE.OctahedronGeometry(0.2, 0),
+        new THREE.IcosahedronGeometry(0.35, 0),
+      ]
+
+      for (let i = 0; i < 30; i++) {
+        const geo = geometries[Math.floor(Math.random() * geometries.length)]
+        const color = blueColors[Math.floor(Math.random() * blueColors.length)]
+
+        // Wireframe + solid combo
+        const isWireframe = Math.random() > 0.5
+
+        const mat = new THREE.MeshStandardMaterial({
+          color,
+          wireframe: isWireframe,
+          transparent: true,
+          opacity: isDark ? (isWireframe ? 0.3 : 0.15) : (isWireframe ? 0.2 : 0.08),
+          emissive: new THREE.Color(color),
+          emissiveIntensity: isDark ? 0.3 : 0.1,
+        })
+
+        const mesh = new THREE.Mesh(geo, mat)
+
+        // Random position spread across screen
+        mesh.position.set(
+          (Math.random() - 0.5) * 14,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 6 - 2
+        )
+
+        // Random rotation
+        mesh.rotation.set(
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2,
+          Math.random() * Math.PI * 2
+        )
+
+        // Store velocity for animation
+        ;(mesh as any).vx = (Math.random() - 0.5) * 0.003
+        ;(mesh as any).vy = (Math.random() - 0.5) * 0.003 - 0.001
+        ;(mesh as any).rx = (Math.random() - 0.5) * 0.008
+        ;(mesh as any).ry = (Math.random() - 0.5) * 0.008
+        ;(mesh as any).rz = (Math.random() - 0.5) * 0.005
+
+        scene.add(mesh)
+        objects.push(mesh)
+      }
+
+      // Add floating particles
+      const particleGeo = new THREE.BufferGeometry()
+      const particleCount = 200
+      const positions = new Float32Array(particleCount * 3)
+      for (let i = 0; i < particleCount * 3; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 20
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 15
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 10 - 3
+      }
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+      const particleMat = new THREE.PointsMaterial({
+        color: isDark ? 0x93c5fd : 0x3b82f6,
+        size: 0.03,
+        transparent: true,
+        opacity: isDark ? 0.6 : 0.3,
+      })
+      const particles = new THREE.Points(particleGeo, particleMat)
+      scene.add(particles)
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+      scene.add(ambientLight)
+
+      const pointLight1 = new THREE.PointLight(0x3b82f6, isDark ? 2 : 1, 20)
+      pointLight1.position.set(5, 5, 5)
+      scene.add(pointLight1)
+
+      const pointLight2 = new THREE.PointLight(0x6366f1, isDark ? 1.5 : 0.8, 20)
+      pointLight2.position.set(-5, -5, 3)
+      scene.add(pointLight2)
+
+      // Mouse parallax
+      let mouseX = 0
+      let mouseY = 0
+      const handleMouse = (e: MouseEvent) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5
+      }
+      window.addEventListener('mousemove', handleMouse)
+
+      // Resize
+      const handleResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+      }
+      window.addEventListener('resize', handleResize)
+
+      // Animate
+      const animate = () => {
+        animId = requestAnimationFrame(animate)
+
+        // Camera parallax
+        camera.position.x += (mouseX - camera.position.x) * 0.02
+        camera.position.y += (-mouseY - camera.position.y) * 0.02
+        camera.lookAt(scene.position)
+
+        // Rotate + float objects
+        objects.forEach((obj) => {
+          obj.rotation.x += (obj as any).rx
+          obj.rotation.y += (obj as any).ry
+          obj.rotation.z += (obj as any).rz
+          obj.position.x += (obj as any).vx
+          obj.position.y += (obj as any).vy
+
+          // Wrap around screen
+          if (obj.position.y < -6) obj.position.y = 6
+          if (obj.position.y > 6) obj.position.y = -6
+          if (obj.position.x < -8) obj.position.x = 8
+          if (obj.position.x > 8) obj.position.x = -8
+        })
+
+        // Slowly rotate particles
+        particles.rotation.y += 0.0003
+        particles.rotation.x += 0.0001
+
+        renderer.render(scene, camera)
+      }
+
+      animate()
+
+      // Cleanup
+      return () => {
+        cancelAnimationFrame(animId)
+        window.removeEventListener('mousemove', handleMouse)
+        window.removeEventListener('resize', handleResize)
+        mount.removeChild(renderer.domElement)
+        renderer.dispose()
+        geometries.forEach(g => g.dispose())
+        objects.forEach(o => (o.material as import('three').Material).dispose())
+        particleGeo.dispose()
+        particleMat.dispose()
       }
     }
 
-    // Init particles
-    for (let i = 0; i < 60; i++) {
-      const p = spawnParticle()
-      p.y = Math.random() * canvas.height
-      p.life = Math.random() * p.maxLife
-      p.opacity = isDark ? 0.05 + Math.random() * 0.15 : 0.03 + Math.random() * 0.08
-      particles.push(p)
-    }
-
-    const drawCrystal = (ctx: CanvasRenderingContext2D, p: Particle) => {
-      ctx.save()
-      ctx.translate(p.x, p.y)
-      ctx.rotate(p.rotation)
-      ctx.globalAlpha = p.opacity
-
-      // Diamond/crystal shape
-      const s = p.size
-      ctx.beginPath()
-      ctx.moveTo(0, -s)
-      ctx.lineTo(s * 0.6, 0)
-      ctx.lineTo(0, s)
-      ctx.lineTo(-s * 0.6, 0)
-      ctx.closePath()
-
-      const grad = ctx.createLinearGradient(-s, -s, s, s)
-      grad.addColorStop(0, `${p.color}${p.opacity * 1.5})`)
-      grad.addColorStop(0.5, `${p.color}${p.opacity * 0.8})`)
-      grad.addColorStop(1, `${p.color}${p.opacity * 0.3})`)
-      ctx.fillStyle = grad
-      ctx.fill()
-
-      // Crystal edge highlight
-      ctx.strokeStyle = `${p.color}${Math.min(p.opacity * 2, 0.6)})`
-      ctx.lineWidth = 0.5
-      ctx.stroke()
-
-      ctx.restore()
-    }
-
-    const drawMist = (ctx: CanvasRenderingContext2D, p: Particle) => {
-      ctx.save()
-      ctx.globalAlpha = p.opacity * 0.4
-
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size)
-      grad.addColorStop(0, `${p.color}${p.opacity})`)
-      grad.addColorStop(0.4, `${p.color}${p.opacity * 0.5})`)
-      grad.addColorStop(1, `${p.color}0)`)
-      ctx.fillStyle = grad
-      ctx.beginPath()
-      ctx.ellipse(p.x, p.y, p.size, p.size * 0.6, p.rotation, 0, Math.PI * 2)
-      ctx.fill()
-
-      ctx.restore()
-    }
-
-    const drawSpark = (ctx: CanvasRenderingContext2D, p: Particle) => {
-      ctx.save()
-      ctx.translate(p.x, p.y)
-      ctx.rotate(p.rotation)
-      ctx.globalAlpha = p.opacity
-
-      // Star/spark shape
-      const s = p.size
-      ctx.beginPath()
-      for (let i = 0; i < 4; i++) {
-        const angle = (i / 4) * Math.PI * 2
-        const outerX = Math.cos(angle) * s
-        const outerY = Math.sin(angle) * s
-        const innerX = Math.cos(angle + Math.PI / 4) * s * 0.3
-        const innerY = Math.sin(angle + Math.PI / 4) * s * 0.3
-        if (i === 0) ctx.moveTo(outerX, outerY)
-        else ctx.lineTo(outerX, outerY)
-        ctx.lineTo(innerX, innerY)
-      }
-      ctx.closePath()
-      ctx.fillStyle = `${p.color}${p.opacity})`
-      ctx.fill()
-
-      ctx.restore()
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Background gradient
-      if (isDark) {
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height)
-        bgGrad.addColorStop(0, '#050510')
-        bgGrad.addColorStop(0.5, '#0a0a1a')
-        bgGrad.addColorStop(1, '#080818')
-        ctx.fillStyle = bgGrad
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-      }
-
-      // Update + draw particles
-      particles = particles.filter(p => p.life < p.maxLife)
-
-      while (particles.length < 60) {
-        particles.push(spawnParticle())
-      }
-
-      for (const p of particles) {
-        p.life++
-        p.x += p.vx + Math.sin(p.life * 0.02) * 0.3
-        p.y += p.vy
-        p.rotation += p.rotationSpeed
-
-        // Fade in/out
-        const lifeRatio = p.life / p.maxLife
-        if (lifeRatio < 0.2) {
-          p.opacity = Math.min(p.opacity + p.opacitySpeed, isDark ? 0.18 : 0.08)
-        } else if (lifeRatio > 0.7) {
-          p.opacity = Math.max(p.opacity - p.opacitySpeed * 0.5, 0)
-        }
-
-        if (p.type === 'mist') drawMist(ctx, p)
-        else if (p.type === 'crystal') drawCrystal(ctx, p)
-        else drawSpark(ctx, p)
-      }
-
-      // Subtle grid overlay
-      ctx.save()
-      ctx.globalAlpha = isDark ? 0.04 : 0.025
-      ctx.strokeStyle = isDark ? '#3b82f6' : '#1d4ed8'
-      ctx.lineWidth = 0.5
-      const gridSize = 60
-      for (let x = 0; x < canvas.width; x += gridSize) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke()
-      }
-      for (let y = 0; y < canvas.height; y += gridSize) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke()
-      }
-      ctx.restore()
-
-      animId = requestAnimationFrame(animate)
-    }
-
-    animate()
+    let cleanup: (() => void) | undefined
+    init().then(fn => { cleanup = fn })
 
     return () => {
+      cleanup?.()
       cancelAnimationFrame(animId)
-      window.removeEventListener('resize', resize)
     }
   }, [isDark])
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
+      ref={mountRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: isDark ? 1 : 0.6 }}
+      style={{ background: isDark ? 'linear-gradient(135deg, #050510 0%, #0a0a1f 50%, #080818 100%)' : 'linear-gradient(135deg, #f0f4ff 0%, #ffffff 50%, #eff6ff 100%)' }}
     />
   )
 }
