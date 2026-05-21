@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { createPublicClient, http, formatUnits } from 'viem'
+import { createPublicClient, http, formatUnits, parseUnits } from 'viem'
 import { arcTestnet, USDC_ADDRESS_ARC, FEE_RECIPIENT, SWAP_FEE_BPS } from '@/config/chains'
+
+const XYLO_ROUTER = '0x73742278c31a76dBb0D2587d03ef92E6E2141023' as const
 
 const ERC20_ABI = [
   {
@@ -15,18 +17,65 @@ const ERC20_ABI = [
     outputs: [{ name: '', type: 'uint256' }],
   },
   {
+    name: 'allowance',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'owner', type: 'address' }, { name: 'spender', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    name: 'approve',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
     name: 'transfer',
     type: 'function',
     stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'to', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
+    inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }],
     outputs: [{ name: '', type: 'bool' }],
   },
 ] as const
 
-// Mock tokens for Arc testnet
+const XYLO_ROUTER_ABI = [
+  {
+    name: 'quote',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'tokenIn', type: 'address' },
+      { name: 'tokenOut', type: 'address' },
+      { name: 'amountIn', type: 'uint256' },
+    ],
+    outputs: [
+      { name: 'amountOut', type: 'uint256' },
+      { name: 'priceImpact', type: 'uint256' },
+    ],
+  },
+  {
+    name: 'swap',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      {
+        name: 'params',
+        type: 'tuple',
+        components: [
+          { name: 'tokenIn', type: 'address' },
+          { name: 'tokenOut', type: 'address' },
+          { name: 'amountIn', type: 'uint256' },
+          { name: 'minAmountOut', type: 'uint256' },
+          { name: 'to', type: 'address' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      },
+    ],
+    outputs: [{ name: 'amountOut', type: 'uint256' }],
+  },
+] as const
+
 const TOKENS = [
   { symbol: 'USDC', name: 'USD Coin', address: USDC_ADDRESS_ARC, decimals: 6, icon: '💵', color: 'bg-blue-100 text-blue-700' },
   { symbol: 'EURC', name: 'Euro Coin', address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', decimals: 6, icon: '💶', color: 'bg-purple-100 text-purple-700' },
@@ -47,12 +96,15 @@ export function SwapCard() {
   const [toToken, setToToken] = useState(TOKENS[1])
   const [fromAmount, setFromAmount] = useState('')
   const [toAmount, setToAmount] = useState('')
+  const [priceImpact, setPriceImpact] = useState<string | null>(null)
   const [balance, setBalance] = useState('0.00')
   const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState<'idle' | 'approving' | 'swapping' | 'done'>('idle')
   const [txHash, setTxHash] = useState('')
   const [error, setError] = useState('')
   const [showFromSelect, setShowFromSelect] = useState(false)
   const [showToSelect, setShowToSelect] = useState(false)
+  const [quoteLoading, setQuoteLoading] = useState(false)
 
   const activeWallet = wallets?.[0]
   const address = activeWallet?.address as `0x${string}` | undefined
@@ -76,42 +128,71 @@ export function SwapCard() {
     fetchBalance()
   }, [address, fromToken])
 
-  // Calculate output with fee
-  useEffect(() => {
-    if (!fromAmount || isNaN(parseFloat(fromAmount))) {
+  // Get real quote from XyloRouter
+  const fetchQuote = useCallback(async (amount: string) => {
+    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
       setToAmount('')
+      setPriceImpact(null)
       return
     }
-    const input = parseFloat(fromAmount)
-    const fee = (input * SWAP_FEE_BPS) / 10000
-    const output = input - fee
-    setToAmount(output.toFixed(6))
-  }, [fromAmount])
+    setQuoteLoading(true)
+    try {
+      const amountIn = parseUnits(amount, fromToken.decimals)
+      const [amountOut, impact] = await publicClient.readContract({
+        address: XYLO_ROUTER,
+        abi: XYLO_ROUTER_ABI,
+        functionName: 'quote',
+        args: [
+          fromToken.address as `0x${string}`,
+          toToken.address as `0x${string}`,
+          amountIn,
+        ],
+      })
+      setToAmount(parseFloat(formatUnits(amountOut, toToken.decimals)).toFixed(6))
+      // priceImpact is in basis points (e.g. 30 = 0.30%)
+      setPriceImpact((Number(impact) / 100).toFixed(2))
+    } catch {
+      // Fallback: no pool exists, show estimated with fee
+      const input = parseFloat(amount)
+      const fee = (input * SWAP_FEE_BPS) / 10000
+      setToAmount((input - fee).toFixed(6))
+      setPriceImpact(null)
+    } finally {
+      setQuoteLoading(false)
+    }
+  }, [fromToken, toToken])
+
+  // Debounce quote fetch
+  useEffect(() => {
+    const timer = setTimeout(() => fetchQuote(fromAmount), 500)
+    return () => clearTimeout(timer)
+  }, [fromAmount, fromToken, toToken, fetchQuote])
 
   const feeAmount = fromAmount
     ? ((parseFloat(fromAmount) * SWAP_FEE_BPS) / 10000).toFixed(6)
     : '0'
 
   const handleSwapTokens = () => {
-    const temp = fromToken
     setFromToken(toToken)
-    setToToken(temp)
+    setToToken(fromToken)
     setFromAmount(toAmount)
     setToAmount(fromAmount)
   }
 
   const handleSwap = async () => {
     if (!authenticated) { login(); return }
-    if (!address || !fromAmount) return
+    if (!address || !fromAmount || parseFloat(fromAmount) <= 0) return
+
     setLoading(true)
     setError('')
     setTxHash('')
+    setStep('approving')
 
     try {
       const walletProvider = await activeWallet?.getEthereumProvider()
       if (!walletProvider) throw new Error('No wallet provider')
 
-      const { createWalletClient, custom, parseUnits } = await import('viem')
+      const { createWalletClient, custom } = await import('viem')
       const walletClient = createWalletClient({
         chain: arcTestnet,
         transport: custom(walletProvider),
@@ -119,9 +200,10 @@ export function SwapCard() {
 
       const amountIn = parseUnits(fromAmount, fromToken.decimals)
       const feeAmt = (amountIn * BigInt(SWAP_FEE_BPS)) / BigInt(10000)
+      const swapAmountIn = amountIn - feeAmt
 
-      // Send fee to recipient
-      const hash = await walletClient.writeContract({
+      // Step 1: Collect protocol fee
+      await walletClient.writeContract({
         address: fromToken.address as `0x${string}`,
         abi: ERC20_ABI,
         functionName: 'transfer',
@@ -129,12 +211,65 @@ export function SwapCard() {
         account: address,
       })
 
+      // Step 2: Approve XyloRouter
+      const allowance = await publicClient.readContract({
+        address: fromToken.address as `0x${string}`,
+        abi: ERC20_ABI,
+        functionName: 'allowance',
+        args: [address, XYLO_ROUTER],
+      })
+
+      if (allowance < swapAmountIn) {
+        await walletClient.writeContract({
+          address: fromToken.address as `0x${string}`,
+          abi: ERC20_ABI,
+          functionName: 'approve',
+          args: [XYLO_ROUTER, swapAmountIn],
+          account: address,
+        })
+      }
+
+      setStep('swapping')
+
+      // Step 3: Execute swap via XyloRouter
+      const minAmountOut = toAmount
+        ? (parseUnits(toAmount, toToken.decimals) * BigInt(995)) / BigInt(1000) // 0.5% slippage
+        : BigInt(0)
+
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 300) // 5 min
+
+      const hash = await walletClient.writeContract({
+        address: XYLO_ROUTER,
+        abi: XYLO_ROUTER_ABI,
+        functionName: 'swap',
+        args: [{
+          tokenIn: fromToken.address as `0x${string}`,
+          tokenOut: toToken.address as `0x${string}`,
+          amountIn: swapAmountIn,
+          minAmountOut,
+          to: address,
+          deadline,
+        }],
+        account: address,
+      })
+
       setTxHash(hash)
+      setStep('done')
+      setFromAmount('')
+      setToAmount('')
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Transaction failed')
+      setStep('idle')
     } finally {
       setLoading(false)
     }
+  }
+
+  const stepLabels = {
+    idle: null,
+    approving: 'Collecting fee...',
+    swapping: 'Executing swap...',
+    done: 'Swap complete!',
   }
 
   return (
@@ -148,8 +283,14 @@ export function SwapCard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-slate-900">Swap</h2>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-full">
-            <span className="text-xs text-blue-600 font-medium">Fee: 0.3%</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-full">
+              <span className="text-xs text-blue-600 font-medium">Fee: 0.3%</span>
+            </div>
+            <div className="flex items-center gap-1 px-2.5 py-1 bg-green-50 rounded-full">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              <span className="text-xs text-green-600 font-medium">XyloNet</span>
+            </div>
           </div>
         </div>
 
@@ -228,6 +369,9 @@ export function SwapCard() {
         <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-slate-400">You receive</span>
+            {quoteLoading && (
+              <span className="text-[10px] text-slate-400 animate-pulse">Fetching quote...</span>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -274,7 +418,7 @@ export function SwapCard() {
           </div>
         </div>
 
-        {/* Fee info */}
+        {/* Quote details */}
         {fromAmount && parseFloat(fromAmount) > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -285,10 +429,42 @@ export function SwapCard() {
               <span>Protocol fee (0.3%)</span>
               <span>{feeAmount} {fromToken.symbol}</span>
             </div>
+            {priceImpact !== null && (
+              <div className="flex justify-between text-xs text-slate-500">
+                <span>Price impact</span>
+                <span className={parseFloat(priceImpact) > 1 ? 'text-orange-500' : 'text-green-600'}>
+                  {priceImpact}%
+                </span>
+              </div>
+            )}
             <div className="flex justify-between text-xs text-slate-500">
-              <span>You receive</span>
-              <span className="font-medium text-slate-700">{toAmount} {toToken.symbol}</span>
+              <span>Slippage tolerance</span>
+              <span>0.5%</span>
             </div>
+            <div className="border-t border-slate-200 pt-1.5 flex justify-between text-xs font-medium text-slate-700">
+              <span>You receive</span>
+              <span>{toAmount} {toToken.symbol}</span>
+            </div>
+            <div className="flex justify-between text-[10px] text-slate-400">
+              <span>Powered by</span>
+              <span>XyloNet DEX</span>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step indicator */}
+        {loading && stepLabels[step] && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4"
+          >
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              className="inline-block w-4 h-4 border-2 border-blue-300 border-t-blue-700 rounded-full"
+            />
+            <span className="text-xs text-blue-700 font-medium">{stepLabels[step]}</span>
           </motion.div>
         )}
 
@@ -339,7 +515,7 @@ export function SwapCard() {
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
               />
-              Swapping...
+              {stepLabels[step] ?? 'Processing...'}
             </span>
           ) : !authenticated ? (
             'Connect Wallet to Swap'
