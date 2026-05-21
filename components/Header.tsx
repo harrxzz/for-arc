@@ -4,11 +4,13 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { useTheme } from '@/components/ThemeProvider'
 
 export function Header() {
   const pathname = usePathname()
   const { ready, authenticated, login, logout } = usePrivy()
   const { wallets } = useWallets()
+  const { theme, toggleTheme } = useTheme()
 
   const activeWallet = wallets?.[0]
   const address = activeWallet?.address
@@ -17,16 +19,23 @@ export function Header() {
     : null
 
   const navLinks = [
-    { href: '/', label: 'Swap' },
+    { href: '/', label: 'Home' },
+    { href: '/swap', label: 'Swap' },
     { href: '/bridge', label: 'Bridge' },
   ]
+
+  const isDark = theme === 'dark'
 
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-blue-100"
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-colors ${
+        isDark
+          ? 'bg-[#0a0a0f]/80 border-white/10'
+          : 'bg-white/80 border-blue-100'
+      }`}
     >
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
@@ -36,9 +45,7 @@ export function Header() {
             transition={{ type: 'spring', stiffness: 400 }}
             className="flex items-center gap-2"
           >
-            {/* Arc shape logo */}
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Background — gradient rounded square */}
               <rect width="32" height="32" rx="9" fill="url(#grad)"/>
               <defs>
                 <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
@@ -46,22 +53,12 @@ export function Header() {
                   <stop offset="100%" stopColor="#1d4ed8"/>
                 </linearGradient>
               </defs>
-              {/* Bold arc — thick, centered, clear bridge shape */}
-              <path
-                d="M6 23 C6 13 26 13 26 23"
-                stroke="white"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                fill="none"
-              />
-              {/* Left pillar */}
+              <path d="M6 23 C6 13 26 13 26 23" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
               <line x1="6" y1="23" x2="6" y2="27" stroke="white" strokeWidth="3" strokeLinecap="round"/>
-              {/* Right pillar */}
               <line x1="26" y1="23" x2="26" y2="27" stroke="white" strokeWidth="3" strokeLinecap="round"/>
-              {/* Subtle glow dot at top of arc */}
               <circle cx="16" cy="13" r="2" fill="rgba(255,255,255,0.5)"/>
             </svg>
-            <span className="font-bold text-slate-900 text-lg">For Arc</span>
+            <span className={`font-bold text-lg ${isDark ? 'text-white' : 'text-slate-900'}`}>For Arc</span>
           </motion.div>
         </Link>
 
@@ -74,7 +71,9 @@ export function Header() {
                 <motion.div
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors relative ${
                     isActive
-                      ? 'text-blue-700'
+                      ? 'text-blue-500'
+                      : isDark
+                      ? 'text-slate-400 hover:text-white'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                   whileHover={{ scale: 1.02 }}
@@ -84,7 +83,7 @@ export function Header() {
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute inset-0 bg-blue-50 rounded-lg -z-10"
+                      className={`absolute inset-0 rounded-lg -z-10 ${isDark ? 'bg-white/10' : 'bg-blue-50'}`}
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -94,20 +93,44 @@ export function Header() {
           })}
         </nav>
 
-        {/* Wallet button */}
+        {/* Right side */}
         <div className="flex items-center gap-2">
           {/* Arc badge */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full">
+          <div className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${
+            isDark
+              ? 'bg-blue-500/10 border-blue-500/20'
+              : 'bg-blue-50 border-blue-200'
+          }`}>
             <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-xs text-blue-700 font-medium">Arc Testnet</span>
+            <span className="text-xs text-blue-500 font-medium">Arc Testnet</span>
           </div>
 
+          {/* Theme toggle */}
+          <motion.button
+            onClick={toggleTheme}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
+              isDark
+                ? 'bg-white/10 hover:bg-white/20 text-yellow-400'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+            }`}
+            aria-label="Toggle theme"
+          >
+            {isDark ? '☀️' : '🌙'}
+          </motion.button>
+
+          {/* Wallet */}
           {ready && (
             <>
               {authenticated && shortAddress ? (
                 <div className="flex items-center gap-2">
                   <motion.div
-                    className="px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full text-xs font-mono text-blue-700"
+                    className={`px-3 py-1.5 rounded-full text-xs font-mono border ${
+                      isDark
+                        ? 'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                        : 'bg-blue-50 border-blue-200 text-blue-700'
+                    }`}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                   >
@@ -115,7 +138,9 @@ export function Header() {
                   </motion.div>
                   <motion.button
                     onClick={logout}
-                    className="px-3 py-1.5 text-xs text-slate-500 hover:text-red-500 transition-colors"
+                    className={`px-3 py-1.5 text-xs transition-colors ${
+                      isDark ? 'text-slate-400 hover:text-red-400' : 'text-slate-500 hover:text-red-500'
+                    }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
