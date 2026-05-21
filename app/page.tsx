@@ -357,7 +357,7 @@ export default function LandingPage() {
                         : 'border-blue-300 text-blue-700 hover:bg-blue-100'
                     }`}
                   >
-                    <Bridge size={16} />
+                    <ArrowLeftRight size={16} />
                     Bridge USDC
                   </motion.button>
                 </Link>
