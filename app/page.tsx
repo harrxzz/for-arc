@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import {
+  Coins, Zap, RefreshCw, Bridge, ShieldCheck, BarChart2,
+  Wallet, ArrowRightLeft, CheckCircle, Rocket,
+  Box, Fuel, CircleDollarSign, ArrowRight
+} from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { AnimatedBg } from '@/components/AnimatedBg'
@@ -35,15 +40,12 @@ async function fetchLiveStats(): Promise<LiveStats> {
   const gasData = await gasRes.json()
   const blockNum = parseInt(blockData.result, 16)
   const gasPriceGwei = (parseInt(gasData.result, 16) / 1e9).toFixed(4)
-
-  // Fetch token count from ArcScan
   const tokenRes = await fetch(`${ARCSCAN}/api/v2/tokens?type=ERC-20`)
   const tokenData = await tokenRes.json()
   const tokenCount = tokenData.items?.length ?? 0
-
   return {
     blockNumber: blockNum.toLocaleString(),
-    totalTxs: (blockNum * 3).toLocaleString(), // estimate
+    totalTxs: (blockNum * 3).toLocaleString(),
     totalTokens: tokenCount.toString(),
     gasPrice: gasPriceGwei,
   }
@@ -51,37 +53,37 @@ async function fetchLiveStats(): Promise<LiveStats> {
 
 const FEATURES = [
   {
-    icon: '💵',
+    Icon: Coins,
     title: 'USDC as Gas',
     desc: 'No ETH needed. Pay all transaction fees in USDC — the stablecoin you already hold.',
     badge: 'Unique to Arc',
   },
   {
-    icon: '⚡',
+    Icon: Zap,
     title: 'Sub-second Finality',
     desc: 'Transactions confirm in under 1 second. No waiting, no uncertainty.',
     badge: '< 1 sec',
   },
   {
-    icon: '🔄',
+    Icon: RefreshCw,
     title: 'XyloNet DEX',
-    desc: 'Real on-chain swaps powered by XyloNet — Arc\'s native DEX with live quotes and price impact.',
+    desc: "Real on-chain swaps powered by XyloNet — Arc's native DEX with live quotes and price impact.",
     badge: 'Live',
   },
   {
-    icon: '🌉',
+    Icon: Bridge,
     title: 'Cross-chain Bridge',
     desc: 'Bridge USDC from Ethereum, Base, or Arbitrum to Arc in ~20 seconds via Circle CCTP.',
     badge: 'CCTP',
   },
   {
-    icon: '🔒',
+    Icon: ShieldCheck,
     title: 'Circle Infrastructure',
-    desc: 'Built on Circle\'s audited, battle-tested blockchain infrastructure.',
+    desc: "Built on Circle's audited, battle-tested blockchain infrastructure.",
     badge: 'Audited',
   },
   {
-    icon: '📊',
+    Icon: BarChart2,
     title: 'Transaction History',
     desc: 'Track all your swaps and bridges in one place with live ArcScan data.',
     badge: 'Real-time',
@@ -91,22 +93,29 @@ const FEATURES = [
 const HOW_IT_WORKS = [
   {
     step: '01',
+    Icon: Wallet,
     title: 'Connect Wallet',
     desc: 'Connect MetaMask, OKX, Rabby, or any EVM wallet. Or use email/Google via Privy.',
-    icon: '👛',
   },
   {
     step: '02',
+    Icon: ArrowRightLeft,
     title: 'Swap or Bridge',
     desc: 'Swap tokens on Arc via XyloNet DEX, or bridge USDC from other chains.',
-    icon: '🔄',
   },
   {
     step: '03',
+    Icon: CheckCircle,
     title: 'Done in seconds',
     desc: 'Transactions confirm in under 1 second. Gas paid in USDC — no ETH needed.',
-    icon: '✅',
   },
+]
+
+const LIVE_STATS_CONFIG = [
+  { label: 'Latest Block', key: 'blockNumber', Icon: Box },
+  { label: 'Est. Transactions', key: 'totalTxs', Icon: RefreshCw },
+  { label: 'ERC-20 Tokens', key: 'totalTokens', Icon: CircleDollarSign, suffix: '+' },
+  { label: 'Gas Price', key: 'gasPrice', Icon: Fuel, suffix: ' Gwei' },
 ]
 
 export default function LandingPage() {
@@ -125,7 +134,6 @@ export default function LandingPage() {
   const card = isDark
     ? 'bg-white/5 border border-white/10 hover:border-white/20'
     : 'bg-white border border-blue-100 hover:border-blue-200 shadow-sm'
-
   const muted = isDark ? 'text-slate-400' : 'text-slate-500'
   const heading = isDark ? 'text-white' : 'text-slate-900'
 
@@ -178,21 +186,23 @@ export default function LandingPage() {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className="px-8 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-colors text-sm"
+                  className="flex items-center gap-2 px-8 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-colors text-sm"
                 >
-                  Start Swapping →
+                  Start Swapping
+                  <ArrowRight size={16} />
                 </motion.button>
               </Link>
               <Link href="/bridge">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className={`px-8 py-3.5 font-semibold rounded-xl transition-colors text-sm border ${
+                  className={`flex items-center gap-2 px-8 py-3.5 font-semibold rounded-xl transition-colors text-sm border ${
                     isDark
                       ? 'border-white/20 text-white hover:bg-white/10'
                       : 'border-blue-200 text-blue-700 hover:bg-blue-50'
                   }`}
                 >
+                  <Bridge size={16} />
                   Bridge USDC
                 </motion.button>
               </Link>
@@ -203,23 +213,20 @@ export default function LandingPage() {
         {/* ── LIVE STATS ── */}
         <section className="pb-16 px-4">
           <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: 'Latest Block', value: stats?.blockNumber ?? '—', icon: '📦' },
-              { label: 'Est. Transactions', value: stats?.totalTxs ?? '—', icon: '🔄' },
-              { label: 'ERC-20 Tokens', value: stats ? `${stats.totalTokens}+` : '—', icon: '🪙' },
-              { label: 'Gas Price', value: stats ? `${stats.gasPrice} Gwei` : '—', icon: '⛽' },
-            ].map((stat, i) => (
+            {LIVE_STATS_CONFIG.map(({ label, key, Icon, suffix }, i) => (
               <motion.div
-                key={stat.label}
+                key={label}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + i * 0.05 }}
                 whileHover={{ y: -2 }}
                 className={`rounded-xl p-4 transition-all ${card}`}
               >
-                <div className="text-xl mb-2">{stat.icon}</div>
-                <div className={`text-[10px] uppercase tracking-wider mb-1 ${muted}`}>{stat.label}</div>
-                <div className={`text-sm font-bold ${heading}`}>{stat.value}</div>
+                <Icon size={18} className="text-blue-500 mb-2" />
+                <div className={`text-[10px] uppercase tracking-wider mb-1 ${muted}`}>{label}</div>
+                <div className={`text-sm font-bold ${heading}`}>
+                  {stats ? `${stats[key as keyof LiveStats]}${suffix ?? ''}` : '—'}
+                </div>
               </motion.div>
             ))}
           </div>
@@ -239,9 +246,9 @@ export default function LandingPage() {
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {FEATURES.map((f, i) => (
+              {FEATURES.map(({ Icon, title, desc, badge }, i) => (
                 <motion.div
-                  key={f.title}
+                  key={title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -250,13 +257,17 @@ export default function LandingPage() {
                   className={`rounded-xl p-5 transition-all ${card}`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-2xl">{f.icon}</span>
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                      isDark ? 'bg-blue-500/15' : 'bg-blue-50'
+                    }`}>
+                      <Icon size={18} className="text-blue-500" />
+                    </div>
                     <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-500 rounded-full font-medium">
-                      {f.badge}
+                      {badge}
                     </span>
                   </div>
-                  <h3 className={`text-sm font-bold mb-1.5 ${heading}`}>{f.title}</h3>
-                  <p className={`text-xs leading-relaxed ${muted}`}>{f.desc}</p>
+                  <h3 className={`text-sm font-bold mb-1.5 ${heading}`}>{title}</h3>
+                  <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -277,23 +288,23 @@ export default function LandingPage() {
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {HOW_IT_WORKS.map((step, i) => (
+              {HOW_IT_WORKS.map(({ step, Icon, title, desc }, i) => (
                 <motion.div
-                  key={step.step}
+                  key={step}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   className="text-center"
                 >
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 ${
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
                     isDark ? 'bg-white/10' : 'bg-blue-50'
                   }`}>
-                    {step.icon}
+                    <Icon size={24} className="text-blue-500" />
                   </div>
-                  <div className="text-blue-500 text-xs font-bold mb-1">{step.step}</div>
-                  <h3 className={`text-sm font-bold mb-2 ${heading}`}>{step.title}</h3>
-                  <p className={`text-xs leading-relaxed ${muted}`}>{step.desc}</p>
+                  <div className="text-blue-500 text-xs font-bold mb-1">{step}</div>
+                  <h3 className={`text-sm font-bold mb-2 ${heading}`}>{title}</h3>
+                  <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -313,7 +324,11 @@ export default function LandingPage() {
                   : 'bg-blue-50 border-blue-200'
               }`}
             >
-              <div className="text-4xl mb-4">🚀</div>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 ${
+                isDark ? 'bg-blue-500/20' : 'bg-blue-100'
+              }`}>
+                <Rocket size={26} className="text-blue-500" />
+              </div>
               <h2 className={`text-2xl font-bold mb-3 ${heading}`}>
                 Ready to swap on Arc?
               </h2>
@@ -326,21 +341,23 @@ export default function LandingPage() {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-colors text-sm"
+                    className="flex items-center gap-2 px-8 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-colors text-sm"
                   >
-                    Launch Swap →
+                    Launch Swap
+                    <ArrowRight size={16} />
                   </motion.button>
                 </Link>
                 <Link href="/bridge">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className={`px-8 py-3 font-semibold rounded-xl transition-colors text-sm border ${
+                    className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-xl transition-colors text-sm border ${
                       isDark
                         ? 'border-white/20 text-white hover:bg-white/10'
                         : 'border-blue-300 text-blue-700 hover:bg-blue-100'
                     }`}
                   >
+                    <Bridge size={16} />
                     Bridge USDC
                   </motion.button>
                 </Link>

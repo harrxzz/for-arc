@@ -4,22 +4,16 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useWallets } from '@privy-io/react-auth'
 import { formatUnits } from 'viem'
+import { ArrowLeftRight, ExternalLink, Loader2, CheckCircle, XCircle } from 'lucide-react'
+import { useTheme } from '@/components/ThemeProvider'
 
 const ARCSCAN = 'https://testnet.arcscan.app'
 
-// Source chain names by chain ID
-const CHAIN_NAMES: Record<number, { name: string; icon: string }> = {
-  1: { name: 'Ethereum', icon: '⟠' },
-  8453: { name: 'Base', icon: '🔷' },
-  42161: { name: 'Arbitrum', icon: '🔵' },
-}
-
-// USDC addresses across chains (lowercase)
 const USDC_ADDRESSES = new Set([
-  '0x3600000000000000000000000000000000000000', // Arc
-  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // Ethereum
-  '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // Base
-  '0xaf88d065e77c8cc2239327c5edb3a432268e5831', // Arbitrum
+  '0x3600000000000000000000000000000000000000',
+  '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+  '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
 ])
 
 const FEE_RECIPIENT = '0xfeacd1f962aec08f9f7d501659bd0dcc026f2775'
@@ -53,6 +47,8 @@ function shortHash(hash: string) {
 
 export function BridgeHistory() {
   const { wallets } = useWallets()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const address = wallets?.[0]?.address
 
   const [txs, setTxs] = useState<TxItem[]>([])
@@ -61,26 +57,17 @@ export function BridgeHistory() {
 
   useEffect(() => {
     if (!address) return
-    const fetch_ = async () => {
-      setLoading(true)
-      setError('')
-      try {
-        const res = await fetch(`${ARCSCAN}/api/v2/addresses/${address}/transactions`)
-        if (!res.ok) throw new Error('Failed to fetch')
-        const data = await res.json()
-        setTxs(data.items || [])
-      } catch {
-        setError('Failed to load history')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetch_()
+    setLoading(true)
+    setError('')
+    fetch(`${ARCSCAN}/api/v2/addresses/${address}/transactions`)
+      .then(r => r.json())
+      .then(d => setTxs(d.items || []))
+      .catch(() => setError('Failed to load history'))
+      .finally(() => setLoading(false))
   }, [address])
 
   if (!address) return null
 
-  // Filter: txs where fee was sent to FEE_RECIPIENT (bridge fee collection)
   const bridgeTxs = txs.filter(tx => {
     if (!tx.token_transfers) return false
     return tx.token_transfers.some(t =>
@@ -89,100 +76,88 @@ export function BridgeHistory() {
     )
   }).slice(0, 10)
 
+  const card = isDark ? 'bg-[#0f0f1a] border-white/10' : 'bg-white border-blue-100'
+  const muted = isDark ? 'text-slate-500' : 'text-slate-400'
+  const heading = isDark ? 'text-white' : 'text-slate-900'
+  const rowHover = isDark ? 'hover:bg-white/5' : 'hover:bg-blue-50'
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-      className="w-full max-w-md mx-auto mt-4"
-    >
-      <div className="bg-white border border-blue-100 rounded-2xl shadow-xl shadow-blue-50 p-5">
-        {/* Header */}
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="w-full max-w-md mx-auto mt-4">
+      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-slate-900">Bridge History</h3>
-          <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-full">
+          <h3 className={`text-sm font-bold ${heading}`}>Bridge History</h3>
+          <span className={`text-[10px] px-2 py-1 rounded-full ${isDark ? 'bg-white/10 text-slate-400' : 'bg-slate-50 text-slate-400'}`}>
             {bridgeTxs.length} transactions
           </span>
         </div>
 
-        {/* Loading */}
         {loading && (
-          <div className="space-y-2">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-14 bg-slate-100 rounded-xl animate-pulse" />
-            ))}
+          <div className="flex items-center justify-center gap-2 py-8">
+            <Loader2 size={16} className="text-blue-500 animate-spin" />
+            <span className={`text-xs ${muted}`}>Loading...</span>
           </div>
         )}
 
-        {/* Error */}
-        {error && (
-          <p className="text-xs text-red-500 text-center py-4">{error}</p>
-        )}
+        {error && <p className="text-xs text-red-500 text-center py-4">{error}</p>}
 
-        {/* Empty */}
         {!loading && !error && bridgeTxs.length === 0 && (
           <div className="text-center py-8">
-            <div className="text-2xl mb-2">🌉</div>
-            <p className="text-xs text-slate-400">No bridge transactions yet</p>
+            <ArrowLeftRight size={28} className={`mx-auto mb-2 ${muted}`} />
+            <p className={`text-xs ${muted}`}>No bridge transactions yet</p>
           </div>
         )}
 
-        {/* Tx list */}
         <AnimatePresence>
           {!loading && bridgeTxs.map((tx, i) => {
-            // Find the fee transfer to recipient
             const feeTransfer = tx.token_transfers?.find(t =>
               t.to.hash.toLowerCase() === FEE_RECIPIENT &&
               USDC_ADDRESSES.has(t.token.address_hash.toLowerCase())
             )
             if (!feeTransfer) return null
-
             const decimals = parseInt(feeTransfer.total.decimals)
             const feeAmount = parseFloat(formatUnits(BigInt(feeTransfer.total.value), decimals)).toFixed(4)
+            const isSuccess = tx.status === 'ok'
 
             return (
               <motion.a
                 key={tx.hash}
                 href={`${ARCSCAN}/tx/${tx.hash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
+                target="_blank" rel="noopener noreferrer"
+                initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50 transition-colors group mb-1 last:mb-0"
+                className={`flex items-center gap-3 p-3 rounded-xl transition-colors group mb-1 last:mb-0 ${rowHover}`}
               >
-                {/* Bridge icon */}
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0 bg-blue-50 text-blue-600">
-                  🌉
+                {/* Icon */}
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                  isDark ? 'bg-blue-500/15 text-blue-400' : 'bg-blue-50 text-blue-600'
+                }`}>
+                  <ArrowLeftRight size={14} />
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-slate-800">Bridge → Arc</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                      tx.status === 'ok'
-                        ? 'bg-green-50 text-green-600'
-                        : 'bg-red-50 text-red-500'
-                    }`}>
-                      {tx.status === 'ok' ? 'Success' : 'Failed'}
+                    <span className={`text-xs font-semibold ${heading}`}>Bridge → Arc</span>
+                    {isSuccess
+                      ? <CheckCircle size={11} className="text-green-500" />
+                      : <XCircle size={11} className="text-red-500" />
+                    }
+                    <span className={`text-[10px] ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+                      {isSuccess ? 'Success' : 'Failed'}
                     </span>
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">
+                  <div className={`text-[10px] mt-0.5 ${muted}`}>
                     {timeAgo(tx.timestamp)} · {shortHash(tx.hash)}
                   </div>
                 </div>
 
                 {/* Fee */}
                 <div className="text-right flex-shrink-0">
-                  <div className="text-[10px] text-slate-400">Fee paid</div>
-                  <div className="text-xs font-bold text-slate-700">
-                    {feeAmount} USDC
-                  </div>
+                  <div className={`text-[10px] ${muted}`}>Fee paid</div>
+                  <div className={`text-xs font-bold ${heading}`}>{feeAmount} USDC</div>
                 </div>
 
-                {/* Arrow */}
-                <span className="text-slate-300 group-hover:text-blue-400 transition-colors text-xs">→</span>
+                <ExternalLink size={12} className={`flex-shrink-0 transition-colors ${muted} group-hover:text-blue-500`} />
               </motion.a>
             )
           })}
