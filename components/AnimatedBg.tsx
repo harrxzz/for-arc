@@ -11,6 +11,10 @@ export function AnimatedBg() {
   useEffect(() => {
     if (!mountRef.current) return
 
+    // Respect prefers-reduced-motion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReduced) return
+
     let animId: number
     const mount = mountRef.current
 

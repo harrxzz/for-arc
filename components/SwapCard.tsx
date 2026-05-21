@@ -192,23 +192,36 @@ export function SwapCard() {
         {/* From */}
         <div className={`border rounded-xl p-4 mb-2 transition-colors ${input}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs ${muted}`}>You pay</span>
+            <label htmlFor="from-amount" className={`text-xs ${muted}`}>You pay</label>
             {address && (
-              <button onClick={() => setFromAmount(balance)} className="text-xs text-blue-500 hover:text-blue-400 font-medium">
+              <button
+                onClick={() => setFromAmount(balance)}
+                className="text-xs text-blue-500 hover:text-blue-400 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                aria-label={`Set max amount: ${balance} ${fromToken.symbol}`}
+              >
                 Balance: {balance}
               </button>
             )}
           </div>
           <div className="flex items-center gap-3">
             <input
-              type="number" placeholder="0.00" value={fromAmount}
+              id="from-amount"
+              type="number"
+              placeholder="0.00"
+              value={fromAmount}
               onChange={(e) => setFromAmount(e.target.value)}
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-300 ${heading}`}
+              aria-label={`Amount of ${fromToken.symbol} to swap`}
+              aria-describedby="swap-fee-info"
+              autoComplete="off"
+              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-300 font-variant-numeric tabular-nums ${heading}`}
             />
             <div className="relative">
               <button
                 onClick={() => setShowFromSelect(!showFromSelect)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium text-sm transition-colors ${
+                aria-label={`Select token to swap from, currently ${fromToken.symbol}`}
+                aria-expanded={showFromSelect}
+                aria-haspopup="listbox"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isDark ? 'bg-white/10 hover:bg-white/15 text-white' : fromToken.color
                 }`}
               >
@@ -261,17 +274,27 @@ export function SwapCard() {
         {/* To */}
         <div className={`border rounded-xl p-4 mb-4 transition-colors ${input}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-xs ${muted}`}>You receive</span>
-            {quoteLoading && <span className={`text-[10px] animate-pulse ${muted}`}>Fetching quote...</span>}
+            <label htmlFor="to-amount" className={`text-xs ${muted}`}>You receive</label>
+            {quoteLoading && <span className={`text-[10px] animate-pulse ${muted}`} aria-live="polite">Fetching quote...</span>}
           </div>
           <div className="flex items-center gap-3">
-            <input type="number" placeholder="0.00" value={toAmount} readOnly
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-300 ${heading}`}
+            <input
+              id="to-amount"
+              type="number"
+              placeholder="0.00"
+              value={toAmount}
+              readOnly
+              aria-label={`Amount of ${toToken.symbol} you will receive`}
+              aria-live="polite"
+              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-300 tabular-nums ${heading}`}
             />
             <div className="relative">
               <button
                 onClick={() => setShowToSelect(!showToSelect)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium text-sm transition-colors ${
+                aria-label={`Select token to receive, currently ${toToken.symbol}`}
+                aria-expanded={showToSelect}
+                aria-haspopup="listbox"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isDark ? 'bg-white/10 hover:bg-white/15 text-white' : toToken.color
                 }`}
               >
@@ -310,6 +333,7 @@ export function SwapCard() {
         {/* Quote details */}
         {fromAmount && parseFloat(fromAmount) > 0 && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+            id="swap-fee-info"
             className={`rounded-xl p-3 mb-4 space-y-1.5 text-xs ${isDark ? 'bg-white/5' : 'bg-slate-50'}`}
           >
             <div className={`flex justify-between ${muted}`}>
@@ -344,8 +368,12 @@ export function SwapCard() {
 
         {/* Error */}
         {error && (
-          <div className={`flex items-start gap-2 border rounded-xl p-3 mb-4 text-xs ${isDark ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>
-            <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+          <div
+            role="alert"
+            aria-live="polite"
+            className={`flex items-start gap-2 border rounded-xl p-3 mb-4 text-xs ${isDark ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}
+          >
+            <AlertCircle size={14} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </div>
         )}

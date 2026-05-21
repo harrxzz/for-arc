@@ -142,7 +142,7 @@ export default function LandingPage() {
       <AnimatedBg />
       <Header />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
 
         {/* ── HERO ── */}
         <section className="pt-32 pb-20 px-4 text-center">
