@@ -32,13 +32,37 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <motion.div
-            className="w-8 h-8 rounded-lg bg-blue-700 flex items-center justify-center"
-            whileHover={{ scale: 1.05, rotate: 5 }}
+            whileHover={{ scale: 1.05 }}
             transition={{ type: 'spring', stiffness: 400 }}
+            className="flex items-center gap-2"
           >
-            <span className="text-white text-sm font-bold">A</span>
+            {/* Arc shape logo */}
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Background — gradient rounded square */}
+              <rect width="32" height="32" rx="9" fill="url(#grad)"/>
+              <defs>
+                <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#3b82f6"/>
+                  <stop offset="100%" stopColor="#1d4ed8"/>
+                </linearGradient>
+              </defs>
+              {/* Bold arc — thick, centered, clear bridge shape */}
+              <path
+                d="M6 23 C6 13 26 13 26 23"
+                stroke="white"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              {/* Left pillar */}
+              <line x1="6" y1="23" x2="6" y2="27" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+              {/* Right pillar */}
+              <line x1="26" y1="23" x2="26" y2="27" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+              {/* Subtle glow dot at top of arc */}
+              <circle cx="16" cy="13" r="2" fill="rgba(255,255,255,0.5)"/>
+            </svg>
+            <span className="font-bold text-slate-900 text-lg">For Arc</span>
           </motion.div>
-          <span className="font-bold text-slate-900 text-lg">For Arc</span>
         </Link>
 
         {/* Nav */}

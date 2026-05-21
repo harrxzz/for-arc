@@ -30,6 +30,8 @@ const ERC20_ABI = [
 const TOKENS = [
   { symbol: 'USDC', name: 'USD Coin', address: USDC_ADDRESS_ARC, decimals: 6, icon: '💵', color: 'bg-blue-100 text-blue-700' },
   { symbol: 'EURC', name: 'Euro Coin', address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', decimals: 6, icon: '💶', color: 'bg-purple-100 text-purple-700' },
+  { symbol: 'USDT', name: 'Tether USD', address: '0x175CdB1D338945f0D851A741ccF787D343E57952', decimals: 18, icon: '💚', color: 'bg-green-100 text-green-700' },
+  { symbol: 'WUSDC', name: 'Wrapped USDC', address: '0x911b4000D3422F482F4062a913885f7b035382Df', decimals: 18, icon: '🔵', color: 'bg-sky-100 text-sky-700' },
 ]
 
 const publicClient = createPublicClient({
@@ -187,7 +189,7 @@ export function SwapCard() {
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="absolute right-0 top-full mt-1 bg-white border border-blue-100 rounded-xl shadow-lg z-20 min-w-[140px]"
+                    className="absolute right-0 top-full mt-1 bg-white border border-blue-100 rounded-xl shadow-lg z-20 min-w-[180px]"
                   >
                     {TOKENS.filter(t => t.symbol !== toToken.symbol).map(token => (
                       <button
@@ -196,7 +198,10 @@ export function SwapCard() {
                         className="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-blue-50 text-sm text-slate-700 first:rounded-t-xl last:rounded-b-xl"
                       >
                         <span>{token.icon}</span>
-                        <span className="font-medium">{token.symbol}</span>
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium text-xs">{token.symbol}</span>
+                          <span className="text-[10px] text-slate-400">{token.name}</span>
+                        </div>
                       </button>
                     ))}
                   </motion.div>
@@ -247,7 +252,7 @@ export function SwapCard() {
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="absolute right-0 top-full mt-1 bg-white border border-blue-100 rounded-xl shadow-lg z-20 min-w-[140px]"
+                    className="absolute right-0 top-full mt-1 bg-white border border-blue-100 rounded-xl shadow-lg z-20 min-w-[180px]"
                   >
                     {TOKENS.filter(t => t.symbol !== fromToken.symbol).map(token => (
                       <button
@@ -256,7 +261,10 @@ export function SwapCard() {
                         className="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-blue-50 text-sm text-slate-700 first:rounded-t-xl last:rounded-b-xl"
                       >
                         <span>{token.icon}</span>
-                        <span className="font-medium">{token.symbol}</span>
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium text-xs">{token.symbol}</span>
+                          <span className="text-[10px] text-slate-400">{token.name}</span>
+                        </div>
                       </button>
                     ))}
                   </motion.div>
