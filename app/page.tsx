@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import {
-  Coins, Zap, RefreshCw, Bridge, ShieldCheck, BarChart2,
+  Coins, Zap, RefreshCw, ArrowLeftRight, ShieldCheck, BarChart2,
   Wallet, ArrowRightLeft, CheckCircle, Rocket,
   Box, Fuel, CircleDollarSign, ArrowRight
 } from 'lucide-react'
@@ -71,7 +71,7 @@ const FEATURES = [
     badge: 'Live',
   },
   {
-    Icon: Bridge,
+    Icon: ArrowLeftRight,
     title: 'Cross-chain Bridge',
     desc: 'Bridge USDC from Ethereum, Base, or Arbitrum to Arc in ~20 seconds via Circle CCTP.',
     badge: 'CCTP',
@@ -202,7 +202,7 @@ export default function LandingPage() {
                       : 'border-blue-200 text-blue-700 hover:bg-blue-50'
                   }`}
                 >
-                  <Bridge size={16} />
+                  <ArrowLeftRight size={16} />
                   Bridge USDC
                 </motion.button>
               </Link>
