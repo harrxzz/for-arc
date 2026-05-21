@@ -5,6 +5,7 @@ import { AnimatedBg } from '@/components/AnimatedBg'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { SwapCard } from '@/components/SwapCard'
+import { SwapHistory } from '@/components/SwapHistory'
 
 const stats = [
   { label: 'Chain', value: 'Arc Testnet', icon: '🔵' },
@@ -77,6 +78,9 @@ export default function HomePage() {
 
         {/* Swap card */}
         <SwapCard />
+
+        {/* Swap history */}
+        <SwapHistory />
 
         {/* Features */}
         <motion.div

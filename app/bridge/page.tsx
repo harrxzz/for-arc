@@ -5,6 +5,7 @@ import { AnimatedBg } from '@/components/AnimatedBg'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { BridgeCard } from '@/components/BridgeCard'
+import { BridgeHistory } from '@/components/BridgeHistory'
 
 export default function BridgePage() {
   return (
@@ -82,6 +83,9 @@ export default function BridgePage() {
 
         {/* Bridge card */}
         <BridgeCard />
+
+        {/* Bridge history */}
+        <BridgeHistory />
 
         {/* Info cards */}
         <motion.div
