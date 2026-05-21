@@ -6,6 +6,7 @@ import { useWallets } from '@privy-io/react-auth'
 import { formatUnits } from 'viem'
 import { ArrowUp, ArrowDown, ExternalLink, Inbox, Loader2 } from 'lucide-react'
 import { useTheme } from '@/components/ThemeProvider'
+import { TokenIcon } from '@/components/TokenIcon'
 
 const ARCSCAN = 'https://testnet.arcscan.app'
 
@@ -14,23 +15,6 @@ const SWAP_TOKENS: Record<string, { symbol: string; decimals: number }> = {
   '0x89b50855aa3be2f677cd6303cec089b5f319d72a': { symbol: 'EURC', decimals: 6 },
   '0x175cdb1d338945f0d851a741ccf787d343e57952': { symbol: 'USDT', decimals: 18 },
   '0x911b4000d3422f482f4062a913885f7b035382df': { symbol: 'WUSDC', decimals: 18 },
-}
-
-// Token icon
-function TokenIcon({ symbol, size = 16 }: { symbol: string; size?: number }) {
-  const configs: Record<string, { bg: string; label: string }> = {
-    USDC:  { bg: '#2775CA', label: '$' },
-    EURC:  { bg: '#7B3FE4', label: '€' },
-    USDT:  { bg: '#26A17B', label: '₮' },
-    WUSDC: { bg: '#0EA5E9', label: 'W' },
-  }
-  const cfg = configs[symbol] ?? { bg: '#6366f1', label: symbol[0] }
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="8" r="8" fill={cfg.bg} />
-      <text x="8" y="11.5" textAnchor="middle" fontSize="8" fontWeight="bold" fill="white" fontFamily="system-ui">{cfg.label}</text>
-    </svg>
-  )
 }
 
 interface TxItem {

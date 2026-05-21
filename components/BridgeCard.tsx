@@ -7,25 +7,16 @@ import { parseUnits } from 'viem'
 import { ChevronDown, ArrowDown, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { arcTestnet, BRIDGE_SOURCE_CHAINS, FEE_RECIPIENT, BRIDGE_FEE_USDC } from '@/config/chains'
 import { useTheme } from '@/components/ThemeProvider'
+import { TokenIcon } from '@/components/TokenIcon'
 
 const ERC20_ABI = [
   { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ name: 'owner', type: 'address' }], outputs: [{ name: '', type: 'uint256' }] },
   { name: 'transfer', type: 'function', stateMutability: 'nonpayable', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }] },
 ] as const
 
-// Chain icon as SVG
+// Chain icon as SVG component
 function ChainIcon({ icon, size = 18 }: { icon: string; size?: number }) {
   return <span style={{ fontSize: size * 0.9 }}>{icon}</span>
-}
-
-// USDC token icon
-function USDCIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="10" fill="#2775CA" />
-      <text x="10" y="14" textAnchor="middle" fontSize="10" fontWeight="bold" fill="white" fontFamily="system-ui">$</text>
-    </svg>
-  )
 }
 
 export function BridgeCard() {
@@ -156,7 +147,7 @@ export function BridgeCard() {
               className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-300 ${heading}`}
             />
             <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl ${isDark ? 'bg-white/10' : 'bg-blue-100'}`}>
-              <USDCIcon size={18} />
+              <TokenIcon symbol="USDC" size={18} />
               <span className={`text-sm font-medium ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
             </div>
           </div>
@@ -187,7 +178,7 @@ export function BridgeCard() {
               {receiveAmount !== '0' ? receiveAmount : <span className="text-slate-300">0.00</span>}
             </div>
             <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl ${isDark ? 'bg-white/10' : 'bg-blue-100'}`}>
-              <USDCIcon size={18} />
+              <TokenIcon symbol="USDC" size={18} />
               <span className={`text-sm font-medium ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
             </div>
           </div>

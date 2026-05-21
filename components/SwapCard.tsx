@@ -7,6 +7,7 @@ import { createPublicClient, http, formatUnits, parseUnits } from 'viem'
 import { ArrowUpDown, ChevronDown, Loader2, CheckCircle, AlertCircle, TrendingDown } from 'lucide-react'
 import { arcTestnet, USDC_ADDRESS_ARC, FEE_RECIPIENT, SWAP_FEE_BPS } from '@/config/chains'
 import { useTheme } from '@/components/ThemeProvider'
+import { TokenIcon } from '@/components/TokenIcon'
 
 const XYLO_ROUTER = '0x73742278c31a76dBb0D2587d03ef92E6E2141023' as const
 
@@ -33,23 +34,6 @@ const XYLO_ROUTER_ABI = [
     outputs: [{ name: 'amountOut', type: 'uint256' }],
   },
 ] as const
-
-// Token icon as SVG component
-function TokenIcon({ symbol, size = 20 }: { symbol: string; size?: number }) {
-  const configs: Record<string, { bg: string; text: string; label: string }> = {
-    USDC:  { bg: '#2775CA', text: '#fff', label: '$' },
-    EURC:  { bg: '#7B3FE4', text: '#fff', label: '€' },
-    USDT:  { bg: '#26A17B', text: '#fff', label: '₮' },
-    WUSDC: { bg: '#0EA5E9', text: '#fff', label: 'W' },
-  }
-  const cfg = configs[symbol] ?? { bg: '#6366f1', text: '#fff', label: symbol[0] }
-  return (
-    <svg width={size} height={size} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="10" fill={cfg.bg} />
-      <text x="10" y="14" textAnchor="middle" fontSize="10" fontWeight="bold" fill={cfg.text} fontFamily="system-ui">{cfg.label}</text>
-    </svg>
-  )
-}
 
 const TOKENS = [
   { symbol: 'USDC',  name: 'USD Coin',     address: USDC_ADDRESS_ARC,                              decimals: 6,  color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400' },
