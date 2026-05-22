@@ -99,10 +99,10 @@ export function RecentSwaps() {
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
-  const card = isDark ? 'bg-[#0f0f1a] border-white/10' : 'bg-white border-blue-100'
+  const card = isDark ? 'bg-[#0a0a0a] border-white/10' : 'bg-white border-white/8'
   const muted = isDark ? 'text-slate-400' : 'text-slate-500'
   const heading = isDark ? 'text-white' : 'text-slate-900'
-  const row = isDark ? 'hover:bg-white/5 border-white/5' : 'hover:bg-blue-50/50 border-blue-50'
+  const row = isDark ? 'hover:bg-white/5 border-white/5' : 'hover:bg-white/5/50 border-white/5'
 
   const fetchSwaps = useCallback(async () => {
     try {
@@ -131,7 +131,7 @@ export function RecentSwaps() {
       <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-white/8' : 'border-white/60'}`}>
         <div className="flex items-center gap-2">
           <h3 className={`text-sm font-bold ${heading}`}>Recent Swaps</h3>
-          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" aria-hidden="true" />
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" aria-hidden="true" />
         </div>
         <div className="flex items-center gap-2">
           {lastUpdated && (
@@ -142,8 +142,8 @@ export function RecentSwaps() {
           <button
             onClick={fetchSwaps}
             aria-label="Refresh recent swaps"
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-              isDark ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-blue-50 text-slate-500'
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
+              isDark ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-white/5 text-slate-500'
             }`}
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
@@ -152,17 +152,17 @@ export function RecentSwaps() {
       </div>
 
       {/* List */}
-      <div className={`divide-y ${isDark ? 'divide-white/5' : 'divide-blue-50'}`}>
+      <div className={`divide-y ${isDark ? 'divide-white/5' : 'divide-white/5'}`}>
         {loading ? (
           // Skeleton
           Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex items-center gap-3 px-5 py-3.5 animate-pulse">
-              <div className={`w-8 h-8 rounded-full ${isDark ? 'bg-white/10' : 'bg-blue-50'}`} />
+              <div className={`w-8 h-8 rounded-full ${isDark ? 'bg-white/10' : 'bg-white/5'}`} />
               <div className="flex-1 space-y-1.5">
-                <div className={`h-3 w-32 rounded ${isDark ? 'bg-white/10' : 'bg-blue-50'}`} />
+                <div className={`h-3 w-32 rounded ${isDark ? 'bg-white/10' : 'bg-white/5'}`} />
                 <div className={`h-2.5 w-20 rounded ${isDark ? 'bg-white/5' : 'bg-slate-100'}`} />
               </div>
-              <div className={`h-3 w-16 rounded ${isDark ? 'bg-white/10' : 'bg-blue-50'}`} />
+              <div className={`h-3 w-16 rounded ${isDark ? 'bg-white/10' : 'bg-white/5'}`} />
             </div>
           ))
         ) : swaps.length === 0 ? (
@@ -187,7 +187,7 @@ export function RecentSwaps() {
                 {/* Token icons side by side */}
                 <div className="flex items-center flex-shrink-0">
                   <TokenIcon symbol={swap.tokenIn} size={20} />
-                  <ArrowRight size={10} className="text-blue-500 mx-1" aria-hidden="true" />
+                  <ArrowRight size={10} className="text-arc-light mx-1" aria-hidden="true" />
                   <TokenIcon symbol={swap.tokenOut} size={20} />
                 </div>
 
@@ -208,7 +208,7 @@ export function RecentSwaps() {
                 {/* Time + link */}
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <span className={`text-[10px] ${muted}`}>{timeAgo(swap.timestamp)}</span>
-                  <ExternalLink size={10} className="text-blue-500" aria-hidden="true" />
+                  <ExternalLink size={10} className="text-arc-light" aria-hidden="true" />
                 </div>
               </motion.a>
             ))}

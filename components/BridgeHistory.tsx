@@ -76,14 +76,14 @@ export function BridgeHistory() {
     )
   }).slice(0, 10)
 
-  const card = isDark ? 'bg-[#0f0f1a] border-white/10' : 'bg-white border-blue-100'
+  const card = isDark ? 'bg-[#0a0a0a] border-white/10' : 'bg-white border-white/8'
   const muted = isDark ? 'text-slate-500' : 'text-slate-400'
   const heading = isDark ? 'text-white' : 'text-slate-900'
-  const rowHover = isDark ? 'hover:bg-white/5' : 'hover:bg-blue-50'
+  const rowHover = isDark ? 'hover:bg-white/5' : 'hover:bg-white/5'
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="w-full max-w-md mx-auto mt-4">
-      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
+      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-arc-light/5' : 'shadow-black'}`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className={`text-sm font-bold ${heading}`}>Bridge History</h3>
           <span className={`text-[10px] px-2 py-1 rounded-full ${isDark ? 'bg-white/10 text-slate-400' : 'bg-slate-50 text-slate-400'}`}>
@@ -93,7 +93,7 @@ export function BridgeHistory() {
 
         {loading && (
           <div className="flex items-center justify-center gap-2 py-8">
-            <Loader2 size={16} className="text-blue-500 animate-spin" />
+            <Loader2 size={16} className="text-arc-light animate-spin" />
             <span className={`text-xs ${muted}`}>Loading...</span>
           </div>
         )}
@@ -129,7 +129,7 @@ export function BridgeHistory() {
               >
                 {/* Icon */}
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                  isDark ? 'bg-blue-500/15 text-blue-400' : 'bg-blue-50 text-blue-600'
+                  isDark ? 'bg-arc-light/15 text-arc-light' : 'bg-white/5 text-arc-light'
                 }`}>
                   <ArrowLeftRight size={14} />
                 </div>
@@ -139,10 +139,10 @@ export function BridgeHistory() {
                   <div className="flex items-center gap-1.5">
                     <span className={`text-xs font-semibold ${heading}`}>Bridge → Arc</span>
                     {isSuccess
-                      ? <CheckCircle size={11} className="text-green-500" />
+                      ? <CheckCircle size={11} className="text-white" />
                       : <XCircle size={11} className="text-red-500" />
                     }
-                    <span className={`text-[10px] ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+                    <span className={`text-[10px] ${isSuccess ? 'text-white' : 'text-red-500'}`}>
                       {isSuccess ? 'Success' : 'Failed'}
                     </span>
                   </div>
@@ -157,7 +157,7 @@ export function BridgeHistory() {
                   <div className={`text-xs font-bold ${heading}`}>{feeAmount} USDC</div>
                 </div>
 
-                <ExternalLink size={12} className={`flex-shrink-0 transition-colors ${muted} group-hover:text-blue-500`} />
+                <ExternalLink size={12} className={`flex-shrink-0 transition-colors ${muted} group-hover:text-arc-light`} />
               </motion.a>
             )
           })}

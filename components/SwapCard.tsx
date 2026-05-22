@@ -185,7 +185,7 @@ export function SwapCard() {
         aria-label={`Select token, currently ${selected.symbol}`}
         aria-expanded={show}
         aria-haspopup="listbox"
-        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
           isDark
             ? 'bg-white/8 hover:bg-white/12 text-white border border-white/10'
             : 'bg-white/80 hover:bg-white text-slate-800 border border-white/90 shadow-sm'
@@ -208,8 +208,8 @@ export function SwapCard() {
               <button key={token.symbol}
                 onClick={() => { onSelect(token); onToggle() }}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                  isDark ? 'hover:bg-white/8 text-slate-200' : 'hover:bg-blue-50/80 text-slate-700'
-                } ${selected.symbol === token.symbol ? isDark ? 'bg-white/8 text-blue-400' : 'bg-blue-50 text-blue-700' : ''}`}
+                  isDark ? 'hover:bg-white/8 text-slate-200' : 'hover:bg-white/5/80 text-slate-700'
+                } ${selected.symbol === token.symbol ? isDark ? 'bg-white/8 text-arc-light' : 'bg-white/5 text-arc-light' : ''}`}
               >
                 <TokenIcon symbol={token.symbol} size={22} />
                 <div className="flex flex-col items-start">
@@ -238,10 +238,10 @@ export function SwapCard() {
           <h2 className={`text-base font-bold ${heading}`}>Swap</h2>
           <div className="flex items-center gap-2">
             <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-              isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-blue-50 text-blue-600 border border-blue-100'
+              isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/5 text-arc-light border border-white/8'
             }`}>0.3% fee</span>
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-green-500/15 text-green-400 border border-green-500/20 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse" aria-hidden="true" />
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-white/15 text-white border border-white/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-white inline-block animate-pulse" aria-hidden="true" />
               XyloNet
             </span>
           </div>
@@ -254,7 +254,7 @@ export function SwapCard() {
             {address && (
               <button
                 onClick={() => setFromAmount(balance)}
-                className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                className="text-xs text-arc-light hover:text-arc-light font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light rounded"
                 aria-label={`Set max: ${balance} ${fromToken.symbol}`}
               >
                 Balance: {balance}
@@ -287,10 +287,10 @@ export function SwapCard() {
             whileTap={{ scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 400 }}
             aria-label="Swap token direction"
-            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
               isDark
-                ? 'bg-white/8 border border-white/10 hover:bg-white/15 text-blue-400'
-                : 'bg-white/90 border border-white/90 shadow-sm hover:bg-white text-blue-600'
+                ? 'bg-white/8 border border-white/10 hover:bg-white/15 text-arc-light'
+                : 'bg-white/90 border border-white/90 shadow-sm hover:bg-white text-arc-light'
             }`}
           >
             <ArrowUpDown size={15} aria-hidden="true" />
@@ -330,7 +330,7 @@ export function SwapCard() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             className={`rounded-2xl p-3.5 mb-4 space-y-2 text-xs ${
-              isDark ? 'bg-white/4 border border-white/6' : 'bg-blue-50/60 border border-blue-100/80'
+              isDark ? 'bg-white/4 border border-white/6' : 'bg-white/5/60 border border-white/8/80'
             }`}
           >
             <div className={`flex justify-between ${muted}`}>
@@ -342,7 +342,7 @@ export function SwapCard() {
                 <span className="flex items-center gap-1">
                   <TrendingDown size={11} aria-hidden="true" /> Price impact
                 </span>
-                <span className={parseFloat(priceImpact) > 1 ? 'text-orange-400' : 'text-green-400'}>
+                <span className={parseFloat(priceImpact) > 1 ? 'text-arc-light' : 'text-white'}>
                   {priceImpact}%
                 </span>
               </div>
@@ -351,7 +351,7 @@ export function SwapCard() {
               <span>Slippage tolerance</span><span>0.5%</span>
             </div>
             <div className={`border-t pt-2 flex justify-between font-semibold ${
-              isDark ? 'border-white/8 text-slate-200' : 'border-blue-200/60 text-slate-700'
+              isDark ? 'border-white/8 text-slate-200' : 'border-arc-light/60 text-slate-700'
             }`}>
               <span>You receive</span>
               <span>{toAmount} {toToken.symbol}</span>
@@ -365,11 +365,11 @@ export function SwapCard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className={`flex items-center gap-2 rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-50 border border-blue-200'
+              isDark ? 'bg-arc-light/10 border border-arc-light/20' : 'bg-white/5 border border-arc-light'
             }`}
           >
-            <Loader2 size={14} className="text-blue-400 animate-spin" aria-hidden="true" />
-            <span className="text-xs text-blue-400 font-medium">{stepLabels[step]}</span>
+            <Loader2 size={14} className="text-arc-light animate-spin" aria-hidden="true" />
+            <span className="text-xs text-arc-light font-medium">{stepLabels[step]}</span>
           </motion.div>
         )}
 
@@ -392,16 +392,16 @@ export function SwapCard() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className={`rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-50 border border-green-200'
+              isDark ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
             }`}
           >
-            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
+            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-white'}`}>
               <CheckCircle size={13} aria-hidden="true" /> Swap successful!
             </p>
             <a
               href={`https://testnet.arcscan.app/tx/${txHash}`}
               target="_blank" rel="noopener noreferrer"
-              className={`text-xs underline break-all ${isDark ? 'text-green-400' : 'text-green-600'}`}
+              className={`text-xs underline break-all ${isDark ? 'text-white' : 'text-white'}`}
             >
               View on ArcScan →
             </a>
@@ -414,7 +414,7 @@ export function SwapCard() {
           disabled={loading || (!fromAmount && authenticated)}
           whileHover={authenticated && fromAmount ? { scale: 1.01 } : {}}
           whileTap={authenticated && fromAmount ? { scale: 0.99 } : {}}
-          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light focus-visible:ring-offset-2 ${
             !authenticated
               ? 'glass-btn-primary text-white'
               : !fromAmount

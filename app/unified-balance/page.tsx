@@ -16,7 +16,7 @@ export default function UnifiedBalancePage() {
   const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#020208]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
       <AnimatedBg />
       <Header />
 
@@ -25,10 +25,10 @@ export default function UnifiedBalancePage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-arc-violet/10 border border-arc-violet/20 rounded-full mb-4"
           >
-            <Globe size={13} className="text-purple-400" />
-            <span className="text-sm text-purple-400 font-medium">Circle Gateway</span>
+            <Globe size={13} className="text-arc-violet" />
+            <span className="text-sm text-arc-violet font-medium">Circle Gateway</span>
           </motion.div>
 
           <motion.h1
@@ -83,12 +83,12 @@ export default function UnifiedBalancePage() {
                   },
                 ].map(({ Icon, step, title, desc }) => (
                   <div key={step} className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-purple-500/15' : 'bg-purple-50'}`}>
-                      <Icon size={15} className="text-purple-400" aria-hidden="true" />
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-arc-violet/15' : 'bg-white/5'}`}>
+                      <Icon size={15} className="text-arc-violet" aria-hidden="true" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold text-purple-400">{step}</span>
+                        <span className="text-[10px] font-bold text-arc-violet">{step}</span>
                         <span className={`text-xs font-semibold ${heading}`}>{title}</span>
                       </div>
                       <p className={`text-[11px] leading-relaxed ${muted}`}>{desc}</p>
@@ -103,10 +103,10 @@ export default function UnifiedBalancePage() {
               <h3 className={`text-sm font-bold mb-3 ${heading}`}>Supported chains</h3>
               <div className="space-y-2">
                 {[
-                  { name: 'Arc Testnet', domain: 26, color: 'bg-blue-500' },
+                  { name: 'Arc Testnet', domain: 26, color: 'bg-arc-light' },
                   { name: 'Ethereum Sepolia', domain: 0, color: 'bg-slate-400' },
-                  { name: 'Base Sepolia', domain: 6, color: 'bg-blue-400' },
-                  { name: 'Arbitrum Sepolia', domain: 3, color: 'bg-cyan-400' },
+                  { name: 'Base Sepolia', domain: 6, color: 'bg-arc-light' },
+                  { name: 'Arbitrum Sepolia', domain: 3, color: 'bg-arc-light' },
                 ].map(({ name, domain, color }) => (
                   <div key={domain} className={`flex items-center justify-between px-3 py-2 rounded-xl ${isDark ? 'bg-white/4' : 'bg-slate-50'}`}>
                     <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function UnifiedBalancePage() {
                   href="https://developers.circle.com/gateway"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-purple-400 underline"
+                  className="text-arc-violet underline"
                 >
                   Circle Gateway
                 </a>

@@ -14,7 +14,7 @@ export default function SwapPage() {
   const isDark = theme === 'dark'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#0a0a0f]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
       <AnimatedBg />
       <Header />
 
@@ -26,7 +26,7 @@ export default function SwapPage() {
             transition={{ duration: 0.5 }}
             className={`text-3xl sm:text-4xl font-bold mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}
           >
-            Swap on <span className="text-blue-500">Arc Network</span>
+            Swap on <span className="text-arc-light">Arc Network</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}

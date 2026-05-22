@@ -7,18 +7,18 @@ import * as THREE from 'three'
 // Coin symbols to render as canvas textures
 const COIN_SYMBOLS = ['$', '€', '₿', 'Ξ', '◎', '₮', 'Ξ', '$', '€', '◎', '₿', '₮']
 const COIN_COLORS = [
-  '#2775CA', // USDC blue
-  '#26A17B', // USDT green
-  '#F7931A', // BTC orange
-  '#627EEA', // ETH purple
-  '#9945FF', // SOL purple
-  '#E84142', // AVAX red
-  '#0033AD', // EURC blue
-  '#2775CA',
-  '#26A17B',
-  '#627EEA',
-  '#F7931A',
-  '#9945FF',
+  '#ffffff', // white
+  '#cccccc', // light grey
+  '#aaaaaa', // mid grey
+  '#888888', // grey
+  '#666666', // dark grey
+  '#dddddd', // silver
+  '#ffffff',
+  '#cccccc',
+  '#aaaaaa',
+  '#888888',
+  '#dddddd',
+  '#666666',
 ]
 
 function makeCoinTexture(symbol: string, color: string): THREE.CanvasTexture {
@@ -74,6 +74,10 @@ export function AnimatedBg() {
     renderer.setSize(window.innerWidth, window.innerHeight)
 
     const scene = new THREE.Scene()
+
+    // Deep space background
+    scene.background = new THREE.Color(isDark ? 0x000000 : 0x080808)
+
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 300)
     camera.position.z = 22
 
@@ -81,21 +85,21 @@ export function AnimatedBg() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
     scene.add(ambientLight)
 
-    const dirLight = new THREE.DirectionalLight(0x818cf8, 1.2)
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2)
     dirLight.position.set(5, 8, 10)
     scene.add(dirLight)
 
-    const rimLight = new THREE.DirectionalLight(0xa78bfa, 0.6)
+    const rimLight = new THREE.DirectionalLight(0xcccccc, 0.6)
     rimLight.position.set(-8, -4, 5)
     scene.add(rimLight)
 
     // ── Globe ──
     const globeGeo = new THREE.SphereGeometry(5, 64, 64)
 
-    // Wireframe overlay (continent lines effect)
+    // Wireframe overlay
     const wireGeo = new THREE.SphereGeometry(5.02, 32, 32)
     const wireMat = new THREE.MeshBasicMaterial({
-      color: isDark ? 0x6366f1 : 0x818cf8,
+      color: isDark ? 0xffffff : 0xaaaaaa,
       wireframe: true,
       transparent: true,
       opacity: isDark ? 0.12 : 0.08,
@@ -103,32 +107,32 @@ export function AnimatedBg() {
     const wireMesh = new THREE.Mesh(wireGeo, wireMat)
     scene.add(wireMesh)
 
-    // Globe outer shell — glassy
+    // Globe outer shell — monochrome glassy
     const globeMat = new THREE.MeshPhongMaterial({
-      color: isDark ? 0x1e1b4b : 0xc7d2fe,
-      emissive: isDark ? 0x312e81 : 0xe0e7ff,
+      color: isDark ? 0x111111 : 0x222222,
+      emissive: isDark ? 0x222222 : 0x333333,
       emissiveIntensity: 0.3,
       transparent: true,
-      opacity: isDark ? 0.18 : 0.22,
-      shininess: 120,
-      specular: new THREE.Color(isDark ? 0x818cf8 : 0x6366f1),
+      opacity: isDark ? 0.22 : 0.28,
+      shininess: 140,
+      specular: new THREE.Color(isDark ? 0xffffff : 0xcccccc),
     })
     const globe = new THREE.Mesh(globeGeo, globeMat)
     scene.add(globe)
 
-    // Globe inner glow
+    // Globe inner glow — white
     const innerGeo = new THREE.SphereGeometry(4.6, 32, 32)
     const innerMat = new THREE.MeshBasicMaterial({
-      color: isDark ? 0x4f46e5 : 0x818cf8,
+      color: isDark ? 0xffffff : 0xaaaaaa,
       transparent: true,
       opacity: isDark ? 0.06 : 0.04,
     })
     scene.add(new THREE.Mesh(innerGeo, innerMat))
 
-    // Globe equator ring
+    // Globe equator ring — white
     const eqGeo = new THREE.TorusGeometry(5.1, 0.04, 8, 128)
     const eqMat = new THREE.MeshBasicMaterial({
-      color: isDark ? 0x818cf8 : 0x6366f1,
+      color: isDark ? 0xffffff : 0xaaaaaa,
       transparent: true,
       opacity: isDark ? 0.35 : 0.2,
     })
@@ -136,12 +140,12 @@ export function AnimatedBg() {
     eqRing.rotation.x = Math.PI / 2
     scene.add(eqRing)
 
-    // Orbit ring (tilted)
+    // Orbit ring (tilted) — grey
     const orbitGeo = new THREE.TorusGeometry(8.5, 0.03, 8, 128)
     const orbitMat = new THREE.MeshBasicMaterial({
-      color: isDark ? 0x6366f1 : 0x818cf8,
+      color: isDark ? 0xcccccc : 0x888888,
       transparent: true,
-      opacity: isDark ? 0.2 : 0.12,
+      opacity: isDark ? 0.22 : 0.12,
     })
     const orbitRing = new THREE.Mesh(orbitGeo, orbitMat)
     orbitRing.rotation.x = Math.PI / 3
@@ -200,17 +204,17 @@ export function AnimatedBg() {
       })
     }
 
-    // ── Background nebula orbs ──
+    // ── Nebula orbs (monochrome) ──
     const orbColors = isDark
-      ? [0x4f46e5, 0x7c3aed, 0x1e40af, 0x6d28d9]
-      : [0xc7d2fe, 0xddd6fe, 0xbfdbfe, 0xe0e7ff]
+      ? [0x111111, 0x1a1a1a, 0x0d0d0d, 0x222222]
+      : [0x1a1a1a, 0x222222, 0x111111, 0x2a2a2a]
 
     orbColors.forEach((color, i) => {
       const geo = new THREE.SphereGeometry(12 + i * 4, 16, 16)
       const mat = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: isDark ? 0.04 : 0.1,
+        opacity: isDark ? 0.18 : 0.22,
       })
       const mesh = new THREE.Mesh(geo, mat)
       mesh.position.set(
@@ -221,19 +225,77 @@ export function AnimatedBg() {
       scene.add(mesh)
     })
 
-    // ── Star particles ──
+    // ── Star particles — multi-color space stars ──
     const starGeo = new THREE.BufferGeometry()
-    const starCount = 400
+    const starCount = 700
     const starPos = new Float32Array(starCount * 3)
-    for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 250
+    const starColors = new Float32Array(starCount * 3)
+
+    for (let i = 0; i < starCount; i++) {
+      starPos[i * 3]     = (Math.random() - 0.5) * 280
+      starPos[i * 3 + 1] = (Math.random() - 0.5) * 280
+      starPos[i * 3 + 2] = (Math.random() - 0.5) * 280
+
+      // Star color variety: white, grey-white, silver
+      const r = Math.random()
+      if (r < 0.6) {
+        // pure white
+        starColors[i * 3] = 1; starColors[i * 3 + 1] = 1; starColors[i * 3 + 2] = 1
+      } else if (r < 0.85) {
+        // grey-white
+        starColors[i * 3] = 0.8; starColors[i * 3 + 1] = 0.8; starColors[i * 3 + 2] = 0.8
+      } else {
+        // silver/dim
+        starColors[i * 3] = 0.6; starColors[i * 3 + 1] = 0.6; starColors[i * 3 + 2] = 0.6
+      }
+    }
+
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3))
+    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3))
+
     const starMat = new THREE.PointsMaterial({
-      color: isDark ? 0xc4b5fd : 0x6366f1,
-      size: isDark ? 0.1 : 0.07,
+      size: isDark ? 0.14 : 0.10,
       transparent: true,
-      opacity: isDark ? 0.45 : 0.2,
+      opacity: isDark ? 0.75 : 0.55,
+      vertexColors: true,
+      sizeAttenuation: true,
     })
-    scene.add(new THREE.Points(starGeo, starMat))
+    const starField = new THREE.Points(starGeo, starMat)
+    scene.add(starField)
+
+    // ── Shooting stars ──
+    type ShootingStar = {
+      line: THREE.Line
+      active: boolean
+      progress: number
+      speed: number
+      startPos: THREE.Vector3
+      endPos: THREE.Vector3
+      cooldown: number
+    }
+
+    function makeShootingStar(): ShootingStar {
+      const startX = (Math.random() - 0.5) * 60
+      const startY = 12 + Math.random() * 10
+      const startZ = -10 - Math.random() * 20
+      const length = 6 + Math.random() * 10
+      const angle = -Math.PI / 6 + (Math.random() - 0.5) * 0.3
+
+      const startPos = new THREE.Vector3(startX, startY, startZ)
+      const endPos = new THREE.Vector3(
+        startX + Math.cos(angle) * length,
+        startY + Math.sin(angle) * length,
+        startZ
+      )
+      const pts = [startPos.clone(), startPos.clone()]
+      const geo = new THREE.BufferGeometry().setFromPoints(pts)
+      const mat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 })
+      const line = new THREE.Line(geo, mat)
+      scene.add(line)
+      return { line, active: false, progress: 0, speed: 0.022 + Math.random() * 0.018, startPos, endPos, cooldown: 100 + Math.random() * 350 }
+    }
+
+    const shootingStars: ShootingStar[] = Array.from({ length: 4 }, makeShootingStar)
 
     // ── Mouse parallax ──
     let mouseX = 0, mouseY = 0
@@ -270,6 +332,13 @@ export function AnimatedBg() {
       eqRing.rotation.z += 0.001
       orbitRing.rotation.z += 0.0008
 
+      // Star field slow drift
+      starField.rotation.y += 0.0002
+      starField.rotation.x += 0.00005
+
+      // Star twinkle
+      starMat.opacity = (isDark ? 0.75 : 0.55) * (0.88 + Math.sin(frame * 0.03) * 0.12)
+
       // Coins orbit
       coins.forEach((c) => {
         c.angle += c.speed
@@ -279,8 +348,6 @@ export function AnimatedBg() {
         const z = Math.sin(c.angle) * c.radius * Math.cos(orbitTilt) * 0.3
 
         c.group.position.set(x, y, z)
-
-        // Face camera + self spin
         c.group.rotation.y += c.selfSpin
         c.group.rotation.x = Math.sin(frame * 0.01 + c.angle) * 0.3
 
@@ -288,6 +355,47 @@ export function AnimatedBg() {
         const glowRing = c.group.children[1] as THREE.Mesh
         const glowMat = glowRing.material as THREE.MeshBasicMaterial
         glowMat.opacity = 0.25 + Math.sin(frame * 0.05 + c.angle * 3) * 0.15
+      })
+
+      // Shooting stars
+      shootingStars.forEach((ss) => {
+        if (!ss.active) {
+          ss.cooldown--
+          if (ss.cooldown <= 0) { ss.active = true; ss.progress = 0 }
+          return
+        }
+        ss.progress += ss.speed
+        const mat = ss.line.material as THREE.LineBasicMaterial
+
+        if (ss.progress >= 1) {
+          ss.active = false
+          ss.cooldown = 150 + Math.random() * 400
+          mat.opacity = 0
+          const startX = (Math.random() - 0.5) * 60
+          const startY = 12 + Math.random() * 10
+          const startZ = -10 - Math.random() * 20
+          const length = 6 + Math.random() * 10
+          const angle = -Math.PI / 6 + (Math.random() - 0.5) * 0.3
+          ss.startPos.set(startX, startY, startZ)
+          ss.endPos.set(startX + Math.cos(angle) * length, startY + Math.sin(angle) * length, startZ)
+          ss.speed = 0.022 + Math.random() * 0.018
+          return
+        }
+
+        const headT = Math.min(ss.progress * 1.5, 1)
+        const tailT = Math.max(ss.progress * 1.5 - 0.5, 0)
+        const head = ss.startPos.clone().lerp(ss.endPos, headT)
+        const tail = ss.startPos.clone().lerp(ss.endPos, tailT)
+        const geo = ss.line.geometry as THREE.BufferGeometry
+        geo.setFromPoints([tail, head])
+        geo.computeBoundingSphere()
+
+        const fade = ss.progress < 0.2
+          ? ss.progress / 0.2
+          : ss.progress > 0.7
+            ? (1 - ss.progress) / 0.3
+            : 1
+        mat.opacity = fade * 0.9
       })
 
       renderer.render(scene, camera)

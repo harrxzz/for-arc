@@ -81,8 +81,8 @@ export function SendCard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className={`text-base font-bold ${heading}`}>Send</h2>
-          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-green-500/15 text-green-400 border border-green-500/20 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse" aria-hidden="true" />
+          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-white/15 text-white border border-white/20 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-white inline-block animate-pulse" aria-hidden="true" />
             Arc Testnet
           </span>
         </div>
@@ -95,7 +95,7 @@ export function SendCard() {
               <button
                 key={t.symbol}
                 onClick={() => setToken(t.symbol)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
                   token === t.symbol
                     ? 'glass-btn-primary text-white'
                     : isDark
@@ -172,16 +172,16 @@ export function SendCard() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className={`rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-50 border border-green-200'
+              isDark ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
             }`}
           >
-            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
+            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-white'}`}>
               <CheckCircle size={13} aria-hidden="true" /> Sent successfully!
             </p>
             <a
               href={`https://testnet.arcscan.app/tx/${txHash}`}
               target="_blank" rel="noopener noreferrer"
-              className={`text-xs underline break-all ${isDark ? 'text-green-400' : 'text-green-600'}`}
+              className={`text-xs underline break-all ${isDark ? 'text-white' : 'text-white'}`}
             >
               View on ArcScan →
             </a>
@@ -194,7 +194,7 @@ export function SendCard() {
           disabled={loading}
           whileHover={authenticated && isValidAddress && isValidAmount ? { scale: 1.01 } : {}}
           whileTap={authenticated && isValidAddress && isValidAmount ? { scale: 0.99 } : {}}
-          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 flex items-center justify-center gap-2 ${
+          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light focus-visible:ring-offset-2 flex items-center justify-center gap-2 ${
             !authenticated
               ? 'glass-btn-primary text-white'
               : !isValidAddress || !isValidAmount

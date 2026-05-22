@@ -143,8 +143,8 @@ export function SwapHistory() {
           <button
             onClick={fetchHistory}
             aria-label="Refresh swap history"
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-              isDark ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-blue-50 text-slate-500'
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
+              isDark ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-white/5 text-slate-500'
             }`}
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} aria-hidden="true" />
@@ -155,7 +155,7 @@ export function SwapHistory() {
         <div className="divide-y" style={{ borderColor: 'transparent' }}>
           {loading ? (
             <div className="flex items-center justify-center gap-2 py-8">
-              <Loader2 size={16} className="text-blue-500 animate-spin" aria-hidden="true" />
+              <Loader2 size={16} className="text-arc-light animate-spin" aria-hidden="true" />
               <span className={`text-xs ${muted}`}>Loading...</span>
             </div>
           ) : error ? (
@@ -176,14 +176,14 @@ export function SwapHistory() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
                   className={`flex items-center gap-3 px-5 py-3 transition-colors group ${
-                    isDark ? 'hover:bg-white/5' : 'hover:bg-blue-50/50'
+                    isDark ? 'hover:bg-white/5' : 'hover:bg-white/5/50'
                   }`}
                   aria-label={`Swap ${tx.amountIn} ${tx.tokenIn} for ${tx.amountOut} ${tx.tokenOut}`}
                 >
                   {/* Token icons */}
                   <div className="flex items-center flex-shrink-0">
                     <TokenIcon symbol={tx.tokenIn} size={20} />
-                    <ArrowRight size={10} className="text-blue-500 mx-1" aria-hidden="true" />
+                    <ArrowRight size={10} className="text-arc-light mx-1" aria-hidden="true" />
                     <TokenIcon symbol={tx.tokenOut} size={20} />
                   </div>
 
@@ -203,12 +203,12 @@ export function SwapHistory() {
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                       tx.status === 'ok'
-                        ? 'bg-green-500/15 text-green-400'
+                        ? 'bg-white/15 text-white'
                         : 'bg-red-500/15 text-red-400'
                     }`}>
                       {tx.status === 'ok' ? 'Success' : 'Failed'}
                     </span>
-                    <ExternalLink size={11} className={`${muted} group-hover:text-blue-500 transition-colors`} aria-hidden="true" />
+                    <ExternalLink size={11} className={`${muted} group-hover:text-arc-light transition-colors`} aria-hidden="true" />
                   </div>
                 </motion.a>
               ))}

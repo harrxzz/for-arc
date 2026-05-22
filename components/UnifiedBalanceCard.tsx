@@ -7,10 +7,13 @@ import { createPublicClient, createWalletClient, custom, http, parseUnits, forma
 import { Loader2, RefreshCw, ArrowDownToLine, Globe, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import { useTheme } from '@/components/ThemeProvider'
 import { TokenIcon } from '@/components/TokenIcon'
+import { AppKit } from '@circle-fin/app-kit'
+import { createViemAdapterFromProvider } from '@circle-fin/adapter-viem-v2'
+
+const kit = new AppKit()
 
 // Gateway contracts (testnet)
 const GATEWAY_WALLET = '0x0077777d7EBA4688BDeF3E311b846F25870A19B9'
-const GATEWAY_API = 'https://gateway-api-testnet.circle.com/v1'
 
 // USDC addresses per chain (testnet)
 const CHAIN_USDC: Record<number, string> = {
@@ -34,11 +37,19 @@ const CHAIN_DOMAINS: Record<number, number> = {
   5042002:  26,
 }
 
-const CHAIN_RPCS: Record<number, string> = {
-  11155111: 'https://rpc.sepolia.org',
-  84532:    'https://sepolia.base.org',
-  421614:   'https://sepolia-rollup.arbitrum.io/rpc',
-  5042002:  'https://rpc.testnet.arc.network',
+// Map AppKit SDK chain names to chainId
+const CHAIN_NAME_TO_ID: Record<string, number> = {
+  'Ethereum_Sepolia': 11155111,
+  'Base_Sepolia':     84532,
+  'Arbitrum_Sepolia': 421614,
+  'Arc_Testnet':      5042002,
+}
+
+const CHAIN_CONFIGS: Record<number, { id: number; name: string; nativeCurrency: { name: string; symbol: string; decimals: number }; rpcUrls: { default: { http: string[] } } }> = {
+  11155111: { id: 11155111, name: 'Ethereum Sepolia', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: { default: { http: ['https://rpc.sepolia.org'] } } },
+  84532:    { id: 84532,    name: 'Base Sepolia',     nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: { default: { http: ['https://sepolia.base.org'] } } },
+  421614:   { id: 421614,   name: 'Arbitrum Sepolia', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: { default: { http: ['https://sepolia-rollup.arbitrum.io/rpc'] } } },
+  5042002:  { id: 5042002,  name: 'Arc Testnet',      nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 }, rpcUrls: { default: { http: ['https://rpc.testnet.arc.network'] } } },
 }
 
 const ERC20_ABI = [
@@ -92,21 +103,20 @@ export function UnifiedBalanceCard() {
     if (!address) return
     setRefreshing(true)
 
+    // Fetch wallet balances per chain via eth_call
     const updated = await Promise.all(
       Object.entries(CHAIN_USDC).map(async ([chainIdStr, usdcAddr]) => {
         const chainId = Number(chainIdStr)
         try {
-          const client = createPublicClient({ transport: http(CHAIN_RPCS[chainId]) })
-
-          const [walletBal, gatewayBal] = await Promise.all([
-            client.readContract({ address: usdcAddr as `0x${string}`, abi: ERC20_ABI, functionName: 'balanceOf', args: [address] }),
-            client.readContract({ address: GATEWAY_WALLET as `0x${string}`, abi: GATEWAY_WALLET_ABI, functionName: 'balanceOf', args: [usdcAddr as `0x${string}`, address] }),
-          ])
-
+          const client = createPublicClient({ chain: CHAIN_CONFIGS[chainId] as any, transport: http(CHAIN_CONFIGS[chainId].rpcUrls.default.http[0]) })
+          let walletBal: bigint = BigInt(0)
+          try {
+            walletBal = await client.readContract({ address: usdcAddr as `0x${string}`, abi: ERC20_ABI, functionName: 'balanceOf', args: [address] }) as bigint
+          } catch {}
           return {
             chainId,
-            walletBalance: formatUnits(walletBal as bigint, 6),
-            gatewayBalance: formatUnits(gatewayBal as bigint, 6),
+            walletBalance: parseFloat(formatUnits(walletBal, 6)).toFixed(2),
+            gatewayBalance: '—',
             loading: false,
           }
         } catch {
@@ -115,9 +125,40 @@ export function UnifiedBalanceCard() {
       })
     )
 
+    // Fetch unified gateway balance via AppKit SDK
+    try {
+      const provider = await activeWallet?.getEthereumProvider()
+      if (provider) {
+        const adapter = await createViemAdapterFromProvider({ provider: provider as any })
+        const result = await kit.unifiedBalance.getBalances({
+          sources: [{ adapter }],
+          networkType: 'testnet',
+          includePending: true,
+        })
+        // Map per-chain gateway balances from SDK result
+        if (result?.breakdown) {
+          for (const depositor of result.breakdown) {
+            for (const chainBreakdown of depositor.breakdown ?? []) {
+              const chainName = chainBreakdown.chain as string
+              // Map SDK chain name to chainId
+              const chainId = CHAIN_NAME_TO_ID[chainName]
+              if (chainId !== undefined) {
+                const idx = updated.findIndex(b => b.chainId === chainId)
+                if (idx !== -1) {
+                  updated[idx].gatewayBalance = parseFloat(chainBreakdown.confirmedBalance ?? '0').toFixed(2)
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Gateway balance fetch]', e)
+    }
+
     setBalances(updated)
     setRefreshing(false)
-  }, [address])
+  }, [address, activeWallet])
 
   useEffect(() => {
     if (authenticated && address) fetchBalances()
@@ -137,19 +178,50 @@ export function UnifiedBalanceCard() {
       const provider = await activeWallet?.getEthereumProvider()
       if (!provider) throw new Error('No wallet provider')
 
-      const walletClient = createWalletClient({ transport: custom(provider) })
+      // Switch wallet to the selected chain first
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${depositChain.toString(16)}` }],
+      }).catch(async (switchErr: unknown) => {
+        const switchError = switchErr as { code?: number }
+        if (switchError?.code === 4902) {
+          const cfg = CHAIN_CONFIGS[depositChain]
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: `0x${depositChain.toString(16)}`,
+              chainName: cfg.name,
+              nativeCurrency: cfg.nativeCurrency,
+              rpcUrls: cfg.rpcUrls.default.http,
+            }],
+          })
+        }
+        // ignore other switch errors — wallet may already be on correct chain
+      })
+
+      const chainConfig = CHAIN_CONFIGS[depositChain]
+      const walletClient = createWalletClient({
+        chain: chainConfig as any,
+        transport: custom(provider),
+      })
+      const publicClient = createPublicClient({
+        chain: chainConfig as any,
+        transport: http(chainConfig.rpcUrls.default.http[0]),
+      })
+
       const usdcAddr = CHAIN_USDC[depositChain] as `0x${string}`
       const amount = parseUnits(depositAmount, 6)
 
-      // Step 1: approve
+      // Step 1: approve — wait for receipt before depositing
       const approveTx = await walletClient.writeContract({
         address: usdcAddr,
         abi: ERC20_ABI,
         functionName: 'approve',
         args: [GATEWAY_WALLET as `0x${string}`, amount],
         account: address,
-        chain: null,
+        chain: chainConfig as any,
       })
+      await publicClient.waitForTransactionReceipt({ hash: approveTx })
 
       // Step 2: deposit
       const depositTx = await walletClient.writeContract({
@@ -158,14 +230,16 @@ export function UnifiedBalanceCard() {
         functionName: 'deposit',
         args: [usdcAddr, amount],
         account: address,
-        chain: null,
+        chain: chainConfig as any,
       })
+      await publicClient.waitForTransactionReceipt({ hash: depositTx })
 
       setTxHash(depositTx)
       setDepositAmount('')
       setTimeout(() => fetchBalances(), 3000)
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Deposit failed')
+      console.error('[Deposit error]', e)
+      setError(e instanceof Error ? e.message : String(e) + ' — check console for details')
     } finally {
       setDepositing(false)
     }
@@ -182,7 +256,7 @@ export function UnifiedBalanceCard() {
         <div className="flex items-center justify-between mb-4">
           <h2 className={`text-base font-bold ${heading}`}>Unified Balance</h2>
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-purple-500/15 text-purple-400 border border-purple-500/20 flex items-center gap-1">
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-arc-violet/15 text-arc-violet border border-arc-violet/20 flex items-center gap-1">
               <Globe size={11} aria-hidden="true" />
               Cross-chain
             </span>
@@ -195,7 +269,7 @@ export function UnifiedBalanceCard() {
                 className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isDark ? 'bg-white/8 hover:bg-white/15' : 'bg-slate-100 hover:bg-slate-200'}`}
                 aria-label="Refresh balances"
               >
-                <RefreshCw size={13} className={`${refreshing ? 'animate-spin' : ''} text-blue-500`} />
+                <RefreshCw size={13} className={`${refreshing ? 'animate-spin' : ''} text-arc-light`} />
               </motion.button>
             )}
           </div>
@@ -221,7 +295,7 @@ export function UnifiedBalanceCard() {
           {balances.map((b) => (
             <div key={b.chainId} className={`rounded-xl p-3 flex items-center justify-between ${isDark ? 'bg-white/4' : 'bg-slate-50'}`}>
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${b.chainId === 5042002 ? 'bg-blue-500' : b.chainId === 84532 ? 'bg-blue-400' : b.chainId === 421614 ? 'bg-cyan-400' : 'bg-slate-400'}`} />
+                <div className={`w-2 h-2 rounded-full ${b.chainId === 5042002 ? 'bg-arc-light' : b.chainId === 84532 ? 'bg-arc-light' : b.chainId === 421614 ? 'bg-arc-light' : 'bg-slate-400'}`} />
                 <span className={`text-xs font-medium ${heading}`}>{CHAIN_NAMES[b.chainId]}</span>
               </div>
               <div className="text-right">
@@ -256,14 +330,14 @@ export function UnifiedBalanceCard() {
         className={`rounded-3xl p-5 ${glassCard}`}
       >
         <div className="flex items-center gap-2 mb-4">
-          <ArrowDownToLine size={16} className="text-purple-400" />
+          <ArrowDownToLine size={16} className="text-arc-violet" />
           <h3 className={`text-sm font-bold ${heading}`}>Deposit to Gateway</h3>
         </div>
 
         {/* Info */}
-        <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-purple-500/8 border border-purple-500/15' : 'bg-purple-50 border border-purple-100'}`}>
-          <Info size={13} className="text-purple-400 mt-0.5 flex-shrink-0" />
-          <span className={isDark ? 'text-purple-300' : 'text-purple-700'}>
+        <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-violet/8 border border-arc-violet/15' : 'bg-white/5 border border-white/10'}`}>
+          <Info size={13} className="text-arc-violet mt-0.5 flex-shrink-0" />
+          <span className={isDark ? 'text-arc-light' : 'text-arc-violet'}>
             Deposit USDC from any chain into Gateway to enable instant crosschain transfers (&lt;500ms).
           </span>
         </div>
@@ -320,15 +394,15 @@ export function UnifiedBalanceCard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`rounded-2xl p-3 mb-4 ${isDark ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-50 border border-green-200'}`}
+            className={`rounded-2xl p-3 mb-4 ${isDark ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'}`}
           >
-            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
+            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-white'}`}>
               <CheckCircle size={13} /> Deposited successfully!
             </p>
             <a
               href={`https://testnet.arcscan.app/tx/${txHash}`}
               target="_blank" rel="noopener noreferrer"
-              className={`text-xs underline break-all ${isDark ? 'text-green-400' : 'text-green-600'}`}
+              className={`text-xs underline break-all ${isDark ? 'text-white' : 'text-white'}`}
             >
               View on ArcScan →
             </a>

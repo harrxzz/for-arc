@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import {
   Coins, Zap, RefreshCw, ArrowLeftRight, ShieldCheck, BarChart2,
-  Wallet, ArrowRightLeft, CheckCircle, ArrowRight,
+  Wallet, ArrowRightLeft, CheckCircle, ArrowRight, Bot,
   Box, Fuel, CircleDollarSign, Globe, Send
 } from 'lucide-react'
 import { Header } from '@/components/Header'
@@ -74,10 +74,11 @@ const LIVE_STATS_CONFIG = [
 ]
 
 const QUICK_ACTIONS = [
-  { href: '/swap', Icon: ArrowRightLeft, label: 'Swap', desc: 'USDC ↔ EURC', color: 'from-indigo-500 to-violet-600' },
-  { href: '/bridge', Icon: ArrowLeftRight, label: 'Bridge', desc: 'Cross-chain CCTP', color: 'from-blue-500 to-indigo-600' },
-  { href: '/send', Icon: Send, label: 'Send', desc: 'Wallet to wallet', color: 'from-violet-500 to-purple-600' },
-  { href: '/unified-balance', Icon: Globe, label: 'Gateway', desc: 'Unified balance', color: 'from-purple-500 to-pink-600' },
+  { href: '/swap', Icon: ArrowRightLeft, label: 'Swap', desc: 'USDC ↔ EURC', color: 'from-white/20 to-white/10' },
+  { href: '/bridge', Icon: ArrowLeftRight, label: 'Bridge', desc: 'Cross-chain CCTP', color: 'from-white/15 to-white/8' },
+  { href: '/send', Icon: Send, label: 'Send', desc: 'Wallet to wallet', color: 'from-white/20 to-white/10' },
+  { href: '/unified-balance', Icon: Globe, label: 'Gateway', desc: 'Unified balance', color: 'from-white/15 to-white/8' },
+  { href: '/agent', Icon: Bot, label: 'Agent', desc: 'AI-powered executor', color: 'from-arc-light/20 to-arc-light/10' },
 ]
 
 export default function LandingPage() {
@@ -96,7 +97,7 @@ export default function LandingPage() {
   const heading = isDark ? 'text-white' : 'text-slate-900'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#07071a]' : 'bg-slate-50'}`}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-[#000000]'}`}>
       <AnimatedBg />
       <Header />
 
@@ -110,8 +111,8 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 badge-live"
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-              <span className="text-xs text-indigo-300 font-medium tracking-wide">Live on Arc Testnet</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-arc-violet animate-pulse" />
+              <span className="text-xs text-arc-light font-medium tracking-wide">Live on Arc Testnet</span>
             </motion.div>
 
             <motion.h1
@@ -182,7 +183,7 @@ export default function LandingPage() {
                   className={`flex items-center gap-2 px-8 py-3.5 font-semibold rounded-2xl text-sm border transition-colors ${
                     isDark
                       ? 'border-white/10 text-white hover:bg-white/8'
-                      : 'border-indigo-200 text-indigo-700 hover:bg-indigo-50'
+                      : 'border-arc-light/30 text-arc-violet hover:bg-white/5'
                   }`}
                 >
                   <ArrowLeftRight size={15} />
@@ -205,7 +206,7 @@ export default function LandingPage() {
                 whileHover={{ y: -2 }}
                 className={`rounded-2xl p-4 transition-all ${card}`}
               >
-                <Icon size={16} className="text-indigo-400 mb-2" />
+                <Icon size={16} className="text-arc-violet mb-2" />
                 <div className={`text-[10px] uppercase tracking-widest mb-1 ${muted}`}>{label}</div>
                 <div className={`text-sm font-bold tabular-nums ${heading}`}>
                   {stats ? `${stats[key as keyof LiveStats]}${suffix ?? ''}` : (
@@ -244,9 +245,9 @@ export default function LandingPage() {
                   <Tilt3DCard className={`rounded-2xl p-5 h-full transition-all ${card}`}>
                     <div className="flex items-start justify-between mb-4">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        isDark ? 'bg-indigo-500/15' : 'bg-indigo-50'
+                        isDark ? 'bg-white/10' : 'bg-white/5'
                       }`}>
-                        <Icon size={18} className="text-indigo-400" aria-hidden="true" />
+                        <Icon size={18} className="text-white" aria-hidden="true" />
                       </div>
                       <span className="text-[10px] px-2.5 py-1 rounded-full font-semibold badge-live">
                         {badge}
@@ -287,11 +288,11 @@ export default function LandingPage() {
                   className="text-center"
                 >
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-                    isDark ? 'bg-indigo-500/15' : 'bg-indigo-50'
+                    isDark ? 'bg-white/10' : 'bg-white/5'
                   }`}>
-                    <Icon size={22} className="text-indigo-400" />
+                    <Icon size={22} className="text-white" />
                   </div>
-                  <div className="text-indigo-400 text-xs font-bold mb-1 tracking-widest">{step}</div>
+                  <div className="text-white/50 text-xs font-bold mb-1 tracking-widest">{step}</div>
                   <h3 className={`text-sm font-bold mb-2 ${heading}`}>{title}</h3>
                   <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
                 </motion.div>
@@ -310,9 +311,9 @@ export default function LandingPage() {
               className={`rounded-3xl p-10 ${card} relative overflow-hidden`}
             >
               {/* Glow bg */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-violet-500/5 to-purple-500/5 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/3 via-white/2 to-white/3 pointer-events-none" />
 
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg`}>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 bg-white/10 shadow-lg`}>
                 <BarChart2 size={24} className="text-white" />
               </div>
               <h2 className={`text-2xl font-bold mb-3 tracking-tight ${heading}`} style={{ letterSpacing: '-0.02em' }}>
@@ -340,7 +341,7 @@ export default function LandingPage() {
                     className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-2xl text-sm border transition-colors ${
                       isDark
                         ? 'border-white/10 text-white hover:bg-white/8'
-                        : 'border-indigo-200 text-indigo-700 hover:bg-indigo-50'
+                        : 'border-arc-light/30 text-arc-violet hover:bg-white/5'
                     }`}
                   >
                     <ArrowLeftRight size={15} />

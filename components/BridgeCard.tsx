@@ -122,7 +122,7 @@ export function BridgeCard() {
         <div className="flex items-center justify-between mb-5">
           <h2 className={`text-base font-bold ${heading}`}>Bridge</h2>
           <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-            isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-blue-50 text-blue-600 border border-blue-100'
+            isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/5 text-arc-light border border-white/8'
           }`}>
             Fee: $0.50 USDC
           </span>
@@ -138,7 +138,7 @@ export function BridgeCard() {
                 aria-label={`Select source chain, currently ${sourceChain.name}`}
                 aria-expanded={showChainSelect}
                 aria-haspopup="listbox"
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
                   isDark
                     ? 'bg-white/8 border border-white/10 text-white hover:bg-white/12'
                     : 'bg-white/80 border border-white/90 text-slate-700 hover:bg-white shadow-sm'
@@ -164,8 +164,8 @@ export function BridgeCard() {
                         key={chain.id}
                         onClick={() => { setSourceChain(chain); setShowChainSelect(false) }}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                          isDark ? 'hover:bg-white/8 text-slate-200' : 'hover:bg-blue-50/80 text-slate-700'
-                        } ${sourceChain.id === chain.id ? isDark ? 'bg-white/8 text-blue-400' : 'bg-blue-50 text-blue-700 font-medium' : ''}`}
+                          isDark ? 'hover:bg-white/8 text-slate-200' : 'hover:bg-white/5/80 text-slate-700'
+                        } ${sourceChain.id === chain.id ? isDark ? 'bg-white/8 text-arc-light' : 'bg-white/5 text-arc-light font-medium' : ''}`}
                       >
                         <ChainIcon icon={chain.icon} size={20} />
                         <span>{chain.name}</span>
@@ -181,7 +181,7 @@ export function BridgeCard() {
               isDark ? 'bg-white/8 border border-white/10' : 'bg-white/80 border border-white/90 shadow-sm'
             }`}>
               <TokenIcon symbol="USDC" size={20} />
-              <span className={`text-sm font-semibold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
+              <span className={`text-sm font-semibold ${isDark ? 'text-arc-light' : 'text-arc-light'}`}>USDC</span>
             </div>
             <input
               type="number" placeholder="0.00" value={amount}
@@ -197,8 +197,8 @@ export function BridgeCard() {
         <div className="flex justify-center my-2">
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
             isDark
-              ? 'bg-white/8 border border-white/10 text-blue-400'
-              : 'bg-white/90 border border-white/90 shadow-sm text-blue-600'
+              ? 'bg-white/8 border border-white/10 text-arc-light'
+              : 'bg-white/90 border border-white/90 shadow-sm text-arc-light'
           }`}>
             <ArrowDown size={15} aria-hidden="true" />
           </div>
@@ -209,10 +209,10 @@ export function BridgeCard() {
           <div className="flex items-center justify-between mb-3">
             <span className={`text-xs font-medium ${muted}`}>To</span>
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border ${
-              isDark ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-50 border-blue-200'
+              isDark ? 'bg-arc-light/10 border-arc-light/20' : 'bg-white/5 border-arc-light'
             }`}>
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" aria-hidden="true" />
-              <span className="text-xs font-medium text-blue-500">Arc Testnet</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-arc-light animate-pulse" aria-hidden="true" />
+              <span className="text-xs font-medium text-arc-light">Arc Testnet</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export function BridgeCard() {
               isDark ? 'bg-white/8 border border-white/10' : 'bg-white/80 border border-white/90 shadow-sm'
             }`}>
               <TokenIcon symbol="USDC" size={20} />
-              <span className={`text-sm font-semibold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
+              <span className={`text-sm font-semibold ${isDark ? 'text-arc-light' : 'text-arc-light'}`}>USDC</span>
             </div>
             <div className={`flex-1 text-2xl font-bold text-right tabular-nums ${heading}`}>
               {receiveAmount !== '0' ? receiveAmount : <span className="text-slate-600">0.00</span>}
@@ -232,14 +232,14 @@ export function BridgeCard() {
         {amount && parseFloat(amount) > 0 && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             className={`rounded-2xl p-3.5 mb-4 space-y-2 text-xs ${
-              isDark ? 'bg-white/4 border border-white/6' : 'bg-blue-50/60 border border-blue-100/80'
+              isDark ? 'bg-white/4 border border-white/6' : 'bg-white/5/60 border border-white/8/80'
             }`}
           >
             <div className={`flex justify-between ${muted}`}><span>Bridge fee</span><span>$0.50 USDC</span></div>
-            <div className={`flex justify-between ${muted}`}><span>CCTP (Circle)</span><span className="text-green-400">Free</span></div>
+            <div className={`flex justify-between ${muted}`}><span>CCTP (Circle)</span><span className="text-white">Free</span></div>
             <div className={`flex justify-between ${muted}`}><span>Est. time</span><span>~20 seconds</span></div>
             <div className={`border-t pt-2 flex justify-between font-semibold ${
-              isDark ? 'border-white/8 text-slate-200' : 'border-blue-200/60 text-slate-700'
+              isDark ? 'border-white/8 text-slate-200' : 'border-arc-light/60 text-slate-700'
             }`}>
               <span>You receive on Arc</span><span>{receiveAmount} USDC</span>
             </div>
@@ -250,11 +250,11 @@ export function BridgeCard() {
         {loading && stepLabels[step] && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className={`flex items-center gap-2 rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-50 border border-blue-200'
+              isDark ? 'bg-arc-light/10 border border-arc-light/20' : 'bg-white/5 border border-arc-light'
             }`}
           >
-            <Loader2 size={14} className="text-blue-400 animate-spin" aria-hidden="true" />
-            <span className="text-xs text-blue-400 font-medium">{stepLabels[step]}</span>
+            <Loader2 size={14} className="text-arc-light animate-spin" aria-hidden="true" />
+            <span className="text-xs text-arc-light font-medium">{stepLabels[step]}</span>
           </motion.div>
         )}
 
@@ -274,15 +274,15 @@ export function BridgeCard() {
         {txHash && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className={`rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-50 border border-green-200'
+              isDark ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
             }`}
           >
-            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
+            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-white'}`}>
               <CheckCircle size={13} aria-hidden="true" /> Bridge initiated!
             </p>
-            <p className={`text-xs mb-1 ${isDark ? 'text-green-400' : 'text-green-600'}`}>USDC will arrive on Arc in ~20 seconds</p>
+            <p className={`text-xs mb-1 ${isDark ? 'text-white' : 'text-white'}`}>USDC will arrive on Arc in ~20 seconds</p>
             <a href={`https://testnet.arcscan.app/tx/${txHash}`} target="_blank" rel="noopener noreferrer"
-              className={`text-xs underline break-all ${isDark ? 'text-green-400' : 'text-green-600'}`}
+              className={`text-xs underline break-all ${isDark ? 'text-white' : 'text-white'}`}
             >View on ArcScan →</a>
           </motion.div>
         )}
@@ -292,7 +292,7 @@ export function BridgeCard() {
           onClick={handleBridge} disabled={loading}
           whileHover={authenticated && amount && parseFloat(amount) > BRIDGE_FEE_USDC ? { scale: 1.01 } : {}}
           whileTap={authenticated && amount && parseFloat(amount) > BRIDGE_FEE_USDC ? { scale: 0.99 } : {}}
-          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light focus-visible:ring-offset-2 ${
             !authenticated ? 'glass-btn-primary text-white'
             : !amount || parseFloat(amount) <= BRIDGE_FEE_USDC
               ? isDark ? 'bg-white/6 text-slate-500 cursor-not-allowed border border-white/8' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -312,7 +312,7 @@ export function BridgeCard() {
         <p className={`text-center text-xs mt-3 ${muted}`}>
           Powered by{' '}
           <a href="https://www.circle.com/cross-chain-transfer-protocol" target="_blank" rel="noopener noreferrer"
-            className="text-blue-400 hover:underline"
+            className="text-arc-light hover:underline"
           >
             Circle CCTP
           </a>

@@ -17,7 +17,7 @@ export default function BridgePage() {
   const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#0a0a0f]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
       <AnimatedBg />
       <Header />
 
@@ -31,7 +31,7 @@ export default function BridgePage() {
             className={`text-3xl sm:text-4xl font-bold mb-3 leading-tight ${heading}`}
           >
             Bridge USDC to{' '}
-            <span className="text-blue-500">Arc Network</span>
+            <span className="text-arc-light">Arc Network</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -72,8 +72,8 @@ export default function BridgePage() {
                   <div key={item.step} className="flex items-start gap-3">
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                       item.step === '✓'
-                        ? 'bg-green-500/15 text-green-500'
-                        : 'bg-blue-500/15 text-blue-500'
+                        ? 'bg-white/15 text-white'
+                        : 'bg-arc-light/15 text-arc-light'
                     }`}>
                       {item.step}
                     </div>
@@ -94,7 +94,7 @@ export default function BridgePage() {
                 { Icon: ShieldCheck, title: 'Native USDC', desc: 'Not wrapped' },
               ].map(({ Icon, title, desc }) => (
                 <div key={title} className={`rounded-xl p-3 text-center border transition-all ${card}`}>
-                  <Icon size={18} className="text-blue-500 mx-auto mb-1.5" aria-hidden="true" />
+                  <Icon size={18} className="text-arc-light mx-auto mb-1.5" aria-hidden="true" />
                   <div className={`text-xs font-semibold mb-0.5 ${heading}`}>{title}</div>
                   <div className={`text-[10px] ${muted}`}>{desc}</div>
                 </div>
@@ -103,8 +103,8 @@ export default function BridgePage() {
 
             {/* CCTP badge */}
             <div className={`border rounded-xl p-4 flex items-center gap-3 ${card}`}>
-              <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck size={16} className="text-blue-500" aria-hidden="true" />
+              <div className="w-8 h-8 rounded-lg bg-arc-light/15 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck size={16} className="text-arc-light" aria-hidden="true" />
               </div>
               <div>
                 <div className={`text-xs font-semibold ${heading}`}>Powered by Circle CCTP</div>

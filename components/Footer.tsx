@@ -15,8 +15,8 @@ export function Footer() {
       transition={{ delay: 0.5 }}
       className={`relative z-10 border-t mt-20 transition-colors ${
         isDark
-          ? 'bg-[#0a0a0f]/80 border-white/10 backdrop-blur-md'
-          : 'bg-white/80 border-blue-100 backdrop-blur-md'
+          ? 'bg-[#000000]/80 border-white/10 backdrop-blur-md'
+          : 'bg-white/80 border-white/8 backdrop-blur-md'
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -53,8 +53,8 @@ export function Footer() {
                 target="_blank"
                 className={`text-xs transition-colors ${
                   isDark
-                    ? 'text-slate-500 hover:text-blue-400'
-                    : 'text-slate-400 hover:text-blue-700'
+                    ? 'text-slate-500 hover:text-arc-light'
+                    : 'text-slate-400 hover:text-arc-light'
                 }`}
               >
                 {link.label}

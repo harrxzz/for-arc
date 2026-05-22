@@ -16,7 +16,7 @@ export default function SendPage() {
   const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#020208]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
       <AnimatedBg />
       <Header />
 
@@ -27,7 +27,7 @@ export default function SendPage() {
             animate={{ opacity: 1, y: 0 }}
             className={`text-3xl sm:text-4xl font-bold mb-3 ${heading}`}
           >
-            Send on <span className="text-blue-500">Arc Network</span>
+            Send on <span className="text-arc-light">Arc Network</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -58,9 +58,9 @@ export default function SendPage() {
                 ].map(({ Icon, title, desc }) => (
                   <div key={title} className="flex items-start gap-3">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      isDark ? 'bg-blue-500/15' : 'bg-blue-50'
+                      isDark ? 'bg-arc-light/15' : 'bg-white/5'
                     }`}>
-                      <Icon size={16} className="text-blue-500" aria-hidden="true" />
+                      <Icon size={16} className="text-arc-light" aria-hidden="true" />
                     </div>
                     <div>
                       <div className={`text-xs font-semibold ${heading}`}>{title}</div>
@@ -76,7 +76,7 @@ export default function SendPage() {
               <div className="flex gap-2">
                 {['USDC', 'EURC'].map(sym => (
                   <div key={sym} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium ${
-                    isDark ? 'bg-white/8 border border-white/10 text-slate-300' : 'bg-blue-50 border border-blue-100 text-slate-700'
+                    isDark ? 'bg-white/8 border border-white/10 text-slate-300' : 'bg-white/5 border border-white/8 text-slate-700'
                   }`}>
                     <span>{sym}</span>
                   </div>
