@@ -118,8 +118,8 @@ export function BridgeCard() {
   const stepLabels = { idle: null, approving: 'Switching network...', bridging: 'Collecting fee...', done: 'Bridge initiated!' }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg mx-auto">
-      <div className={`border rounded-2xl shadow-xl p-8 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full mx-auto">
+      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

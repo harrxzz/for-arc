@@ -181,26 +181,23 @@ export function RecentSwaps() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className={`flex items-center gap-3 px-5 py-3.5 transition-colors border-b last:border-0 ${row}`}
+                className={`flex items-center gap-3 px-4 py-3 transition-colors border-b last:border-0 ${row}`}
                 aria-label={`Swap ${swap.amountIn} ${swap.tokenIn} for ${swap.amountOut} ${swap.tokenOut}`}
               >
-                {/* Token icons */}
-                <div className="relative flex-shrink-0 w-10 h-8">
-                  <div className="absolute left-0 top-0">
-                    <TokenIcon symbol={swap.tokenIn} size={22} />
-                  </div>
-                  <div className="absolute left-4 top-0 ring-2 ring-offset-0" style={{ borderRadius: '50%' }}>
-                    <TokenIcon symbol={swap.tokenOut} size={22} />
-                  </div>
+                {/* Token icons side by side */}
+                <div className="flex items-center flex-shrink-0">
+                  <TokenIcon symbol={swap.tokenIn} size={20} />
+                  <ArrowRight size={10} className="text-blue-500 mx-1" aria-hidden="true" />
+                  <TokenIcon symbol={swap.tokenOut} size={20} />
                 </div>
 
                 {/* Swap info */}
                 <div className="flex-1 min-w-0">
-                  <div className={`flex items-center gap-1 text-xs font-semibold ${heading}`}>
-                    <span>{swap.amountIn}</span>
+                  <div className={`text-xs font-semibold ${heading} flex items-center gap-1`}>
+                    <span className="tabular-nums">{swap.amountIn}</span>
                     <span className={`text-[10px] font-medium ${muted}`}>{swap.tokenIn}</span>
-                    <ArrowRight size={10} className="text-blue-500 flex-shrink-0" aria-hidden="true" />
-                    <span>{swap.amountOut}</span>
+                    <span className={muted}>→</span>
+                    <span className="tabular-nums">{swap.amountOut}</span>
                     <span className={`text-[10px] font-medium ${muted}`}>{swap.tokenOut}</span>
                   </div>
                   <div className={`text-[10px] mt-0.5 font-mono truncate ${muted}`}>
@@ -209,9 +206,9 @@ export function RecentSwaps() {
                 </div>
 
                 {/* Time + link */}
-                <div className="flex items-center gap-1.5 flex-shrink-0">
+                <div className="flex items-center gap-1 flex-shrink-0">
                   <span className={`text-[10px] ${muted}`}>{timeAgo(swap.timestamp)}</span>
-                  <ExternalLink size={11} className="text-blue-500" aria-hidden="true" />
+                  <ExternalLink size={10} className="text-blue-500" aria-hidden="true" />
                 </div>
               </motion.a>
             ))}
