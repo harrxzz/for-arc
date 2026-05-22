@@ -43,7 +43,6 @@ function ChainIcon({ icon, size = 18 }: { icon: string; size?: number }) {
       <path d="M19 12.5l6 8.7-3-1.7-6-10.5 3 3.5z" fill="white" fillOpacity="0.6"/>
     </svg>
   )
-  // fallback
   return <span style={{ fontSize: size * 0.9 }} aria-hidden="true">{icon}</span>
 }
 
@@ -119,8 +118,8 @@ export function BridgeCard() {
   const stepLabels = { idle: null, approving: 'Switching network...', bridging: 'Collecting fee...', done: 'Bridge initiated!' }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-md mx-auto">
-      <div className={`border rounded-2xl shadow-xl p-6 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg mx-auto">
+      <div className={`border rounded-2xl shadow-xl p-8 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -140,13 +139,13 @@ export function BridgeCard() {
                 aria-label={`Select source chain, currently ${sourceChain.name}`}
                 aria-expanded={showChainSelect}
                 aria-haspopup="listbox"
-                className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  isDark ? 'bg-white/10 border-white/10 text-white hover:bg-white/15' : 'bg-blue-50 border-blue-200 text-slate-800 hover:bg-blue-100'
+                className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                  isDark ? 'bg-white/10 border-white/10 text-white hover:bg-white/15' : 'bg-white border-blue-200 text-slate-700 hover:border-blue-400'
                 }`}
               >
                 <ChainIcon icon={sourceChain.icon} />
                 <span>{sourceChain.name}</span>
-                <ChevronDown size={13} className={muted} />
+                <ChevronDown size={14} className={muted} />
               </button>
               <AnimatePresence>
                 {showChainSelect && (
@@ -193,7 +192,7 @@ export function BridgeCard() {
           <div className={`w-9 h-9 border-2 rounded-xl flex items-center justify-center ${
             isDark ? 'bg-[#0f0f1a] border-white/10 text-blue-400' : 'bg-white border-blue-100 text-blue-600'
           }`}>
-            <ArrowDown size={16} />
+            <ArrowDown size={16} aria-hidden="true" />
           </div>
         </div>
 
@@ -238,15 +237,20 @@ export function BridgeCard() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className={`flex items-center gap-2 border rounded-xl p-3 mb-4 ${isDark ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-50 border-blue-200'}`}
           >
-            <Loader2 size={14} className="text-blue-500 animate-spin" />
+            <Loader2 size={14} className="text-blue-500 animate-spin" aria-hidden="true" />
             <span className="text-xs text-blue-500 font-medium">{stepLabels[step]}</span>
           </motion.div>
         )}
 
         {/* Error */}
         {error && (
-          <div className={`flex items-start gap-2 border rounded-xl p-3 mb-4 text-xs ${isDark ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>
-            <AlertCircle size={14} className="mt-0.5 flex-shrink-0" /><span>{error}</span>
+          <div
+            role="alert"
+            aria-live="polite"
+            className={`flex items-start gap-2 border rounded-xl p-3 mb-4 text-xs ${isDark ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}
+          >
+            <AlertCircle size={14} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -256,7 +260,7 @@ export function BridgeCard() {
             className={`border rounded-xl p-3 mb-4 ${isDark ? 'bg-green-500/10 border-green-500/20' : 'bg-green-50 border-green-200'}`}
           >
             <p className={`text-xs font-medium mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
-              <CheckCircle size={13} /> Bridge initiated!
+              <CheckCircle size={13} aria-hidden="true" /> Bridge initiated!
             </p>
             <p className={`text-xs mb-1 ${isDark ? 'text-green-400' : 'text-green-600'}`}>USDC will arrive on Arc in ~20 seconds</p>
             <a href={`https://testnet.arcscan.app/tx/${txHash}`} target="_blank" rel="noopener noreferrer"
@@ -268,7 +272,7 @@ export function BridgeCard() {
         {/* Button */}
         <motion.button
           onClick={handleBridge} disabled={loading}
-          className={`w-full py-4 rounded-xl font-semibold text-sm transition-all ${
+          className={`w-full py-4 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
             !authenticated ? 'bg-blue-700 hover:bg-blue-800 text-white'
             : !amount || parseFloat(amount) <= BRIDGE_FEE_USDC
               ? isDark ? 'bg-white/10 text-slate-500 cursor-not-allowed' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -279,7 +283,7 @@ export function BridgeCard() {
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
               Processing...
             </span>
           ) : !authenticated ? 'Connect Wallet to Bridge'
