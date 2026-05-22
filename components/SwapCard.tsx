@@ -36,10 +36,8 @@ const XYLO_ROUTER_ABI = [
 ] as const
 
 const TOKENS = [
-  { symbol: 'USDC',  name: 'USD Coin',     address: USDC_ADDRESS_ARC,                              decimals: 6  },
-  { symbol: 'EURC',  name: 'Euro Coin',    address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', decimals: 6  },
-  { symbol: 'USDT',  name: 'Tether USD',   address: '0x175CdB1D338945f0D851A741ccF787D343E57952', decimals: 18 },
-  { symbol: 'WUSDC', name: 'Wrapped USDC', address: '0x911b4000D3422F482F4062a913885f7b035382Df', decimals: 18 },
+  { symbol: 'USDC',  name: 'USD Coin',  address: USDC_ADDRESS_ARC,                              decimals: 6 },
+  { symbol: 'EURC',  name: 'Euro Coin', address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', decimals: 6 },
 ]
 
 const publicClient = createPublicClient({
