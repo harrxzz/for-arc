@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import {
   Coins, Zap, RefreshCw, ArrowLeftRight, ShieldCheck, BarChart2,
-  Wallet, ArrowRightLeft, CheckCircle, Rocket,
-  Box, Fuel, CircleDollarSign, ArrowRight
+  Wallet, ArrowRightLeft, CheckCircle, ArrowRight,
+  Box, Fuel, CircleDollarSign, Globe, Send
 } from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -43,73 +43,27 @@ async function fetchLiveStats(): Promise<LiveStats> {
   const gasPriceGwei = (parseInt(gasData.result, 16) / 1e9).toFixed(4)
   const tokenRes = await fetch(`${ARCSCAN}/api/v2/tokens?type=ERC-20`)
   const tokenData = await tokenRes.json()
-  const tokenCount = tokenData.items?.length ?? 0
   return {
     blockNumber: blockNum.toLocaleString(),
     totalTxs: (blockNum * 3).toLocaleString(),
-    totalTokens: tokenCount.toString(),
+    totalTokens: (tokenData.items?.length ?? 0).toString(),
     gasPrice: gasPriceGwei,
   }
 }
 
 const FEATURES = [
-  {
-    Icon: Coins,
-    title: 'USDC as Gas',
-    desc: 'No ETH needed. Pay all transaction fees in USDC — the stablecoin you already hold.',
-    badge: 'Unique to Arc',
-  },
-  {
-    Icon: Zap,
-    title: 'Sub-second Finality',
-    desc: 'Transactions confirm in under 1 second. No waiting, no uncertainty.',
-    badge: '< 1 sec',
-  },
-  {
-    Icon: RefreshCw,
-    title: 'XyloNet DEX',
-    desc: "Real on-chain swaps powered by XyloNet — Arc's native DEX with live quotes and price impact.",
-    badge: 'Live',
-  },
-  {
-    Icon: ArrowLeftRight,
-    title: 'Cross-chain Bridge',
-    desc: 'Bridge USDC from Ethereum, Base, or Arbitrum to Arc in ~20 seconds via Circle CCTP.',
-    badge: 'CCTP',
-  },
-  {
-    Icon: ShieldCheck,
-    title: 'Circle Infrastructure',
-    desc: "Built on Circle's audited, battle-tested blockchain infrastructure.",
-    badge: 'Audited',
-  },
-  {
-    Icon: BarChart2,
-    title: 'Transaction History',
-    desc: 'Track all your swaps and bridges in one place with live ArcScan data.',
-    badge: 'Real-time',
-  },
+  { Icon: Coins, title: 'USDC as Gas', desc: 'No ETH needed. Pay all fees in USDC — the stablecoin you already hold.', badge: 'Unique to Arc' },
+  { Icon: Zap, title: 'Sub-second Finality', desc: 'Transactions confirm in under 1 second. No waiting, no uncertainty.', badge: '< 1 sec' },
+  { Icon: RefreshCw, title: 'XyloNet DEX', desc: "Real on-chain swaps powered by XyloNet — Arc's native DEX with live quotes.", badge: 'Live' },
+  { Icon: ArrowLeftRight, title: 'Cross-chain Bridge', desc: 'Bridge USDC from Ethereum, Base, or Arbitrum to Arc via Circle CCTP.', badge: 'CCTP' },
+  { Icon: Globe, title: 'Unified Balance', desc: 'Deposit USDC from any chain into Circle Gateway — one balance, instant transfers.', badge: 'Gateway' },
+  { Icon: ShieldCheck, title: 'Circle Infrastructure', desc: "Built on Circle's audited, battle-tested blockchain infrastructure.", badge: 'Audited' },
 ]
 
 const HOW_IT_WORKS = [
-  {
-    step: '01',
-    Icon: Wallet,
-    title: 'Connect Wallet',
-    desc: 'Connect MetaMask, OKX, Rabby, or any EVM wallet. Or use email/Google via Privy.',
-  },
-  {
-    step: '02',
-    Icon: ArrowRightLeft,
-    title: 'Swap or Bridge',
-    desc: 'Swap tokens on Arc via XyloNet DEX, or bridge USDC from other chains.',
-  },
-  {
-    step: '03',
-    Icon: CheckCircle,
-    title: 'Done in seconds',
-    desc: 'Transactions confirm in under 1 second. Gas paid in USDC — no ETH needed.',
-  },
+  { step: '01', Icon: Wallet, title: 'Connect Wallet', desc: 'Connect MetaMask, OKX, Rabby, or any EVM wallet. Or use email/Google via Privy.' },
+  { step: '02', Icon: ArrowRightLeft, title: 'Swap or Bridge', desc: 'Swap tokens on Arc via XyloNet DEX, or bridge USDC from other chains.' },
+  { step: '03', Icon: CheckCircle, title: 'Done in seconds', desc: 'Transactions confirm in under 1 second. Gas paid in USDC — no ETH needed.' },
 ]
 
 const LIVE_STATS_CONFIG = [
@@ -119,6 +73,13 @@ const LIVE_STATS_CONFIG = [
   { label: 'Gas Price', key: 'gasPrice', Icon: Fuel, suffix: ' Gwei' },
 ]
 
+const QUICK_ACTIONS = [
+  { href: '/swap', Icon: ArrowRightLeft, label: 'Swap', desc: 'USDC ↔ EURC', color: 'from-indigo-500 to-violet-600' },
+  { href: '/bridge', Icon: ArrowLeftRight, label: 'Bridge', desc: 'Cross-chain CCTP', color: 'from-blue-500 to-indigo-600' },
+  { href: '/send', Icon: Send, label: 'Send', desc: 'Wallet to wallet', color: 'from-violet-500 to-purple-600' },
+  { href: '/unified-balance', Icon: Globe, label: 'Gateway', desc: 'Unified balance', color: 'from-purple-500 to-pink-600' },
+]
+
 export default function LandingPage() {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
@@ -126,84 +87,105 @@ export default function LandingPage() {
 
   useEffect(() => {
     fetchLiveStats().then(setStats).catch(() => {})
-    const interval = setInterval(() => {
-      fetchLiveStats().then(setStats).catch(() => {})
-    }, 15000)
+    const interval = setInterval(() => fetchLiveStats().then(setStats).catch(() => {}), 15000)
     return () => clearInterval(interval)
   }, [])
 
-  const card = isDark
-    ? 'glass-dark'
-    : 'glass-light'
+  const card = isDark ? 'glass-dark' : 'glass-light'
   const muted = isDark ? 'text-slate-400' : 'text-slate-500'
   const heading = isDark ? 'text-white' : 'text-slate-900'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#0a0a0f]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative ${isDark ? 'bg-[#07071a]' : 'bg-slate-50'}`}>
       <AnimatedBg />
       <Header />
 
       <main id="main-content" className="relative z-10">
 
         {/* ── HERO ── */}
-        <section className="pt-32 pb-20 px-4 text-center">
-          <div className="max-w-3xl mx-auto">
+        <section className="pt-36 pb-20 px-4 text-center">
+          <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 badge-live"
             >
-              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-sm text-blue-500 font-medium">Live on Arc Testnet</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+              <span className="text-xs text-indigo-300 font-medium tracking-wide">Live on Arc Testnet</span>
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className={`text-5xl sm:text-6xl font-bold mb-6 leading-tight ${heading}`}
+              transition={{ delay: 0.08 }}
+              className={`text-5xl sm:text-7xl font-800 mb-6 leading-[1.05] tracking-tight ${heading}`}
+              style={{ fontWeight: 800, letterSpacing: '-0.03em' }}
             >
-              Swap & Bridge USDC{' '}
-              <span className="text-blue-500">on Arc Network</span>
+              The DeFi Hub for{' '}
+              <span className="gradient-text">Arc Network</span>
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className={`text-lg mb-10 max-w-xl mx-auto ${muted}`}
+              transition={{ delay: 0.15 }}
+              className={`text-lg sm:text-xl mb-10 max-w-2xl mx-auto leading-relaxed ${muted}`}
             >
-              The fastest way to swap stablecoins on Arc — powered by XyloNet DEX.
-              Pay gas in USDC. No ETH needed.
+              Swap, bridge, send, and unify your USDC across chains.
+              Powered by Circle — pay gas in USDC, no ETH needed.
             </motion.p>
 
+            {/* Quick action cards */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.22 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto mb-10"
+            >
+              {QUICK_ACTIONS.map(({ href, Icon, label, desc, color }) => (
+                <Link key={href} href={href}>
+                  <motion.div
+                    whileHover={{ scale: 1.04, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`rounded-2xl p-4 cursor-pointer transition-all ${card} group`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-3 mx-auto shadow-lg`}>
+                      <Icon size={18} className="text-white" />
+                    </div>
+                    <div className={`text-sm font-700 ${heading}`} style={{ fontWeight: 700 }}>{label}</div>
+                    <div className={`text-[11px] mt-0.5 ${muted}`}>{desc}</div>
+                  </motion.div>
+                </Link>
+              ))}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
               className="flex items-center justify-center gap-3 flex-wrap"
             >
               <Link href="/swap">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-2 px-8 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-colors text-sm"
+                  className="flex items-center gap-2 px-8 py-3.5 glass-btn-primary text-white font-semibold rounded-2xl text-sm"
                 >
                   Start Swapping
-                  <ArrowRight size={16} />
+                  <ArrowRight size={15} />
                 </motion.button>
               </Link>
               <Link href="/bridge">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className={`flex items-center gap-2 px-8 py-3.5 font-semibold rounded-xl transition-colors text-sm border ${
+                  className={`flex items-center gap-2 px-8 py-3.5 font-semibold rounded-2xl text-sm border transition-colors ${
                     isDark
-                      ? 'border-white/20 text-white hover:bg-white/10'
-                      : 'border-blue-200 text-blue-700 hover:bg-blue-50'
+                      ? 'border-white/10 text-white hover:bg-white/8'
+                      : 'border-indigo-200 text-indigo-700 hover:bg-indigo-50'
                   }`}
                 >
-                  <ArrowLeftRight size={16} />
+                  <ArrowLeftRight size={15} />
                   Bridge USDC
                 </motion.button>
               </Link>
@@ -219,14 +201,16 @@ export default function LandingPage() {
                 key={label}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + i * 0.05 }}
+                transition={{ delay: 0.35 + i * 0.05 }}
                 whileHover={{ y: -2 }}
-                className={`rounded-xl p-4 transition-all ${card}`}
+                className={`rounded-2xl p-4 transition-all ${card}`}
               >
-                <Icon size={18} className="text-blue-500 mb-2" />
-                <div className={`text-[10px] uppercase tracking-wider mb-1 ${muted}`}>{label}</div>
-                <div className={`text-sm font-bold ${heading}`}>
-                  {stats ? `${stats[key as keyof LiveStats]}${suffix ?? ''}` : '—'}
+                <Icon size={16} className="text-indigo-400 mb-2" />
+                <div className={`text-[10px] uppercase tracking-widest mb-1 ${muted}`}>{label}</div>
+                <div className={`text-sm font-bold tabular-nums ${heading}`}>
+                  {stats ? `${stats[key as keyof LiveStats]}${suffix ?? ''}` : (
+                    <span className="shimmer inline-block w-16 h-4 rounded" />
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -234,16 +218,18 @@ export default function LandingPage() {
         </section>
 
         {/* ── FEATURES ── */}
-        <section className="py-16 px-4">
-          <div className="max-w-4xl mx-auto">
+        <section className="py-20 px-4">
+          <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="text-center mb-14"
             >
-              <h2 className={`text-3xl font-bold mb-3 ${heading}`}>Everything you need</h2>
-              <p className={`text-sm ${muted}`}>Built for Arc Network — the stablecoin-native L1</p>
+              <h2 className={`text-3xl sm:text-4xl font-bold mb-3 tracking-tight ${heading}`} style={{ letterSpacing: '-0.02em' }}>
+                Everything you need
+              </h2>
+              <p className={`text-sm ${muted}`}>Built for Arc Network — the stablecoin-native L1 by Circle</p>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -255,18 +241,18 @@ export default function LandingPage() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.07 }}
                 >
-                  <Tilt3DCard className={`rounded-xl p-5 transition-all ${card}`}>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                        isDark ? 'bg-blue-500/15' : 'bg-blue-50'
+                  <Tilt3DCard className={`rounded-2xl p-5 h-full transition-all ${card}`}>
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                        isDark ? 'bg-indigo-500/15' : 'bg-indigo-50'
                       }`}>
-                        <Icon size={18} className="text-blue-500" aria-hidden="true" />
+                        <Icon size={18} className="text-indigo-400" aria-hidden="true" />
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-500 rounded-full font-medium">
+                      <span className="text-[10px] px-2.5 py-1 rounded-full font-semibold badge-live">
                         {badge}
                       </span>
                     </div>
-                    <h3 className={`text-sm font-bold mb-1.5 ${heading}`}>{title}</h3>
+                    <h3 className={`text-sm font-bold mb-2 ${heading}`}>{title}</h3>
                     <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
                   </Tilt3DCard>
                 </motion.div>
@@ -276,19 +262,21 @@ export default function LandingPage() {
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section className="py-16 px-4">
+        <section className="py-20 px-4">
           <div className="max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="text-center mb-14"
             >
-              <h2 className={`text-3xl font-bold mb-3 ${heading}`}>How it works</h2>
+              <h2 className={`text-3xl sm:text-4xl font-bold mb-3 tracking-tight ${heading}`} style={{ letterSpacing: '-0.02em' }}>
+                How it works
+              </h2>
               <p className={`text-sm ${muted}`}>Three steps to start swapping on Arc</p>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               {HOW_IT_WORKS.map(({ step, Icon, title, desc }, i) => (
                 <motion.div
                   key={step}
@@ -299,11 +287,11 @@ export default function LandingPage() {
                   className="text-center"
                 >
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-                    isDark ? 'bg-white/10' : 'bg-blue-50'
+                    isDark ? 'bg-indigo-500/15' : 'bg-indigo-50'
                   }`}>
-                    <Icon size={24} className="text-blue-500" />
+                    <Icon size={22} className="text-indigo-400" />
                   </div>
-                  <div className="text-blue-500 text-xs font-bold mb-1">{step}</div>
+                  <div className="text-indigo-400 text-xs font-bold mb-1 tracking-widest">{step}</div>
                   <h3 className={`text-sm font-bold mb-2 ${heading}`}>{title}</h3>
                   <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
                 </motion.div>
@@ -319,14 +307,15 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className={`rounded-3xl p-10 ${card}`}
+              className={`rounded-3xl p-10 ${card} relative overflow-hidden`}
             >
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 ${
-                isDark ? 'bg-blue-500/20' : 'bg-blue-100'
-              }`}>
-                <Rocket size={26} className="text-blue-500" />
+              {/* Glow bg */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-violet-500/5 to-purple-500/5 pointer-events-none" />
+
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg`}>
+                <BarChart2 size={24} className="text-white" />
               </div>
-              <h2 className={`text-2xl font-bold mb-3 ${heading}`}>
+              <h2 className={`text-2xl font-bold mb-3 tracking-tight ${heading}`} style={{ letterSpacing: '-0.02em' }}>
                 Ready to swap on Arc?
               </h2>
               <p className={`text-sm mb-8 ${muted}`}>
@@ -338,23 +327,23 @@ export default function LandingPage() {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-2 px-8 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-colors text-sm"
+                    className="flex items-center gap-2 px-8 py-3 glass-btn-primary text-white font-semibold rounded-2xl text-sm"
                   >
                     Launch Swap
-                    <ArrowRight size={16} />
+                    <ArrowRight size={15} />
                   </motion.button>
                 </Link>
                 <Link href="/bridge">
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-xl transition-colors text-sm border ${
+                    className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-2xl text-sm border transition-colors ${
                       isDark
-                        ? 'border-white/20 text-white hover:bg-white/10'
-                        : 'border-blue-300 text-blue-700 hover:bg-blue-100'
+                        ? 'border-white/10 text-white hover:bg-white/8'
+                        : 'border-indigo-200 text-indigo-700 hover:bg-indigo-50'
                     }`}
                   >
-                    <ArrowLeftRight size={16} />
+                    <ArrowLeftRight size={15} />
                     Bridge USDC
                   </motion.button>
                 </Link>
