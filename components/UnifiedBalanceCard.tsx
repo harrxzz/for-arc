@@ -8,7 +8,6 @@ import { Loader2, RefreshCw, ArrowDownToLine, Globe, CheckCircle, AlertCircle, I
 import { useTheme } from '@/components/ThemeProvider'
 import { TokenIcon } from '@/components/TokenIcon'
 import { AppKit } from '@circle-fin/app-kit'
-import { createViemAdapterFromProvider } from '@circle-fin/adapter-viem-v2'
 
 // Lazy init — avoid module-level instantiation during SSR/build
 let _kit: AppKit | null = null
@@ -130,28 +129,19 @@ export function UnifiedBalanceCard() {
       })
     )
 
-    // Fetch unified gateway balance via AppKit SDK
+    // Fetch unified gateway balance via server-side API route (avoids CORS)
     try {
-      const provider = await activeWallet?.getEthereumProvider()
-      if (provider) {
-        const adapter = await createViemAdapterFromProvider({ provider: provider as any })
-        const result = await getKit().unifiedBalance.getBalances({
-          sources: [{ adapter }],
-          networkType: 'testnet',
-          includePending: true,
-        })
-        // Map per-chain gateway balances from SDK result
-        if (result?.breakdown) {
-          for (const depositor of result.breakdown) {
-            for (const chainBreakdown of depositor.breakdown ?? []) {
-              const chainName = chainBreakdown.chain as string
-              // Map SDK chain name to chainId
-              const chainId = CHAIN_NAME_TO_ID[chainName]
-              if (chainId !== undefined) {
-                const idx = updated.findIndex(b => b.chainId === chainId)
-                if (idx !== -1) {
-                  updated[idx].gatewayBalance = parseFloat(chainBreakdown.confirmedBalance ?? '0').toFixed(2)
-                }
+      const res = await fetch(`/api/gateway-balance?address=${address}`)
+      const result = await res.json()
+      if (result?.breakdown) {
+        for (const depositor of result.breakdown) {
+          for (const chainBreakdown of depositor.breakdown ?? []) {
+            const chainName = chainBreakdown.chain as string
+            const chainId = CHAIN_NAME_TO_ID[chainName]
+            if (chainId !== undefined) {
+              const idx = updated.findIndex(b => b.chainId === chainId)
+              if (idx !== -1) {
+                updated[idx].gatewayBalance = parseFloat(chainBreakdown.confirmedBalance ?? '0').toFixed(2)
               }
             }
           }
@@ -305,7 +295,7 @@ export function UnifiedBalanceCard() {
               </div>
               <div className="text-right">
                 <div className={`text-xs font-bold tabular-nums ${heading}`}>
-                  {authenticated ? `${parseFloat(b.gatewayBalance || '0').toFixed(2)} USDC` : '—'}
+                  {authenticated ? `${isNaN(parseFloat(b.gatewayBalance)) ? '0.00' : parseFloat(b.gatewayBalance).toFixed(2)} USDC` : '—'}
                 </div>
                 <div className={`text-[10px] ${muted}`}>
                   wallet: {authenticated ? `${parseFloat(b.walletBalance || '0').toFixed(2)}` : '—'}
