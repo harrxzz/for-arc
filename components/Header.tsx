@@ -23,6 +23,7 @@ export function Header() {
     { href: '/', label: 'Home' },
     { href: '/swap', label: 'Swap' },
     { href: '/bridge', label: 'Bridge' },
+    { href: '/send', label: 'Send' },
   ]
 
   const isDark = theme === 'dark'
