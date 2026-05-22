@@ -12,6 +12,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { AnimatedBg } from '@/components/AnimatedBg'
 import { useTheme } from '@/components/ThemeProvider'
+import { Tilt3DCard } from '@/components/Tilt3DCard'
 
 const ARCSCAN = 'https://testnet.arcscan.app'
 const RPC = 'https://rpc.testnet.arc.network'
@@ -253,21 +254,21 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.07 }}
-                  whileHover={{ y: -3 }}
-                  className={`rounded-xl p-5 transition-all ${card}`}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                      isDark ? 'bg-blue-500/15' : 'bg-blue-50'
-                    }`}>
-                      <Icon size={18} className="text-blue-500" />
+                  <Tilt3DCard className={`rounded-xl p-5 transition-all ${card}`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                        isDark ? 'bg-blue-500/15' : 'bg-blue-50'
+                      }`}>
+                        <Icon size={18} className="text-blue-500" aria-hidden="true" />
+                      </div>
+                      <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-500 rounded-full font-medium">
+                        {badge}
+                      </span>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-500 rounded-full font-medium">
-                      {badge}
-                    </span>
-                  </div>
-                  <h3 className={`text-sm font-bold mb-1.5 ${heading}`}>{title}</h3>
-                  <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
+                    <h3 className={`text-sm font-bold mb-1.5 ${heading}`}>{title}</h3>
+                    <p className={`text-xs leading-relaxed ${muted}`}>{desc}</p>
+                  </Tilt3DCard>
                 </motion.div>
               ))}
             </div>
