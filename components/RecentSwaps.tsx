@@ -126,9 +126,9 @@ export function RecentSwaps() {
   }, [fetchSwaps])
 
   return (
-    <div className={`border rounded-2xl overflow-hidden transition-colors ${card}`}>
+    <div className={`rounded-3xl overflow-hidden transition-colors ${isDark ? 'glass-dark' : 'glass-light'}`}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-white/10' : 'border-blue-50'}`}>
+      <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? 'border-white/8' : 'border-white/60'}`}>
         <div className="flex items-center gap-2">
           <h3 className={`text-sm font-bold ${heading}`}>Recent Swaps</h3>
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" aria-hidden="true" />

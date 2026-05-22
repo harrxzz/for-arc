@@ -36,10 +36,10 @@ const XYLO_ROUTER_ABI = [
 ] as const
 
 const TOKENS = [
-  { symbol: 'USDC',  name: 'USD Coin',     address: USDC_ADDRESS_ARC,                              decimals: 6,  color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400' },
-  { symbol: 'EURC',  name: 'Euro Coin',    address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', decimals: 6,  color: 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400' },
-  { symbol: 'USDT',  name: 'Tether USD',   address: '0x175CdB1D338945f0D851A741ccF787D343E57952', decimals: 18, color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' },
-  { symbol: 'WUSDC', name: 'Wrapped USDC', address: '0x911b4000D3422F482F4062a913885f7b035382Df', decimals: 18, color: 'bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400' },
+  { symbol: 'USDC',  name: 'USD Coin',     address: USDC_ADDRESS_ARC,                              decimals: 6  },
+  { symbol: 'EURC',  name: 'Euro Coin',    address: '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a', decimals: 6  },
+  { symbol: 'USDT',  name: 'Tether USD',   address: '0x175CdB1D338945f0D851A741ccF787D343E57952', decimals: 18 },
+  { symbol: 'WUSDC', name: 'Wrapped USDC', address: '0x911b4000D3422F482F4062a913885f7b035382Df', decimals: 18 },
 ]
 
 const publicClient = createPublicClient({
@@ -70,10 +70,11 @@ export function SwapCard() {
   const activeWallet = wallets?.[0]
   const address = activeWallet?.address as `0x${string}` | undefined
 
-  const card = isDark ? 'bg-[#0f0f1a] border-white/10' : 'bg-white border-blue-100'
-  const input = isDark ? 'bg-white/5 border-white/10' : 'bg-blue-50/50 border-blue-100'
-  const muted = isDark ? 'text-slate-400' : 'text-slate-400'
+  const glassCard = isDark ? 'glass-dark' : 'glass-light'
+  const glassInput = isDark ? 'glass-input-dark' : 'glass-input-light'
+  const muted = isDark ? 'text-slate-400' : 'text-slate-500'
   const heading = isDark ? 'text-white' : 'text-slate-900'
+  const dropdownBg = isDark ? 'glass-dark' : 'glass-light'
 
   useEffect(() => {
     if (!address) return
@@ -173,168 +174,166 @@ export function SwapCard() {
 
   const stepLabels = { idle: null, approving: 'Collecting fee...', swapping: 'Executing swap...', done: 'Swap complete!' }
 
+  const TokenDropdown = ({
+    selected, other, show, onToggle, onSelect, inputId
+  }: {
+    selected: typeof TOKENS[0], other: typeof TOKENS[0],
+    show: boolean, onToggle: () => void,
+    onSelect: (t: typeof TOKENS[0]) => void, inputId: string
+  }) => (
+    <div className="relative flex-shrink-0">
+      <button
+        onClick={onToggle}
+        aria-label={`Select token, currently ${selected.symbol}`}
+        aria-expanded={show}
+        aria-haspopup="listbox"
+        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+          isDark
+            ? 'bg-white/8 hover:bg-white/12 text-white border border-white/10'
+            : 'bg-white/80 hover:bg-white text-slate-800 border border-white/90 shadow-sm'
+        }`}
+      >
+        <TokenIcon symbol={selected.symbol} size={20} />
+        <span>{selected.symbol}</span>
+        <ChevronDown size={13} className={muted} />
+      </button>
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.96 }}
+            transition={{ duration: 0.15 }}
+            className={`absolute left-0 top-full mt-2 rounded-2xl shadow-2xl z-30 min-w-[200px] overflow-hidden ${dropdownBg}`}
+          >
+            {TOKENS.filter(t => t.symbol !== other.symbol).map(token => (
+              <button key={token.symbol}
+                onClick={() => { onSelect(token); onToggle() }}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
+                  isDark ? 'hover:bg-white/8 text-slate-200' : 'hover:bg-blue-50/80 text-slate-700'
+                } ${selected.symbol === token.symbol ? isDark ? 'bg-white/8 text-blue-400' : 'bg-blue-50 text-blue-700' : ''}`}
+              >
+                <TokenIcon symbol={token.symbol} size={22} />
+                <div className="flex flex-col items-start">
+                  <span className="font-semibold text-xs">{token.symbol}</span>
+                  <span className="text-[10px] text-slate-400">{token.name}</span>
+                </div>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full mx-auto">
-      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full mx-auto"
+    >
+      <div className={`rounded-3xl p-5 ${glassCard}`}>
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className={`text-lg font-bold ${heading}`}>Swap</h2>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className={`text-base font-bold ${heading}`}>Swap</h2>
           <div className="flex items-center gap-2">
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${isDark ? 'bg-white/10 text-slate-300' : 'bg-blue-50 text-blue-600'}`}>Fee: 0.3%</span>
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-green-500/10 text-green-500 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+              isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-blue-50 text-blue-600 border border-blue-100'
+            }`}>0.3% fee</span>
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-green-500/15 text-green-400 border border-green-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse" aria-hidden="true" />
               XyloNet
             </span>
           </div>
         </div>
 
         {/* From */}
-        <div className={`border rounded-xl p-4 mb-2 transition-colors ${input}`}>
+        <div className={`rounded-2xl p-4 mb-2 ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <label htmlFor="from-amount" className={`text-xs font-medium ${muted}`}>You pay</label>
             {address && (
               <button
                 onClick={() => setFromAmount(balance)}
-                className="text-xs text-blue-500 hover:text-blue-400 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
-                aria-label={`Set max amount: ${balance} ${fromToken.symbol}`}
+                className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                aria-label={`Set max: ${balance} ${fromToken.symbol}`}
               >
                 Balance: {balance}
               </button>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative flex-shrink-0">
-              <button
-                onClick={() => setShowFromSelect(!showFromSelect)}
-                aria-label={`Select token to swap from, currently ${fromToken.symbol}`}
-                aria-expanded={showFromSelect}
-                aria-haspopup="listbox"
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  isDark ? 'bg-white/10 hover:bg-white/15 text-white' : 'bg-blue-50 hover:bg-blue-100 text-slate-800'
-                }`}
-              >
-                <TokenIcon symbol={fromToken.symbol} size={20} />
-                <span>{fromToken.symbol}</span>
-                <ChevronDown size={13} className={muted} />
-              </button>
-              <AnimatePresence>
-                {showFromSelect && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                    className={`absolute left-0 top-full mt-1 border rounded-xl shadow-lg z-20 min-w-[180px] ${
-                      isDark ? 'bg-[#1a1a2e] border-white/10' : 'bg-white border-blue-100'
-                    }`}
-                  >
-                    {TOKENS.filter(t => t.symbol !== toToken.symbol).map(token => (
-                      <button key={token.symbol} onClick={() => { setFromToken(token); setShowFromSelect(false) }}
-                        className={`w-full flex items-center gap-2 px-3 py-2.5 text-sm first:rounded-t-xl last:rounded-b-xl transition-colors ${
-                          isDark ? 'text-slate-300 hover:bg-white/10' : 'text-slate-700 hover:bg-blue-50'
-                        }`}
-                      >
-                        <TokenIcon symbol={token.symbol} size={20} />
-                        <div className="flex flex-col items-start">
-                          <span className="font-medium text-xs">{token.symbol}</span>
-                          <span className="text-[10px] text-slate-400">{token.name}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+          <div className="flex items-center gap-3">
+            <TokenDropdown
+              selected={fromToken} other={toToken}
+              show={showFromSelect} onToggle={() => setShowFromSelect(v => !v)}
+              onSelect={setFromToken} inputId="from-amount"
+            />
             <input
               id="from-amount"
-              type="number"
-              placeholder="0.00"
-              value={fromAmount}
-              onChange={(e) => setFromAmount(e.target.value)}
+              type="number" placeholder="0.00" value={fromAmount}
+              onChange={e => setFromAmount(e.target.value)}
               aria-label={`Amount of ${fromToken.symbol} to swap`}
               aria-describedby="swap-fee-info"
               autoComplete="off"
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-500 text-right tabular-nums ${heading}`}
+              className={`flex-1 bg-transparent text-2xl font-bold outline-none text-right tabular-nums placeholder:text-slate-600 ${heading}`}
             />
           </div>
         </div>
 
         {/* Swap arrow */}
-        <div className="flex justify-center my-1">
+        <div className="flex justify-center my-2 relative z-10">
           <motion.button
             onClick={handleSwapTokens}
-            className={`w-9 h-9 border-2 rounded-xl flex items-center justify-center transition-all ${
-              isDark ? 'bg-[#0f0f1a] border-white/10 hover:border-white/30 text-blue-400' : 'bg-white border-blue-100 hover:border-blue-300 hover:bg-blue-50 text-blue-600'
-            }`}
-            whileHover={{ scale: 1.1, rotate: 180 }} whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1, rotate: 180 }}
+            whileTap={{ scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 400 }}
+            aria-label="Swap token direction"
+            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+              isDark
+                ? 'bg-white/8 border border-white/10 hover:bg-white/15 text-blue-400'
+                : 'bg-white/90 border border-white/90 shadow-sm hover:bg-white text-blue-600'
+            }`}
           >
-            <ArrowUpDown size={16} />
+            <ArrowUpDown size={15} aria-hidden="true" />
           </motion.button>
         </div>
 
         {/* To */}
-        <div className={`border rounded-xl p-4 mb-4 transition-colors ${input}`}>
+        <div className={`rounded-2xl p-4 mb-4 ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <label htmlFor="to-amount" className={`text-xs font-medium ${muted}`}>You receive</label>
-            {quoteLoading && <span className={`text-[10px] animate-pulse ${muted}`} aria-live="polite">Fetching quote...</span>}
+            {quoteLoading && (
+              <span className={`text-[10px] animate-pulse ${muted}`} aria-live="polite">
+                Fetching quote...
+              </span>
+            )}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative flex-shrink-0">
-              <button
-                onClick={() => setShowToSelect(!showToSelect)}
-                aria-label={`Select token to receive, currently ${toToken.symbol}`}
-                aria-expanded={showToSelect}
-                aria-haspopup="listbox"
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  isDark ? 'bg-white/10 hover:bg-white/15 text-white' : 'bg-blue-50 hover:bg-blue-100 text-slate-800'
-                }`}
-              >
-                <TokenIcon symbol={toToken.symbol} size={20} />
-                <span>{toToken.symbol}</span>
-                <ChevronDown size={13} className={muted} />
-              </button>
-              <AnimatePresence>
-                {showToSelect && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                    className={`absolute left-0 top-full mt-1 border rounded-xl shadow-lg z-20 min-w-[180px] ${
-                      isDark ? 'bg-[#1a1a2e] border-white/10' : 'bg-white border-blue-100'
-                    }`}
-                  >
-                    {TOKENS.filter(t => t.symbol !== fromToken.symbol).map(token => (
-                      <button key={token.symbol} onClick={() => { setToToken(token); setShowToSelect(false) }}
-                        className={`w-full flex items-center gap-2 px-3 py-2.5 text-sm first:rounded-t-xl last:rounded-b-xl transition-colors ${
-                          isDark ? 'text-slate-300 hover:bg-white/10' : 'text-slate-700 hover:bg-blue-50'
-                        }`}
-                      >
-                        <TokenIcon symbol={token.symbol} size={20} />
-                        <div className="flex flex-col items-start">
-                          <span className="font-medium text-xs">{token.symbol}</span>
-                          <span className="text-[10px] text-slate-400">{token.name}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+          <div className="flex items-center gap-3">
+            <TokenDropdown
+              selected={toToken} other={fromToken}
+              show={showToSelect} onToggle={() => setShowToSelect(v => !v)}
+              onSelect={setToToken} inputId="to-amount"
+            />
             <input
               id="to-amount"
-              type="number"
-              placeholder="0.00"
-              value={toAmount}
-              readOnly
+              type="number" placeholder="0.00" value={toAmount} readOnly
               aria-label={`Amount of ${toToken.symbol} you will receive`}
               aria-live="polite"
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-500 text-right tabular-nums ${heading}`}
+              className={`flex-1 bg-transparent text-2xl font-bold outline-none text-right tabular-nums placeholder:text-slate-600 ${heading}`}
             />
           </div>
         </div>
 
         {/* Quote details */}
         {fromAmount && parseFloat(fromAmount) > 0 && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+          <motion.div
             id="swap-fee-info"
-            className={`rounded-xl p-3 mb-4 space-y-1.5 text-xs ${isDark ? 'bg-white/5' : 'bg-slate-50'}`}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className={`rounded-2xl p-3.5 mb-4 space-y-2 text-xs ${
+              isDark ? 'bg-white/4 border border-white/6' : 'bg-blue-50/60 border border-blue-100/80'
+            }`}
           >
             <div className={`flex justify-between ${muted}`}>
               <span>Protocol fee (0.3%)</span>
@@ -342,14 +341,20 @@ export function SwapCard() {
             </div>
             {priceImpact !== null && (
               <div className={`flex justify-between items-center ${muted}`}>
-                <span className="flex items-center gap-1"><TrendingDown size={11} /> Price impact</span>
-                <span className={parseFloat(priceImpact) > 1 ? 'text-orange-500' : 'text-green-500'}>{priceImpact}%</span>
+                <span className="flex items-center gap-1">
+                  <TrendingDown size={11} aria-hidden="true" /> Price impact
+                </span>
+                <span className={parseFloat(priceImpact) > 1 ? 'text-orange-400' : 'text-green-400'}>
+                  {priceImpact}%
+                </span>
               </div>
             )}
             <div className={`flex justify-between ${muted}`}>
               <span>Slippage tolerance</span><span>0.5%</span>
             </div>
-            <div className={`border-t pt-1.5 flex justify-between font-medium ${isDark ? 'border-white/10 text-slate-200' : 'border-slate-200 text-slate-700'}`}>
+            <div className={`border-t pt-2 flex justify-between font-semibold ${
+              isDark ? 'border-white/8 text-slate-200' : 'border-blue-200/60 text-slate-700'
+            }`}>
               <span>You receive</span>
               <span>{toAmount} {toToken.symbol}</span>
             </div>
@@ -358,20 +363,25 @@ export function SwapCard() {
 
         {/* Step indicator */}
         {loading && stepLabels[step] && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className={`flex items-center gap-2 border rounded-xl p-3 mb-4 ${isDark ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-50 border-blue-200'}`}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`flex items-center gap-2 rounded-2xl p-3 mb-4 ${
+              isDark ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-50 border border-blue-200'
+            }`}
           >
-            <Loader2 size={14} className="text-blue-500 animate-spin" />
-            <span className="text-xs text-blue-500 font-medium">{stepLabels[step]}</span>
+            <Loader2 size={14} className="text-blue-400 animate-spin" aria-hidden="true" />
+            <span className="text-xs text-blue-400 font-medium">{stepLabels[step]}</span>
           </motion.div>
         )}
 
         {/* Error */}
         {error && (
           <div
-            role="alert"
-            aria-live="polite"
-            className={`flex items-start gap-2 border rounded-xl p-3 mb-4 text-xs ${isDark ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}
+            role="alert" aria-live="polite"
+            className={`flex items-start gap-2 rounded-2xl p-3 mb-4 text-xs ${
+              isDark ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-red-50 border border-red-200 text-red-600'
+            }`}
           >
             <AlertCircle size={14} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
             <span>{error}</span>
@@ -380,13 +390,19 @@ export function SwapCard() {
 
         {/* Success */}
         {txHash && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className={`border rounded-xl p-3 mb-4 ${isDark ? 'bg-green-500/10 border-green-500/20' : 'bg-green-50 border-green-200'}`}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`rounded-2xl p-3 mb-4 ${
+              isDark ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-50 border border-green-200'
+            }`}
           >
-            <p className={`text-xs font-medium mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
-              <CheckCircle size={13} /> Swap successful!
+            <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-green-400' : 'text-green-700'}`}>
+              <CheckCircle size={13} aria-hidden="true" /> Swap successful!
             </p>
-            <a href={`https://testnet.arcscan.app/tx/${txHash}`} target="_blank" rel="noopener noreferrer"
+            <a
+              href={`https://testnet.arcscan.app/tx/${txHash}`}
+              target="_blank" rel="noopener noreferrer"
               className={`text-xs underline break-all ${isDark ? 'text-green-400' : 'text-green-600'}`}
             >
               View on ArcScan →
@@ -398,17 +414,19 @@ export function SwapCard() {
         <motion.button
           onClick={handleSwap}
           disabled={loading || (!fromAmount && authenticated)}
-          className={`w-full py-4 rounded-xl font-semibold text-sm transition-all ${
-            !authenticated ? 'bg-blue-700 hover:bg-blue-800 text-white'
-            : !fromAmount ? isDark ? 'bg-white/10 text-slate-500 cursor-not-allowed' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-            : 'bg-blue-700 hover:bg-blue-800 text-white'
-          }`}
           whileHover={authenticated && fromAmount ? { scale: 1.01 } : {}}
           whileTap={authenticated && fromAmount ? { scale: 0.99 } : {}}
+          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+            !authenticated
+              ? 'glass-btn-primary text-white'
+              : !fromAmount
+              ? isDark ? 'bg-white/6 text-slate-500 cursor-not-allowed border border-white/8' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              : 'glass-btn-primary text-white'
+          }`}
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
               {stepLabels[step] ?? 'Processing...'}
             </span>
           ) : !authenticated ? 'Connect Wallet to Swap'

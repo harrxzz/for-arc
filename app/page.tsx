@@ -133,8 +133,8 @@ export default function LandingPage() {
   }, [])
 
   const card = isDark
-    ? 'bg-white/5 border border-white/10 hover:border-white/20'
-    : 'bg-white border border-blue-100 hover:border-blue-200 shadow-sm'
+    ? 'glass-dark'
+    : 'glass-light'
   const muted = isDark ? 'text-slate-400' : 'text-slate-500'
   const heading = isDark ? 'text-white' : 'text-slate-900'
 
@@ -319,11 +319,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className={`rounded-2xl p-10 border ${
-                isDark
-                  ? 'bg-blue-500/10 border-blue-500/20'
-                  : 'bg-blue-50 border-blue-200'
-              }`}
+              className={`rounded-3xl p-10 ${card}`}
             >
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 ${
                 isDark ? 'bg-blue-500/20' : 'bg-blue-100'

@@ -16,37 +16,91 @@ body {
   color: #0f172a;
   font-family: var(--font-sans);
   min-height: 100vh;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Dark mode */
 html.dark body {
-  background: #0a0a0f;
+  background: #020208;
   color: #f1f5f9;
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
+/* ── Glass card — dark ── */
+.glass-dark {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 0 0.5px rgba(255,255,255,0.06) inset,
+    0 1px 0 rgba(255,255,255,0.1) inset,
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(59, 130, 246, 0.08);
 }
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
+
+/* ── Glass card — light ── */
+.glass-light {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 0 0 0.5px rgba(255,255,255,0.8) inset,
+    0 1px 0 rgba(255,255,255,1) inset,
+    0 8px 32px rgba(59, 130, 246, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
 }
-html.dark ::-webkit-scrollbar-track {
-  background: #1e1e2e;
+
+/* ── Glass input — dark ── */
+.glass-input-dark {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
 }
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+
+/* ── Glass input — light ── */
+.glass-input-light {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(219, 234, 254, 0.8);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
 }
-html.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+
+/* ── Glass button primary ── */
+.glass-btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.2) inset,
+    0 4px 16px rgba(59, 130, 246, 0.4),
+    0 1px 4px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.2s ease;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+.glass-btn-primary:hover {
+  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.25) inset,
+    0 6px 24px rgba(59, 130, 246, 0.5),
+    0 2px 8px rgba(0,0,0,0.2);
+  transform: translateY(-1px);
 }
+.glass-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(148,163,184,0.5); }
+
+/* ── Number inputs — hide arrows ── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }

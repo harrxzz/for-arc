@@ -14,7 +14,7 @@ export default function BridgePage() {
   const isDark = theme === 'dark'
   const heading = isDark ? 'text-white' : 'text-slate-900'
   const muted = isDark ? 'text-slate-400' : 'text-slate-500'
-  const card = isDark ? 'bg-white/5 border-white/10' : 'bg-white border-blue-100 shadow-sm'
+  const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
     <div className={`min-h-screen relative ${isDark ? 'bg-[#0a0a0f]' : 'bg-white'}`}>

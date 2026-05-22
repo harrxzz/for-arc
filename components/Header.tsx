@@ -41,10 +41,10 @@ export function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b transition-colors ${
+        className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors ${
           isDark
-            ? 'bg-[#0a0a0f]/80 border-white/10'
-            : 'bg-white/80 border-blue-100'
+            ? 'glass-dark border-white/8'
+            : 'glass-light border-white/60'
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
