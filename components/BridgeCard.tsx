@@ -133,17 +133,20 @@ export function BridgeCard() {
         {/* From chain */}
         <div className={`border rounded-xl p-4 mb-2 transition-colors ${input}`}>
           <div className="flex items-center justify-between mb-3">
-            <span className={`text-xs ${muted}`}>From</span>
+            <span className={`text-xs font-medium ${muted}`}>From</span>
             <div className="relative">
               <button
                 onClick={() => setShowChainSelect(!showChainSelect)}
-                className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-sm font-medium transition-colors ${
-                  isDark ? 'bg-white/10 border-white/10 text-white hover:bg-white/15' : 'bg-white border-blue-200 text-slate-700 hover:border-blue-400'
+                aria-label={`Select source chain, currently ${sourceChain.name}`}
+                aria-expanded={showChainSelect}
+                aria-haspopup="listbox"
+                className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                  isDark ? 'bg-white/10 border-white/10 text-white hover:bg-white/15' : 'bg-blue-50 border-blue-200 text-slate-800 hover:bg-blue-100'
                 }`}
               >
                 <ChainIcon icon={sourceChain.icon} />
                 <span>{sourceChain.name}</span>
-                <ChevronDown size={14} className={muted} />
+                <ChevronDown size={13} className={muted} />
               </button>
               <AnimatePresence>
                 {showChainSelect && (
@@ -168,16 +171,20 @@ export function BridgeCard() {
               </AnimatePresence>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <input
-              type="number" placeholder="0.00" value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-300 ${heading}`}
-            />
-            <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl ${isDark ? 'bg-white/10' : 'bg-blue-100'}`}>
-              <TokenIcon symbol="USDC" size={18} />
-              <span className={`text-sm font-medium ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
+          <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl flex-shrink-0 ${isDark ? 'bg-white/10' : 'bg-blue-100'}`}>
+              <TokenIcon symbol="USDC" size={20} />
+              <span className={`text-sm font-semibold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
             </div>
+            <input
+              type="number"
+              placeholder="0.00"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              aria-label="Amount of USDC to bridge"
+              autoComplete="off"
+              className={`flex-1 bg-transparent text-2xl font-bold outline-none placeholder:text-slate-500 text-right tabular-nums ${heading}`}
+            />
           </div>
         </div>
 
@@ -193,21 +200,21 @@ export function BridgeCard() {
         {/* To chain (Arc) */}
         <div className={`border rounded-xl p-4 mb-4 transition-colors ${input}`}>
           <div className="flex items-center justify-between mb-3">
-            <span className={`text-xs ${muted}`}>To</span>
+            <span className={`text-xs font-medium ${muted}`}>To</span>
             <div className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-lg ${
               isDark ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-700/10 border-blue-200'
             }`}>
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" aria-hidden="true" />
               <span className="text-xs font-medium text-blue-500">Arc Testnet</span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className={`flex-1 text-2xl font-bold ${heading}`}>
-              {receiveAmount !== '0' ? receiveAmount : <span className="text-slate-300">0.00</span>}
+          <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl flex-shrink-0 ${isDark ? 'bg-white/10' : 'bg-blue-100'}`}>
+              <TokenIcon symbol="USDC" size={20} />
+              <span className={`text-sm font-semibold ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
             </div>
-            <div className={`flex items-center gap-1.5 px-3 py-2 rounded-xl ${isDark ? 'bg-white/10' : 'bg-blue-100'}`}>
-              <TokenIcon symbol="USDC" size={18} />
-              <span className={`text-sm font-medium ${isDark ? 'text-blue-400' : 'text-blue-700'}`}>USDC</span>
+            <div className={`flex-1 text-2xl font-bold text-right tabular-nums ${heading}`}>
+              {receiveAmount !== '0' ? receiveAmount : <span className="text-slate-500">0.00</span>}
             </div>
           </div>
         </div>
