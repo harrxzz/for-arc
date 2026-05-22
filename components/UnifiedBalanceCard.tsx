@@ -10,7 +10,12 @@ import { TokenIcon } from '@/components/TokenIcon'
 import { AppKit } from '@circle-fin/app-kit'
 import { createViemAdapterFromProvider } from '@circle-fin/adapter-viem-v2'
 
-const kit = new AppKit()
+// Lazy init — avoid module-level instantiation during SSR/build
+let _kit: AppKit | null = null
+function getKit() {
+  if (!_kit) _kit = new AppKit()
+  return _kit
+}
 
 // Gateway contracts (testnet)
 const GATEWAY_WALLET = '0x0077777d7EBA4688BDeF3E311b846F25870A19B9'
@@ -130,7 +135,7 @@ export function UnifiedBalanceCard() {
       const provider = await activeWallet?.getEthereumProvider()
       if (provider) {
         const adapter = await createViemAdapterFromProvider({ provider: provider as any })
-        const result = await kit.unifiedBalance.getBalances({
+        const result = await getKit().unifiedBalance.getBalances({
           sources: [{ adapter }],
           networkType: 'testnet',
           includePending: true,
