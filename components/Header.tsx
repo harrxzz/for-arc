@@ -24,6 +24,7 @@ export function Header() {
     { href: '/swap', label: 'Swap' },
     { href: '/bridge', label: 'Bridge' },
     { href: '/send', label: 'Send' },
+    { href: '/unified-balance', label: 'Gateway' },
   ]
 
   const isDark = theme === 'dark'
