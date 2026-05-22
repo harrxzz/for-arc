@@ -174,8 +174,8 @@ export function SwapCard() {
   const stepLabels = { idle: null, approving: 'Collecting fee...', swapping: 'Executing swap...', done: 'Swap complete!' }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-lg mx-auto">
-      <div className={`border rounded-2xl shadow-xl p-8 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-xl mx-auto">
+      <div className={`border rounded-2xl shadow-xl p-10 transition-colors ${card} ${isDark ? 'shadow-blue-500/5' : 'shadow-blue-50'}`}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
