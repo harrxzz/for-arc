@@ -6,6 +6,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { SwapCard } from '@/components/SwapCard'
 import { SwapHistory } from '@/components/SwapHistory'
+import { RecentSwaps } from '@/components/RecentSwaps'
 import { useTheme } from '@/components/ThemeProvider'
 
 export default function SwapPage() {
@@ -17,7 +18,7 @@ export default function SwapPage() {
       <AnimatedBg />
       <Header />
 
-      <main className="relative z-10 pt-24 pb-16 px-4">
+      <main id="main-content" className="relative z-10 pt-24 pb-16 px-4">
         <div className="max-w-2xl mx-auto text-center mb-10">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
@@ -37,8 +38,22 @@ export default function SwapPage() {
           </motion.p>
         </div>
 
-        <SwapCard />
-        <SwapHistory />
+        {/* 2-column layout: SwapCard kiri, RecentSwaps kanan */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div>
+            <SwapCard />
+            <div className="mt-6">
+              <SwapHistory />
+            </div>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <RecentSwaps />
+          </motion.div>
+        </div>
       </main>
 
       <Footer />
