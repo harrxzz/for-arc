@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { ArrowRight, Clock, ShieldCheck, Layers } from 'lucide-react'
 import { AnimatedBg } from '@/components/AnimatedBg'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -20,106 +21,100 @@ export default function BridgePage() {
       <AnimatedBg />
       <Header />
 
-      <main className="relative z-10 pt-24 pb-16 px-4">
-        {/* Hero */}
-        <div className="max-w-2xl mx-auto text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6"
-          >
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-sm text-blue-500 font-medium">Powered by Circle CCTP</span>
-          </motion.div>
-
+      <main id="main-content" className="relative z-10 pt-24 pb-16 px-4">
+        {/* Compact hero */}
+        <div className="max-w-2xl mx-auto text-center mb-8">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className={`text-4xl sm:text-5xl font-bold mb-4 leading-tight ${heading}`}
+            transition={{ duration: 0.4 }}
+            className={`text-3xl sm:text-4xl font-bold mb-3 leading-tight ${heading}`}
           >
             Bridge USDC to{' '}
             <span className="text-blue-500">Arc Network</span>
           </motion.h1>
-
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className={`text-lg mb-8 ${muted}`}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className={`text-sm ${muted}`}
           >
-            Move USDC from Ethereum, Base, or Arbitrum to Arc in ~20 seconds.
+            Move USDC from Ethereum, Base, or Arbitrum to Arc in ~20 seconds via Circle CCTP.
           </motion.p>
-
-          {/* How it works steps */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex items-center justify-center gap-2 mb-12 flex-wrap"
-          >
-            {[
-              { step: '1', label: 'Select source chain' },
-              { step: '→', label: '' },
-              { step: '2', label: 'Enter amount' },
-              { step: '→', label: '' },
-              { step: '3', label: 'Confirm & bridge' },
-              { step: '→', label: '' },
-              { step: '✓', label: 'USDC on Arc' },
-            ].map((item, i) => (
-              item.step === '→' ? (
-                <span key={i} className={`text-lg ${isDark ? 'text-white/20' : 'text-slate-300'}`}>→</span>
-              ) : (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + i * 0.05 }}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div className="w-8 h-8 rounded-full bg-blue-700 text-white text-sm font-bold flex items-center justify-center">
-                    {item.step}
-                  </div>
-                  <span className={`text-xs ${muted}`}>{item.label}</span>
-                </motion.div>
-              )
-            ))}
-          </motion.div>
         </div>
 
-        {/* Bridge card */}
-        <BridgeCard />
+        {/* 2-column layout */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div>
+            <BridgeCard />
+            <div className="mt-6">
+              <BridgeHistory />
+            </div>
+          </div>
 
-        {/* Bridge history */}
-        <BridgeHistory />
+          {/* Info panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="space-y-4"
+          >
+            {/* How it works */}
+            <div className={`border rounded-2xl p-5 transition-colors ${card}`}>
+              <h3 className={`text-sm font-bold mb-4 ${heading}`}>How it works</h3>
+              <div className="space-y-3">
+                {[
+                  { step: '01', label: 'Select source chain', desc: 'Choose Ethereum, Base, or Arbitrum as your source.' },
+                  { step: '02', label: 'Enter amount', desc: 'Minimum 0.51 USDC. Fee is $0.50 flat.' },
+                  { step: '03', label: 'Confirm & bridge', desc: 'Approve the transaction in your wallet.' },
+                  { step: '✓',  label: 'USDC on Arc', desc: 'Receive native USDC on Arc in ~20 seconds.' },
+                ].map((item) => (
+                  <div key={item.step} className="flex items-start gap-3">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                      item.step === '✓'
+                        ? 'bg-green-500/15 text-green-500'
+                        : 'bg-blue-500/15 text-blue-500'
+                    }`}>
+                      {item.step}
+                    </div>
+                    <div>
+                      <div className={`text-xs font-semibold ${heading}`}>{item.label}</div>
+                      <div className={`text-[11px] mt-0.5 ${muted}`}>{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Info cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="max-w-2xl mx-auto mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4"
-        >
-          {[
-            { icon: '🌉', title: 'Cross-chain', desc: 'Bridge from Ethereum, Base, or Arbitrum.' },
-            { icon: '⏱️', title: '~20 seconds', desc: 'Fast finality via Circle CCTP protocol.' },
-            { icon: '🔐', title: 'Native USDC', desc: 'Receive native USDC, not wrapped tokens.' },
-          ].map((feature, i) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 + i * 0.1 }}
-              whileHover={{ y: -3 }}
-              className={`rounded-xl p-4 text-center border transition-all ${card}`}
-            >
-              <div className="text-2xl mb-2">{feature.icon}</div>
-              <div className={`text-sm font-semibold mb-1 ${heading}`}>{feature.title}</div>
-              <div className={`text-xs ${muted}`}>{feature.desc}</div>
-            </motion.div>
-          ))}
-        </motion.div>
+            {/* Feature cards */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { Icon: Layers, title: 'Cross-chain', desc: 'ETH, Base, Arbitrum' },
+                { Icon: Clock, title: '~20 seconds', desc: 'Fast finality' },
+                { Icon: ShieldCheck, title: 'Native USDC', desc: 'Not wrapped' },
+              ].map(({ Icon, title, desc }) => (
+                <div key={title} className={`rounded-xl p-3 text-center border transition-all ${card}`}>
+                  <Icon size={18} className="text-blue-500 mx-auto mb-1.5" aria-hidden="true" />
+                  <div className={`text-xs font-semibold mb-0.5 ${heading}`}>{title}</div>
+                  <div className={`text-[10px] ${muted}`}>{desc}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* CCTP badge */}
+            <div className={`border rounded-xl p-4 flex items-center gap-3 ${card}`}>
+              <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck size={16} className="text-blue-500" aria-hidden="true" />
+              </div>
+              <div>
+                <div className={`text-xs font-semibold ${heading}`}>Powered by Circle CCTP</div>
+                <div className={`text-[11px] ${muted}`}>
+                  Battle-tested cross-chain transfer protocol by Circle.
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </main>
 
       <Footer />
