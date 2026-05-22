@@ -4,6 +4,62 @@ import { useEffect, useRef } from 'react'
 import { useTheme } from '@/components/ThemeProvider'
 import * as THREE from 'three'
 
+// Coin symbols to render as canvas textures
+const COIN_SYMBOLS = ['$', '€', '₿', 'Ξ', '◎', '₮', 'Ξ', '$', '€', '◎', '₿', '₮']
+const COIN_COLORS = [
+  '#2775CA', // USDC blue
+  '#26A17B', // USDT green
+  '#F7931A', // BTC orange
+  '#627EEA', // ETH purple
+  '#9945FF', // SOL purple
+  '#E84142', // AVAX red
+  '#0033AD', // EURC blue
+  '#2775CA',
+  '#26A17B',
+  '#627EEA',
+  '#F7931A',
+  '#9945FF',
+]
+
+function makeCoinTexture(symbol: string, color: string): THREE.CanvasTexture {
+  const size = 128
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+
+  // Coin base
+  ctx.beginPath()
+  ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
+  ctx.fillStyle = color + '33'
+  ctx.fill()
+
+  // Coin border
+  ctx.beginPath()
+  ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
+  ctx.strokeStyle = color + 'cc'
+  ctx.lineWidth = 4
+  ctx.stroke()
+
+  // Inner ring
+  ctx.beginPath()
+  ctx.arc(size / 2, size / 2, size / 2 - 10, 0, Math.PI * 2)
+  ctx.strokeStyle = color + '55'
+  ctx.lineWidth = 1.5
+  ctx.stroke()
+
+  // Symbol
+  ctx.fillStyle = '#ffffff'
+  ctx.font = `bold ${size * 0.38}px Inter, Arial`
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.shadowColor = color
+  ctx.shadowBlur = 12
+  ctx.fillText(symbol, size / 2, size / 2)
+
+  return new THREE.CanvasTexture(canvas)
+}
+
 export function AnimatedBg() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { theme } = useTheme()
@@ -18,109 +74,166 @@ export function AnimatedBg() {
     renderer.setSize(window.innerWidth, window.innerHeight)
 
     const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200)
-    camera.position.z = 40
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 300)
+    camera.position.z = 22
 
-    // ── Nebula orbs (large blurred spheres) ──
-    const orbs: THREE.Mesh[] = []
-    const orbData = isDark
-      ? [
-          { color: 0x6366f1, x: -20, y: 10, z: -30, r: 18 },
-          { color: 0x7c3aed, x: 20, y: -8, z: -35, r: 22 },
-          { color: 0x4f46e5, x: 0, y: -15, z: -40, r: 25 },
-          { color: 0x0ea5e9, x: 30, y: 15, z: -45, r: 15 },
-        ]
-      : [
-          { color: 0xc7d2fe, x: -20, y: 10, z: -30, r: 18 },
-          { color: 0xddd6fe, x: 20, y: -8, z: -35, r: 22 },
-          { color: 0xe0e7ff, x: 0, y: -15, z: -40, r: 25 },
-          { color: 0xbae6fd, x: 30, y: 15, z: -45, r: 15 },
-        ]
+    // ── Lighting ──
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
+    scene.add(ambientLight)
 
-    orbData.forEach(({ color, x, y, z, r }) => {
-      const geo = new THREE.SphereGeometry(r, 32, 32)
-      const mat = new THREE.MeshBasicMaterial({
-        color,
-        transparent: true,
-        opacity: isDark ? 0.07 : 0.18,
-      })
-      const mesh = new THREE.Mesh(geo, mat)
-      mesh.position.set(x, y, z)
-      scene.add(mesh)
-      orbs.push(mesh)
+    const dirLight = new THREE.DirectionalLight(0x818cf8, 1.2)
+    dirLight.position.set(5, 8, 10)
+    scene.add(dirLight)
+
+    const rimLight = new THREE.DirectionalLight(0xa78bfa, 0.6)
+    rimLight.position.set(-8, -4, 5)
+    scene.add(rimLight)
+
+    // ── Globe ──
+    const globeGeo = new THREE.SphereGeometry(5, 64, 64)
+
+    // Wireframe overlay (continent lines effect)
+    const wireGeo = new THREE.SphereGeometry(5.02, 32, 32)
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x6366f1 : 0x818cf8,
+      wireframe: true,
+      transparent: true,
+      opacity: isDark ? 0.12 : 0.08,
     })
+    const wireMesh = new THREE.Mesh(wireGeo, wireMat)
+    scene.add(wireMesh)
 
-    // ── Floating crystals ──
-    const crystals: { mesh: THREE.Mesh; vx: number; vy: number; vz: number; rx: number; ry: number }[] = []
-    const crystalColors = isDark
-      ? [0x6366f1, 0x8b5cf6, 0x4f46e5, 0xa78bfa, 0x0ea5e9, 0x7c3aed]
-      : [0x6366f1, 0x8b5cf6, 0x4f46e5, 0xa78bfa, 0x93c5fd, 0xc4b5fd]
+    // Globe outer shell — glassy
+    const globeMat = new THREE.MeshPhongMaterial({
+      color: isDark ? 0x1e1b4b : 0xc7d2fe,
+      emissive: isDark ? 0x312e81 : 0xe0e7ff,
+      emissiveIntensity: 0.3,
+      transparent: true,
+      opacity: isDark ? 0.18 : 0.22,
+      shininess: 120,
+      specular: new THREE.Color(isDark ? 0x818cf8 : 0x6366f1),
+    })
+    const globe = new THREE.Mesh(globeGeo, globeMat)
+    scene.add(globe)
 
-    for (let i = 0; i < 55; i++) {
-      const geo = Math.random() > 0.5
-        ? new THREE.OctahedronGeometry(Math.random() * 0.6 + 0.2)
-        : new THREE.TetrahedronGeometry(Math.random() * 0.5 + 0.2)
-      const color = crystalColors[Math.floor(Math.random() * crystalColors.length)]
+    // Globe inner glow
+    const innerGeo = new THREE.SphereGeometry(4.6, 32, 32)
+    const innerMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x4f46e5 : 0x818cf8,
+      transparent: true,
+      opacity: isDark ? 0.06 : 0.04,
+    })
+    scene.add(new THREE.Mesh(innerGeo, innerMat))
+
+    // Globe equator ring
+    const eqGeo = new THREE.TorusGeometry(5.1, 0.04, 8, 128)
+    const eqMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x818cf8 : 0x6366f1,
+      transparent: true,
+      opacity: isDark ? 0.35 : 0.2,
+    })
+    const eqRing = new THREE.Mesh(eqGeo, eqMat)
+    eqRing.rotation.x = Math.PI / 2
+    scene.add(eqRing)
+
+    // Orbit ring (tilted)
+    const orbitGeo = new THREE.TorusGeometry(8.5, 0.03, 8, 128)
+    const orbitMat = new THREE.MeshBasicMaterial({
+      color: isDark ? 0x6366f1 : 0x818cf8,
+      transparent: true,
+      opacity: isDark ? 0.2 : 0.12,
+    })
+    const orbitRing = new THREE.Mesh(orbitGeo, orbitMat)
+    orbitRing.rotation.x = Math.PI / 3
+    orbitRing.rotation.z = Math.PI / 6
+    scene.add(orbitRing)
+
+    // ── Floating coins ──
+    const coins: { group: THREE.Group; angle: number; speed: number; radius: number; tilt: number; selfSpin: number }[] = []
+    const numCoins = 12
+
+    for (let i = 0; i < numCoins; i++) {
+      const angle = (i / numCoins) * Math.PI * 2
+      const radius = 8.5 + (Math.random() - 0.5) * 1.5
+      const tilt = (Math.random() - 0.5) * 0.8
+
+      const group = new THREE.Group()
+
+      // Coin disc
+      const coinGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.12, 32)
+      const tex = makeCoinTexture(COIN_SYMBOLS[i % COIN_SYMBOLS.length], COIN_COLORS[i % COIN_COLORS.length])
+      const coinMat = new THREE.MeshPhongMaterial({
+        map: tex,
+        transparent: true,
+        opacity: isDark ? 0.85 : 0.75,
+        shininess: 80,
+        specular: new THREE.Color(0xffffff),
+      })
+      const coinMesh = new THREE.Mesh(coinGeo, coinMat)
+      coinMesh.rotation.x = Math.PI / 2
+      group.add(coinMesh)
+
+      // Coin glow ring
+      const glowGeo = new THREE.TorusGeometry(0.6, 0.04, 8, 32)
+      const glowMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(COIN_COLORS[i % COIN_COLORS.length]),
+        transparent: true,
+        opacity: 0.4,
+      })
+      const glowRing = new THREE.Mesh(glowGeo, glowMat)
+      glowRing.rotation.x = Math.PI / 2
+      group.add(glowRing)
+
+      // Position on orbit
+      group.position.x = Math.cos(angle) * radius
+      group.position.y = Math.sin(angle) * radius * 0.35 + tilt * 2
+      group.position.z = Math.sin(angle) * radius * 0.2
+
+      scene.add(group)
+      coins.push({
+        group,
+        angle,
+        speed: 0.003 + Math.random() * 0.002,
+        radius,
+        tilt,
+        selfSpin: (Math.random() - 0.5) * 0.02,
+      })
+    }
+
+    // ── Background nebula orbs ──
+    const orbColors = isDark
+      ? [0x4f46e5, 0x7c3aed, 0x1e40af, 0x6d28d9]
+      : [0xc7d2fe, 0xddd6fe, 0xbfdbfe, 0xe0e7ff]
+
+    orbColors.forEach((color, i) => {
+      const geo = new THREE.SphereGeometry(12 + i * 4, 16, 16)
       const mat = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: isDark ? Math.random() * 0.35 + 0.1 : Math.random() * 0.2 + 0.05,
-        wireframe: Math.random() > 0.6,
+        opacity: isDark ? 0.04 : 0.1,
       })
       const mesh = new THREE.Mesh(geo, mat)
       mesh.position.set(
-        (Math.random() - 0.5) * 80,
-        (Math.random() - 0.5) * 60,
-        (Math.random() - 0.5) * 40 - 10
+        [-25, 25, -15, 20][i],
+        [12, -10, -18, 8][i],
+        [-40, -45, -50, -55][i]
       )
       scene.add(mesh)
-      crystals.push({
-        mesh,
-        vx: (Math.random() - 0.5) * 0.008,
-        vy: (Math.random() - 0.5) * 0.006,
-        vz: (Math.random() - 0.5) * 0.004,
-        rx: (Math.random() - 0.5) * 0.012,
-        ry: (Math.random() - 0.5) * 0.012,
-      })
-    }
-
-    // ── USDC coin rings ──
-    const rings: { mesh: THREE.Mesh; speed: number; phase: number }[] = []
-    for (let i = 0; i < 6; i++) {
-      const geo = new THREE.TorusGeometry(Math.random() * 2 + 1, 0.06, 8, 48)
-      const mat = new THREE.MeshBasicMaterial({
-        color: isDark ? 0x6366f1 : 0x818cf8,
-        transparent: true,
-        opacity: isDark ? 0.18 : 0.12,
-      })
-      const mesh = new THREE.Mesh(geo, mat)
-      mesh.position.set(
-        (Math.random() - 0.5) * 50,
-        (Math.random() - 0.5) * 40,
-        (Math.random() - 0.5) * 20 - 5
-      )
-      mesh.rotation.x = Math.random() * Math.PI
-      mesh.rotation.y = Math.random() * Math.PI
-      scene.add(mesh)
-      rings.push({ mesh, speed: Math.random() * 0.008 + 0.003, phase: Math.random() * Math.PI * 2 })
-    }
+    })
 
     // ── Star particles ──
     const starGeo = new THREE.BufferGeometry()
-    const starCount = 300
+    const starCount = 400
     const starPos = new Float32Array(starCount * 3)
-    for (let i = 0; i < starCount * 3; i++) {
-      starPos[i] = (Math.random() - 0.5) * 200
-    }
+    for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 250
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3))
     const starMat = new THREE.PointsMaterial({
       color: isDark ? 0xc4b5fd : 0x6366f1,
-      size: isDark ? 0.12 : 0.08,
+      size: isDark ? 0.1 : 0.07,
       transparent: true,
-      opacity: isDark ? 0.5 : 0.25,
+      opacity: isDark ? 0.45 : 0.2,
     })
-    const stars = new THREE.Points(starGeo, starMat)
-    scene.add(stars)
+    scene.add(new THREE.Points(starGeo, starMat))
 
     // ── Mouse parallax ──
     let mouseX = 0, mouseY = 0
@@ -141,43 +254,41 @@ export function AnimatedBg() {
     // ── Animate ──
     let frame = 0
     let animId: number
+
     const animate = () => {
       animId = requestAnimationFrame(animate)
       frame++
 
       // Camera parallax
-      camera.position.x += (mouseX * 3 - camera.position.x) * 0.03
-      camera.position.y += (mouseY * 2 - camera.position.y) * 0.03
+      camera.position.x += (mouseX * 2 - camera.position.x) * 0.025
+      camera.position.y += (mouseY * 1.5 - camera.position.y) * 0.025
+      camera.lookAt(0, 0, 0)
 
-      // Crystals
-      crystals.forEach(({ mesh, vx, vy, vz, rx, ry }) => {
-        mesh.position.x += vx
-        mesh.position.y += vy
-        mesh.position.z += vz
-        mesh.rotation.x += rx
-        mesh.rotation.y += ry
-        if (Math.abs(mesh.position.x) > 42) mesh.position.x *= -0.98
-        if (Math.abs(mesh.position.y) > 32) mesh.position.y *= -0.98
-        if (mesh.position.z > 10 || mesh.position.z < -30) mesh.position.z *= -0.98
+      // Globe slow rotation
+      globe.rotation.y += 0.0025
+      wireMesh.rotation.y += 0.002
+      eqRing.rotation.z += 0.001
+      orbitRing.rotation.z += 0.0008
+
+      // Coins orbit
+      coins.forEach((c) => {
+        c.angle += c.speed
+        const orbitTilt = Math.PI / 5
+        const x = Math.cos(c.angle) * c.radius
+        const y = Math.sin(c.angle) * c.radius * Math.sin(orbitTilt) + c.tilt
+        const z = Math.sin(c.angle) * c.radius * Math.cos(orbitTilt) * 0.3
+
+        c.group.position.set(x, y, z)
+
+        // Face camera + self spin
+        c.group.rotation.y += c.selfSpin
+        c.group.rotation.x = Math.sin(frame * 0.01 + c.angle) * 0.3
+
+        // Pulse glow
+        const glowRing = c.group.children[1] as THREE.Mesh
+        const glowMat = glowRing.material as THREE.MeshBasicMaterial
+        glowMat.opacity = 0.25 + Math.sin(frame * 0.05 + c.angle * 3) * 0.15
       })
-
-      // Rings
-      rings.forEach(({ mesh, speed, phase }) => {
-        mesh.rotation.x += speed
-        mesh.rotation.z += speed * 0.7
-        const mat = mesh.material as THREE.MeshBasicMaterial
-        mat.opacity = (isDark ? 0.12 : 0.08) + Math.sin(frame * 0.02 + phase) * 0.06
-      })
-
-      // Orbs slow drift
-      orbs.forEach((orb, i) => {
-        orb.position.y += Math.sin(frame * 0.005 + i) * 0.02
-        orb.position.x += Math.cos(frame * 0.004 + i) * 0.015
-      })
-
-      // Stars slow rotation
-      stars.rotation.y += 0.0002
-      stars.rotation.x += 0.0001
 
       renderer.render(scene, camera)
     }
