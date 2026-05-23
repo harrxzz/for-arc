@@ -91,6 +91,7 @@ export function UnifiedBalanceCard() {
   const [depositChain, setDepositChain] = useState<number>(5042002)
   const [depositAmount, setDepositAmount] = useState('')
   const [depositing, setDepositing] = useState(false)
+  const [depositStep, setDepositStep] = useState<'idle' | 'approving' | 'depositing'>('idle')
   const [txHash, setTxHash] = useState('')
   const [error, setError] = useState('')
   const [refreshing, setRefreshing] = useState(false)
@@ -164,11 +165,43 @@ export function UnifiedBalanceCard() {
     return sum + (isNaN(v) ? 0 : v)
   }, 0)
 
+  // Wallet balance on the currently selected source chain (for Max button + validation)
+  const selectedWalletBalance = (() => {
+    const b = balances.find(x => x.chainId === depositChain)
+    if (!b) return 0
+    const v = parseFloat(b.walletBalance)
+    return isNaN(v) ? 0 : v
+  })()
+
+  const amountNum = parseFloat(depositAmount)
+  const amountInvalid = depositAmount !== '' && (isNaN(amountNum) || amountNum <= 0)
+  const insufficientBalance = !isNaN(amountNum) && amountNum > 0 && amountNum > selectedWalletBalance
+
+  const parseError = (e: unknown): string => {
+    const msg = e instanceof Error ? e.message : String(e)
+    const errObj = e as { code?: number; shortMessage?: string }
+    if (errObj?.code === 4001 || /user rejected|user denied/i.test(msg)) {
+      return 'Transaction rejected in wallet.'
+    }
+    if (/insufficient funds/i.test(msg)) {
+      return 'Insufficient gas on this chain. Top up native token first.'
+    }
+    if (/exceeds.*allowance|transfer amount exceeds balance/i.test(msg)) {
+      return 'USDC balance too low on this chain.'
+    }
+    if (errObj?.shortMessage) return errObj.shortMessage
+    return msg.slice(0, 140)
+  }
+
   const handleDeposit = async () => {
     if (!authenticated) { login(); return }
     if (!address || !depositAmount || parseFloat(depositAmount) <= 0) return
+    if (insufficientBalance) {
+      setError('USDC balance too low on this chain.')
+      return
+    }
 
-    setDepositing(true); setError(''); setTxHash('')
+    setDepositing(true); setError(''); setTxHash(''); setDepositStep('idle')
     try {
       const provider = await activeWallet?.getEthereumProvider()
       if (!provider) throw new Error('No wallet provider')
@@ -208,6 +241,7 @@ export function UnifiedBalanceCard() {
       const amount = parseUnits(depositAmount, 6)
 
       // Step 1: approve — wait for receipt before depositing
+      setDepositStep('approving')
       const approveTx = await walletClient.writeContract({
         address: usdcAddr,
         abi: ERC20_ABI,
@@ -219,6 +253,7 @@ export function UnifiedBalanceCard() {
       await publicClient.waitForTransactionReceipt({ hash: approveTx })
 
       // Step 2: deposit
+      setDepositStep('depositing')
       const depositTx = await walletClient.writeContract({
         address: GATEWAY_WALLET as `0x${string}`,
         abi: GATEWAY_WALLET_ABI,
@@ -234,9 +269,10 @@ export function UnifiedBalanceCard() {
       setTimeout(() => fetchBalances(), 3000)
     } catch (e: unknown) {
       console.error('[Deposit error]', e)
-      setError(e instanceof Error ? e.message : String(e) + ' — check console for details')
+      setError(parseError(e))
     } finally {
       setDepositing(false)
+      setDepositStep('idle')
     }
   }
 
@@ -361,12 +397,32 @@ export function UnifiedBalanceCard() {
 
         {/* Amount */}
         <div className={`rounded-2xl p-4 mb-4 ${glassInput}`}>
-          <label htmlFor="deposit-amount" className={`text-xs font-medium ${muted} block mb-2`}>Amount</label>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="deposit-amount" className={`text-xs font-medium ${muted}`}>Amount</label>
+            {authenticated && (
+              <button
+                type="button"
+                onClick={() => setDepositAmount(selectedWalletBalance.toString())}
+                disabled={selectedWalletBalance <= 0}
+                className={`text-[10px] font-semibold px-2 py-0.5 rounded-md transition-colors ${
+                  selectedWalletBalance > 0
+                    ? 'text-arc-violet hover:bg-arc-violet/10 cursor-pointer'
+                    : 'text-slate-500 cursor-not-allowed opacity-50'
+                }`}
+                aria-label="Use max wallet balance"
+              >
+                Wallet: {selectedWalletBalance.toFixed(2)} · MAX
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <TokenIcon symbol="USDC" size={20} />
             <input
               id="deposit-amount"
               type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
               placeholder="0.00"
               value={depositAmount}
               onChange={e => setDepositAmount(e.target.value)}
@@ -374,6 +430,12 @@ export function UnifiedBalanceCard() {
             />
             <span className={`text-sm font-medium ${muted}`}>USDC</span>
           </div>
+          {/* Inline validation hint */}
+          {authenticated && depositAmount !== '' && (insufficientBalance || amountInvalid) && (
+            <p className={`text-[10px] mt-1.5 ${isDark ? 'text-red-400' : 'text-red-500'}`}>
+              {amountInvalid ? 'Enter a valid amount' : `Exceeds wallet balance (${selectedWalletBalance.toFixed(2)} USDC)`}
+            </p>
+          )}
         </div>
 
         {/* Error */}
@@ -407,21 +469,27 @@ export function UnifiedBalanceCard() {
         {/* Button */}
         <motion.button
           onClick={handleDeposit}
-          disabled={depositing}
-          whileHover={authenticated && depositAmount ? { scale: 1.01 } : {}}
-          whileTap={authenticated && depositAmount ? { scale: 0.99 } : {}}
+          disabled={depositing || insufficientBalance || amountInvalid}
+          whileHover={authenticated && depositAmount && !insufficientBalance && !amountInvalid ? { scale: 1.01 } : {}}
+          whileTap={authenticated && depositAmount && !insufficientBalance && !amountInvalid ? { scale: 0.99 } : {}}
           className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
             !authenticated
               ? 'glass-btn-primary text-white'
-              : !depositAmount || parseFloat(depositAmount) <= 0
+              : !depositAmount || amountInvalid || insufficientBalance
               ? isDark ? 'bg-white/6 text-slate-500 cursor-not-allowed border border-white/8' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               : 'glass-btn-primary text-white'
           }`}
         >
           {depositing ? (
-            <><Loader2 size={16} className="animate-spin" /> Depositing...</>
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              {depositStep === 'approving' ? 'Step 1/2 · Approving USDC…'
+                : depositStep === 'depositing' ? 'Step 2/2 · Depositing…'
+                : 'Preparing…'}
+            </>
           ) : !authenticated ? 'Connect Wallet'
-            : !depositAmount || parseFloat(depositAmount) <= 0 ? 'Enter amount'
+            : !depositAmount || amountInvalid ? 'Enter amount'
+            : insufficientBalance ? 'Insufficient balance'
             : <><ArrowDownToLine size={15} /> Deposit {depositAmount} USDC</>
           }
         </motion.button>
