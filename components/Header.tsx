@@ -4,14 +4,14 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { Sun, Moon, ChevronDown, Bot } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { useTheme } from '@/components/ThemeProvider'
 
 export function Header() {
   const pathname = usePathname()
   const { ready, authenticated, login, logout } = usePrivy()
   const { wallets } = useWallets()
-  const { theme, toggleTheme } = useTheme()
+  const { theme } = useTheme()
 
   const activeWallet = wallets?.[0]
   const address = activeWallet?.address
@@ -106,21 +106,6 @@ export function Header() {
               <div className="w-1.5 h-1.5 rounded-full bg-arc-light animate-pulse" aria-hidden="true" />
               <span className="text-xs text-arc-light font-medium">Arc Testnet</span>
             </div>
-
-            {/* Theme toggle */}
-            <motion.button
-              onClick={toggleTheme}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
-                isDark
-                  ? 'bg-white/6 hover:bg-white/12 text-yellow-400'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-              }`}
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {isDark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
-            </motion.button>
 
             {/* Wallet */}
             {ready && (

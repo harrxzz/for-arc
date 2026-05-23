@@ -1,8 +1,11 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 
-type Theme = 'light' | 'dark'
+// Dark-only mode — light theme has been removed. The provider keeps the
+// same shape so existing `useTheme()` consumers continue to work without
+// changes (they just always see theme === 'dark').
+type Theme = 'dark'
 
 interface ThemeContextType {
   theme: Theme
@@ -10,30 +13,21 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'light',
+  theme: 'dark',
   toggleTheme: () => {},
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light')
-
+  // Force dark on the html element + clear any stale localStorage value
+  // from when the toggle existed.
   useEffect(() => {
-    const saved = localStorage.getItem('theme') as Theme | null
-    if (saved) {
-      setTheme(saved)
-      document.documentElement.classList.toggle('dark', saved === 'dark')
-    }
+    document.documentElement.classList.add('dark')
+    document.documentElement.classList.remove('light')
+    try { localStorage.removeItem('theme') } catch { /* SSR / private mode */ }
   }, [])
 
-  const toggleTheme = () => {
-    const next = theme === 'light' ? 'dark' : 'light'
-    setTheme(next)
-    localStorage.setItem('theme', next)
-    document.documentElement.classList.toggle('dark', next === 'dark')
-  }
-
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: () => {} }}>
       {children}
     </ThemeContext.Provider>
   )
