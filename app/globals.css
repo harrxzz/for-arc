@@ -32,56 +32,56 @@ html { scroll-behavior: smooth; }
 
 /* ── Glass card — dark ── */
 .glass-dark {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(20,20,24,0.72);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.10);
   box-shadow:
-    0 0 0 0.5px rgba(255,255,255,0.05) inset,
-    0 1px 0 rgba(255,255,255,0.08) inset,
-    0 16px 48px rgba(0,0,0,0.5),
-    0 4px 16px rgba(255,255,255,0.04);
+    0 0 0 0.5px rgba(255,255,255,0.06) inset,
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 16px 48px rgba(0,0,0,0.6),
+    0 4px 16px rgba(0,0,0,0.3);
 }
 
 /* ── Glass card — light ── */
 .glass-light {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.40);
   box-shadow:
-    0 0 0 0.5px rgba(255,255,255,0.1) inset,
-    0 1px 0 rgba(255,255,255,0.2) inset,
-    0 8px 32px rgba(0,0,0,0.4),
-    0 2px 8px rgba(0,0,0,0.2);
+    0 0 0 0.5px rgba(255,255,255,0.4) inset,
+    0 1px 0 rgba(255,255,255,0.6) inset,
+    0 8px 32px rgba(0,0,0,0.18),
+    0 2px 8px rgba(0,0,0,0.08);
 }
 
 /* ── Glass input — dark ── */
 .glass-input-dark {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.07);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .glass-input-dark:focus-within {
-  border-color: rgba(255,255,255,0.3);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.06), 0 1px 0 rgba(255,255,255,0.05) inset;
+  border-color: rgba(255,255,255,0.35);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.08), 0 1px 0 rgba(255,255,255,0.08) inset;
 }
 
 /* ── Glass input — light ── */
 .glass-input-light {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.40);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .glass-input-light:focus-within {
-  border-color: rgba(255,255,255,0.35);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.08), 0 1px 0 rgba(255,255,255,0.1) inset;
+  border-color: rgba(159,114,255,0.45);
+  box-shadow: 0 0 0 3px rgba(159,114,255,0.12), 0 1px 0 rgba(255,255,255,0.5) inset;
 }
 
 /* ── Primary button — white/grey gradient ── */
