@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   try {
     const result = await kit.unifiedBalance.getBalances({
       token: 'USDC',
-      sources: [{ account: address }] as any,
+      sources: { address: address as `0x${string}` },
       networkType: 'testnet',
       includePending: false,
     })
