@@ -5,8 +5,9 @@ import { AnimatedBg } from '@/components/AnimatedBg'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { UnifiedBalanceCard } from '@/components/UnifiedBalanceCard'
+import { CrossChainSpendCard } from '@/components/CrossChainSpendCard'
 import { useTheme } from '@/components/ThemeProvider'
-import { Globe, Zap, ArrowLeftRight } from 'lucide-react'
+import { Globe, Zap } from 'lucide-react'
 
 export default function UnifiedBalancePage() {
   const { theme } = useTheme()
@@ -45,7 +46,7 @@ export default function UnifiedBalancePage() {
             transition={{ delay: 0.1 }}
             className={`text-sm ${muted}`}
           >
-            Deposit USDC from any chain into Circle Gateway — one balance, instant crosschain transfers.
+            Deposit once, spend anywhere. Instant cross-chain USDC transfers in &lt;500ms.
           </motion.p>
         </div>
 
@@ -58,49 +59,15 @@ export default function UnifiedBalancePage() {
             transition={{ delay: 0.2 }}
             className="space-y-4"
           >
-            {/* How it works */}
-            <div className={`rounded-2xl p-5 ${card}`}>
-              <h3 className={`text-sm font-bold mb-4 ${heading}`}>How Gateway works</h3>
-              <div className="space-y-4">
-                {[
-                  {
-                    Icon: ArrowLeftRight,
-                    step: '01',
-                    title: 'Deposit from any chain',
-                    desc: 'Deposit USDC from Ethereum, Base, Arbitrum, or Arc into your Gateway balance.',
-                  },
-                  {
-                    Icon: Globe,
-                    step: '02',
-                    title: 'One unified balance',
-                    desc: 'All deposits aggregate into a single balance visible across all chains.',
-                  },
-                  {
-                    Icon: Zap,
-                    step: '03',
-                    title: 'Instant transfers (<500ms)',
-                    desc: 'Transfer USDC to any supported chain instantly — no waiting for finality.',
-                  },
-                ].map(({ Icon, step, title, desc }) => (
-                  <div key={step} className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-arc-violet/15' : 'bg-white/5'}`}>
-                      <Icon size={15} className="text-arc-violet" aria-hidden="true" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold text-arc-violet">{step}</span>
-                        <span className={`text-xs font-semibold ${heading}`}>{title}</span>
-                      </div>
-                      <p className={`text-[11px] leading-relaxed ${muted}`}>{desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Cross-chain Spend (the killer feature) */}
+            <CrossChainSpendCard />
 
             {/* Supported chains */}
             <div className={`rounded-2xl p-5 ${card}`}>
-              <h3 className={`text-sm font-bold mb-3 ${heading}`}>Supported chains</h3>
+              <h3 className={`text-sm font-bold mb-3 flex items-center gap-2 ${heading}`}>
+                <Zap size={13} className="text-arc-violet" />
+                Supported chains
+              </h3>
               <div className="space-y-2">
                 {[
                   { name: 'Arc Testnet', domain: 26, color: 'bg-arc-light' },
