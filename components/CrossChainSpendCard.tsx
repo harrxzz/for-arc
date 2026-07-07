@@ -254,7 +254,7 @@ export function CrossChainSpendCard() {
       {/* Info */}
       <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-violet/8 border border-arc-violet/15' : 'bg-white/5 border border-white/10'}`}>
         <Info size={13} className="text-arc-violet mt-0.5 flex-shrink-0" />
-        <span className={isDark ? 'text-arc-light' : 'text-arc-violet'}>
+        <span className={isDark ? 'text-arc-violet' : 'text-arc-violet'}>
           Send USDC from your Gateway balance to any chain instantly. Recipient gets minted USDC without you holding gas on the destination chain.
         </span>
       </div>
@@ -359,7 +359,7 @@ export function CrossChainSpendCard() {
         </div>
         <p className={`text-[10px] ${muted}`}>
           USDC will be minted directly to the recipient on{' '}
-          <span className="text-arc-light font-medium">{destChain.name}</span>
+          <span className="text-arc-violet font-medium">{destChain.name}</span>
         </p>
       </div>
 

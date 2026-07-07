@@ -300,7 +300,7 @@ export function UnifiedBalanceCard() {
                 className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isDark ? 'bg-white/8 hover:bg-white/15' : 'bg-slate-100 hover:bg-slate-200'}`}
                 aria-label="Refresh balances"
               >
-                <RefreshCw size={13} className={`${refreshing ? 'animate-spin' : ''} text-arc-light`} />
+                <RefreshCw size={13} className={`${refreshing ? 'animate-spin' : ''} text-arc-violet`} />
               </motion.button>
             )}
           </div>
@@ -326,7 +326,7 @@ export function UnifiedBalanceCard() {
           {balances.map((b) => (
             <div key={b.chainId} className={`rounded-xl p-3 flex items-center justify-between ${isDark ? 'bg-white/4' : 'bg-slate-50'}`}>
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${b.chainId === 5042002 ? 'bg-arc-light' : b.chainId === 84532 ? 'bg-arc-light' : b.chainId === 421614 ? 'bg-arc-light' : 'bg-slate-400'}`} />
+                <div className={`w-2 h-2 rounded-full ${b.chainId === 5042002 ? 'bg-arc-violet' : b.chainId === 84532 ? 'bg-arc-violet' : b.chainId === 421614 ? 'bg-arc-violet' : 'bg-slate-400'}`} />
                 <span className={`text-xs font-medium ${heading}`}>{CHAIN_NAMES[b.chainId]}</span>
               </div>
               <div className="text-right">
@@ -368,7 +368,7 @@ export function UnifiedBalanceCard() {
         {/* Info */}
         <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-violet/8 border border-arc-violet/15' : 'bg-white/5 border border-white/10'}`}>
           <Info size={13} className="text-arc-violet mt-0.5 flex-shrink-0" />
-          <span className={isDark ? 'text-arc-light' : 'text-arc-violet'}>
+          <span className={isDark ? 'text-arc-violet' : 'text-arc-violet'}>
             Deposit USDC from any chain into Gateway to enable instant crosschain transfers (&lt;500ms).
           </span>
         </div>

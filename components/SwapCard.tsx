@@ -185,7 +185,7 @@ export function SwapCard() {
         aria-label={`Select token, currently ${selected.symbol}`}
         aria-expanded={show}
         aria-haspopup="listbox"
-        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
           isDark
             ? 'bg-white/8 hover:bg-white/12 text-white border border-white/10'
             : 'bg-white/80 hover:bg-white text-slate-800 border border-white/90 shadow-sm'
@@ -209,7 +209,7 @@ export function SwapCard() {
                 onClick={() => { onSelect(token); onToggle() }}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
                   isDark ? 'hover:bg-white/8 text-slate-200' : 'hover:bg-white/5/80 text-slate-700'
-                } ${selected.symbol === token.symbol ? isDark ? 'bg-white/8 text-arc-light' : 'bg-white/5 text-arc-light' : ''}`}
+                } ${selected.symbol === token.symbol ? isDark ? 'bg-white/8 text-arc-violet' : 'bg-white/5 text-arc-violet' : ''}`}
               >
                 <TokenIcon symbol={token.symbol} size={22} />
                 <div className="flex flex-col items-start">
@@ -231,14 +231,14 @@ export function SwapCard() {
       transition={{ duration: 0.4 }}
       className="w-full mx-auto"
     >
-      <div className={`rounded-3xl p-5 ${glassCard}`}>
+      <div className={`rounded-3xl p-5 ${glassCard} hover-glow`}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className={`text-base font-bold ${heading}`}>Swap</h2>
           <div className="flex items-center gap-2">
             <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-              isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/5 text-arc-light border border-white/8'
+              isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/5 text-arc-violet border border-white/8'
             }`}>0.3% fee</span>
             <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-white/15 text-white border border-white/20 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-white inline-block animate-pulse" aria-hidden="true" />
@@ -254,7 +254,7 @@ export function SwapCard() {
             {address && (
               <button
                 onClick={() => setFromAmount(balance)}
-                className="text-xs text-arc-light hover:text-arc-light font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light rounded"
+                className="text-xs text-arc-violet hover:text-arc-violet font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet rounded"
                 aria-label={`Set max: ${balance} ${fromToken.symbol}`}
               >
                 Balance: {balance}
@@ -287,10 +287,10 @@ export function SwapCard() {
             whileTap={{ scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 400 }}
             aria-label="Swap token direction"
-            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
+            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
               isDark
-                ? 'bg-white/8 border border-white/10 hover:bg-white/15 text-arc-light'
-                : 'bg-white/90 border border-white/90 shadow-sm hover:bg-white text-arc-light'
+                ? 'bg-white/8 border border-white/10 hover:bg-white/15 text-arc-violet'
+                : 'bg-white/90 border border-white/90 shadow-sm hover:bg-white text-arc-violet'
             }`}
           >
             <ArrowUpDown size={15} aria-hidden="true" />
@@ -342,7 +342,7 @@ export function SwapCard() {
                 <span className="flex items-center gap-1">
                   <TrendingDown size={11} aria-hidden="true" /> Price impact
                 </span>
-                <span className={parseFloat(priceImpact) > 1 ? 'text-arc-light' : 'text-white'}>
+                <span className={parseFloat(priceImpact) > 1 ? 'text-arc-violet' : 'text-white'}>
                   {priceImpact}%
                 </span>
               </div>
@@ -351,7 +351,7 @@ export function SwapCard() {
               <span>Slippage tolerance</span><span>0.5%</span>
             </div>
             <div className={`border-t pt-2 flex justify-between font-semibold ${
-              isDark ? 'border-white/8 text-slate-200' : 'border-arc-light/60 text-slate-700'
+              isDark ? 'border-white/8 text-slate-200' : 'border-arc-violet/60 text-slate-700'
             }`}>
               <span>You receive</span>
               <span>{toAmount} {toToken.symbol}</span>
@@ -365,11 +365,11 @@ export function SwapCard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className={`flex items-center gap-2 rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-arc-light/10 border border-arc-light/20' : 'bg-white/5 border border-arc-light'
+              isDark ? 'bg-arc-violet/10 border border-arc-violet/20' : 'bg-white/5 border border-arc-violet'
             }`}
           >
-            <Loader2 size={14} className="text-arc-light animate-spin" aria-hidden="true" />
-            <span className="text-xs text-arc-light font-medium">{stepLabels[step]}</span>
+            <Loader2 size={14} className="text-arc-violet animate-spin" aria-hidden="true" />
+            <span className="text-xs text-arc-violet font-medium">{stepLabels[step]}</span>
           </motion.div>
         )}
 
@@ -414,7 +414,7 @@ export function SwapCard() {
           disabled={loading || (!fromAmount && authenticated)}
           whileHover={authenticated && fromAmount ? { scale: 1.01 } : {}}
           whileTap={authenticated && fromAmount ? { scale: 0.99 } : {}}
-          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light focus-visible:ring-offset-2 ${
+          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet focus-visible:ring-offset-2 ${
             !authenticated
               ? 'glass-btn-primary text-white'
               : !fromAmount

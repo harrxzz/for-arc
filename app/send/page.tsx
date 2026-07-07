@@ -6,7 +6,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { SendCard } from '@/components/SendCard'
 import { useTheme } from '@/components/ThemeProvider'
-import { Send, Zap, ShieldCheck } from 'lucide-react'
+import { Send, Zap, ShieldCheck, Sparkles } from 'lucide-react'
 
 export default function SendPage() {
   const { theme } = useTheme()
@@ -16,30 +16,37 @@ export default function SendPage() {
   const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative grain-overlay ${isDark ? 'bg-[#000000]' : 'bg-[#000000]'}`}>
       <AnimatedBg />
       <Header />
 
-      <main id="main-content" className="relative z-10 pt-24 pb-16 px-4">
-        <div className="max-w-2xl mx-auto text-center mb-8">
+      <main id="main-content" className="relative z-10 pt-28 pb-16 px-4 overflow-hidden">
+        <div className="mesh-gradient" aria-hidden="true" />
+        <div className="max-w-3xl mx-auto text-center mb-10 relative z-10">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 badge-live glow-violet">
+            <Send size={13} className="text-arc-violet" />
+            <span className="text-xs text-arc-violet font-semibold uppercase tracking-wide">Instant transfers</span>
+            <Sparkles size={12} className="text-arc-violet" />
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`text-3xl sm:text-4xl font-bold mb-3 ${heading}`}
+            className={`text-4xl sm:text-6xl font-black mb-4 leading-tight tracking-tight ${heading}`}
+            style={{ letterSpacing: '-0.035em' }}
           >
-            Send on <span className="text-arc-light">Arc Network</span>
+            Send on <span className="gradient-text">Arc Network</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className={`text-sm ${muted}`}
+            className={`text-sm sm:text-base ${muted}`}
           >
             Send USDC or EURC to any wallet on Arc — instant, sub-second finality.
           </motion.p>
         </div>
 
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start relative z-10">
           <SendCard />
 
           <motion.div
@@ -48,7 +55,7 @@ export default function SendPage() {
             transition={{ delay: 0.2 }}
             className="space-y-4"
           >
-            <div className={`rounded-2xl p-5 ${card}`}>
+            <div className="rounded-2xl p-5 glass-violet hover-glow">
               <h3 className={`text-sm font-bold mb-4 ${heading}`}>Why send on Arc?</h3>
               <div className="space-y-4">
                 {[
@@ -58,9 +65,9 @@ export default function SendPage() {
                 ].map(({ Icon, title, desc }) => (
                   <div key={title} className="flex items-start gap-3">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      isDark ? 'bg-arc-light/15' : 'bg-white/5'
+                      isDark ? 'bg-arc-violet/15' : 'bg-white/5'
                     }`}>
-                      <Icon size={16} className="text-arc-light" aria-hidden="true" />
+                      <Icon size={16} className="text-arc-violet" aria-hidden="true" />
                     </div>
                     <div>
                       <div className={`text-xs font-semibold ${heading}`}>{title}</div>
@@ -71,7 +78,7 @@ export default function SendPage() {
               </div>
             </div>
 
-            <div className={`rounded-2xl p-4 ${card}`}>
+            <div className={`rounded-2xl p-4 hover-glow ${card}`}>
               <div className={`text-xs font-semibold mb-2 ${heading}`}>Supported tokens</div>
               <div className="flex gap-2">
                 {['USDC', 'EURC'].map(sym => (

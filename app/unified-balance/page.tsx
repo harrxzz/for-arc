@@ -17,40 +17,42 @@ export default function UnifiedBalancePage() {
   const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative grain-overlay ${isDark ? 'bg-[#000000]' : 'bg-[#000000]'}`}>
       <AnimatedBg />
       <Header />
 
-      <main id="main-content" className="relative z-10 pt-24 pb-16 px-4">
-        <div className="max-w-2xl mx-auto text-center mb-8">
+      <main id="main-content" className="relative z-10 pt-28 pb-16 px-4 overflow-hidden">
+        <div className="mesh-gradient" aria-hidden="true" />
+        <div className="max-w-3xl mx-auto text-center mb-10 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-arc-violet/10 border border-arc-violet/20 rounded-full mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 badge-live glow-violet"
           >
             <Globe size={13} className="text-arc-violet" />
-            <span className="text-sm text-arc-violet font-medium">Circle Gateway</span>
+            <span className="text-xs text-arc-violet font-semibold uppercase tracking-wide">Circle Gateway</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className={`text-3xl sm:text-4xl font-bold mb-3 ${heading}`}
+            className={`text-4xl sm:text-6xl font-black mb-4 leading-tight tracking-tight ${heading}`}
+            style={{ letterSpacing: '-0.035em' }}
           >
-            Unified Balance
+            Unified <span className="gradient-text">Balance</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className={`text-sm ${muted}`}
+            className={`text-sm sm:text-base ${muted}`}
           >
             Deposit once, spend anywhere. Instant cross-chain USDC transfers in &lt;500ms.
           </motion.p>
         </div>
 
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start relative z-10">
           <UnifiedBalanceCard />
 
           <motion.div
@@ -63,17 +65,17 @@ export default function UnifiedBalancePage() {
             <CrossChainSpendCard />
 
             {/* Supported chains */}
-            <div className={`rounded-2xl p-5 ${card}`}>
+            <div className="rounded-2xl p-5 glass-violet hover-glow">
               <h3 className={`text-sm font-bold mb-3 flex items-center gap-2 ${heading}`}>
                 <Zap size={13} className="text-arc-violet" />
                 Supported chains
               </h3>
               <div className="space-y-2">
                 {[
-                  { name: 'Arc Testnet', domain: 26, color: 'bg-arc-light' },
+                  { name: 'Arc Testnet', domain: 26, color: 'bg-arc-violet' },
                   { name: 'Ethereum Sepolia', domain: 0, color: 'bg-slate-400' },
-                  { name: 'Base Sepolia', domain: 6, color: 'bg-arc-light' },
-                  { name: 'Arbitrum Sepolia', domain: 3, color: 'bg-arc-light' },
+                  { name: 'Base Sepolia', domain: 6, color: 'bg-arc-violet' },
+                  { name: 'Arbitrum Sepolia', domain: 3, color: 'bg-arc-violet' },
                 ].map(({ name, domain, color }) => (
                   <div key={domain} className={`flex items-center justify-between px-3 py-2 rounded-xl ${isDark ? 'bg-white/4' : 'bg-slate-50'}`}>
                     <div className="flex items-center gap-2">
@@ -87,7 +89,7 @@ export default function UnifiedBalancePage() {
             </div>
 
             {/* Gateway info */}
-            <div className={`rounded-2xl p-4 ${card}`}>
+            <div className={`rounded-2xl p-4 hover-glow ${card}`}>
               <p className={`text-[11px] leading-relaxed ${muted}`}>
                 Powered by{' '}
                 <a

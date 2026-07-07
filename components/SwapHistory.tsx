@@ -143,7 +143,7 @@ export function SwapHistory() {
           <button
             onClick={fetchHistory}
             aria-label="Refresh swap history"
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
               isDark ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-white/5 text-slate-500'
             }`}
           >
@@ -155,7 +155,7 @@ export function SwapHistory() {
         <div className="divide-y" style={{ borderColor: 'transparent' }}>
           {loading ? (
             <div className="flex items-center justify-center gap-2 py-8">
-              <Loader2 size={16} className="text-arc-light animate-spin" aria-hidden="true" />
+              <Loader2 size={16} className="text-arc-violet animate-spin" aria-hidden="true" />
               <span className={`text-xs ${muted}`}>Loading...</span>
             </div>
           ) : error ? (
@@ -183,7 +183,7 @@ export function SwapHistory() {
                   {/* Token icons */}
                   <div className="flex items-center flex-shrink-0">
                     <TokenIcon symbol={tx.tokenIn} size={20} />
-                    <ArrowRight size={10} className="text-arc-light mx-1" aria-hidden="true" />
+                    <ArrowRight size={10} className="text-arc-violet mx-1" aria-hidden="true" />
                     <TokenIcon symbol={tx.tokenOut} size={20} />
                   </div>
 
@@ -208,7 +208,7 @@ export function SwapHistory() {
                     }`}>
                       {tx.status === 'ok' ? 'Success' : 'Failed'}
                     </span>
-                    <ExternalLink size={11} className={`${muted} group-hover:text-arc-light transition-colors`} aria-hidden="true" />
+                    <ExternalLink size={11} className={`${muted} group-hover:text-arc-violet transition-colors`} aria-hidden="true" />
                   </div>
                 </motion.a>
               ))}

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Clock, ShieldCheck, Layers } from 'lucide-react'
+import { Clock, ShieldCheck, Layers, Sparkles, ArrowLeftRight } from 'lucide-react'
 import { AnimatedBg } from '@/components/AnimatedBg'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -17,34 +17,40 @@ export default function BridgePage() {
   const card = isDark ? 'glass-dark' : 'glass-light'
 
   return (
-    <div className={`min-h-screen relative ${isDark ? 'bg-[#000000]' : 'bg-white'}`}>
+    <div className={`min-h-screen relative grain-overlay ${isDark ? 'bg-[#000000]' : 'bg-[#000000]'}`}>
       <AnimatedBg />
       <Header />
 
-      <main id="main-content" className="relative z-10 pt-24 pb-16 px-4">
-        {/* Compact hero */}
-        <div className="max-w-2xl mx-auto text-center mb-8">
+      <main id="main-content" className="relative z-10 pt-28 pb-16 px-4 overflow-hidden">
+        <div className="mesh-gradient" aria-hidden="true" />
+        <div className="max-w-3xl mx-auto text-center mb-10 relative z-10">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 badge-live glow-violet">
+            <ArrowLeftRight size={13} className="text-arc-violet" />
+            <span className="text-xs text-arc-violet font-semibold uppercase tracking-wide">Circle CCTP</span>
+            <Sparkles size={12} className="text-arc-violet" />
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className={`text-3xl sm:text-4xl font-bold mb-3 leading-tight ${heading}`}
+            className={`text-4xl sm:text-6xl font-black mb-4 leading-tight tracking-tight ${heading}`}
+            style={{ letterSpacing: '-0.035em' }}
           >
             Bridge USDC to{' '}
-            <span className="text-arc-light">Arc Network</span>
+            <span className="gradient-text">Arc Network</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className={`text-sm ${muted}`}
+            className={`text-sm sm:text-base ${muted}`}
           >
             Move USDC from Ethereum, Base, or Arbitrum to Arc in ~20 seconds via Circle CCTP.
           </motion.p>
         </div>
 
         {/* 2-column layout */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-start relative z-10">
           <div>
             <BridgeCard />
             <div className="mt-6">
@@ -60,7 +66,7 @@ export default function BridgePage() {
             className="space-y-4"
           >
             {/* How it works */}
-            <div className={`border rounded-2xl p-5 transition-colors ${card}`}>
+            <div className="rounded-2xl p-5 glass-violet hover-glow">
               <h3 className={`text-sm font-bold mb-4 ${heading}`}>How it works</h3>
               <div className="space-y-3">
                 {[
@@ -73,7 +79,7 @@ export default function BridgePage() {
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                       item.step === '✓'
                         ? 'bg-white/15 text-white'
-                        : 'bg-arc-light/15 text-arc-light'
+                        : 'bg-arc-violet/15 text-arc-violet'
                     }`}>
                       {item.step}
                     </div>
@@ -93,8 +99,8 @@ export default function BridgePage() {
                 { Icon: Clock, title: '~20 seconds', desc: 'Fast finality' },
                 { Icon: ShieldCheck, title: 'Native USDC', desc: 'Not wrapped' },
               ].map(({ Icon, title, desc }) => (
-                <div key={title} className={`rounded-xl p-3 text-center border transition-all ${card}`}>
-                  <Icon size={18} className="text-arc-light mx-auto mb-1.5" aria-hidden="true" />
+                <div key={title} className={`rounded-xl p-3 text-center transition-all hover-glow ${card}`}>
+                  <Icon size={18} className="text-arc-violet mx-auto mb-1.5" aria-hidden="true" />
                   <div className={`text-xs font-semibold mb-0.5 ${heading}`}>{title}</div>
                   <div className={`text-[10px] ${muted}`}>{desc}</div>
                 </div>
@@ -102,9 +108,9 @@ export default function BridgePage() {
             </div>
 
             {/* CCTP badge */}
-            <div className={`border rounded-xl p-4 flex items-center gap-3 ${card}`}>
-              <div className="w-8 h-8 rounded-lg bg-arc-light/15 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck size={16} className="text-arc-light" aria-hidden="true" />
+            <div className="rounded-xl p-4 flex items-center gap-3 glass-violet hover-glow">
+              <div className="w-8 h-8 rounded-lg bg-arc-violet/15 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck size={16} className="text-arc-violet" aria-hidden="true" />
               </div>
               <div>
                 <div className={`text-xs font-semibold ${heading}`}>Powered by Circle CCTP</div>

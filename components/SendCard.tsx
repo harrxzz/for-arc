@@ -77,7 +77,7 @@ export function SendCard() {
       transition={{ duration: 0.4 }}
       className="w-full mx-auto"
     >
-      <div className={`rounded-3xl p-5 ${glassCard}`}>
+      <div className={`rounded-3xl p-5 ${glassCard} hover-glow`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className={`text-base font-bold ${heading}`}>Send</h2>
@@ -95,7 +95,7 @@ export function SendCard() {
               <button
                 key={t.symbol}
                 onClick={() => setToken(t.symbol)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
                   token === t.symbol
                     ? 'glass-btn-primary text-white'
                     : isDark
@@ -194,7 +194,7 @@ export function SendCard() {
           disabled={loading}
           whileHover={authenticated && isValidAddress && isValidAmount ? { scale: 1.01 } : {}}
           whileTap={authenticated && isValidAddress && isValidAmount ? { scale: 0.99 } : {}}
-          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-light focus-visible:ring-offset-2 flex items-center justify-center gap-2 ${
+          className={`w-full py-3.5 rounded-2xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet focus-visible:ring-offset-2 flex items-center justify-center gap-2 ${
             !authenticated
               ? 'glass-btn-primary text-white'
               : !isValidAddress || !isValidAmount
