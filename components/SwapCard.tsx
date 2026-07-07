@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { createPublicClient, http, formatUnits, parseUnits } from 'viem'
-import { ArrowUpDown, ChevronDown, Loader2, CheckCircle, AlertCircle, TrendingDown } from 'lucide-react'
+import { ArrowUpDown, ChevronDown, Loader2, CheckCircle, AlertCircle, TrendingDown, ShieldCheck, Sparkles } from 'lucide-react'
 import { arcTestnet, USDC_ADDRESS_ARC, FEE_RECIPIENT, SWAP_FEE_BPS } from '@/config/chains'
 import { useTheme } from '@/components/ThemeProvider'
 import { TokenIcon } from '@/components/TokenIcon'
@@ -111,6 +111,9 @@ export function SwapCard() {
   }, [fromAmount, fromToken, toToken, fetchQuote])
 
   const feeAmount = fromAmount ? ((parseFloat(fromAmount) * SWAP_FEE_BPS) / 10000).toFixed(6) : '0'
+  const rate = fromAmount && toAmount && parseFloat(fromAmount) > 0
+    ? (parseFloat(toAmount) / parseFloat(fromAmount)).toFixed(6)
+    : null
 
   const handleSwapTokens = () => {
     setFromToken(toToken); setToToken(fromToken)
@@ -185,15 +188,15 @@ export function SwapCard() {
         aria-label={`Select token, currently ${selected.symbol}`}
         aria-expanded={show}
         aria-haspopup="listbox"
-        className={`flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
+        className={`group flex items-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
           isDark
-            ? 'bg-white/8 hover:bg-white/12 text-white border border-white/10'
+            ? 'bg-white/8 hover:bg-white/12 text-white border border-white/10 hover:border-arc-violet/30'
             : 'bg-white/80 hover:bg-white text-slate-800 border border-white/90 shadow-sm'
         }`}
       >
         <TokenIcon symbol={selected.symbol} size={20} />
         <span>{selected.symbol}</span>
-        <ChevronDown size={13} className={muted} />
+        <ChevronDown size={13} className={`${muted} transition-transform group-hover:rotate-180`} />
       </button>
       <AnimatePresence>
         {show && (
@@ -231,24 +234,34 @@ export function SwapCard() {
       transition={{ duration: 0.4 }}
       className="w-full mx-auto"
     >
-      <div className={`rounded-3xl p-5 ${glassCard} hover-glow`}>
+      <div className={`tx-card-shell rounded-3xl p-5 ${isDark ? 'glass-violet' : glassCard} hover-glow`}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className={`text-base font-bold ${heading}`}>Swap</h2>
+          <div>
+            <h2 className={`text-base font-bold ${heading}`}>Swap</h2>
+            <p className={`text-[11px] mt-0.5 ${muted}`}>Instant stablecoin routing on Arc</p>
+          </div>
           <div className="flex items-center gap-2">
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-              isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/5 text-arc-violet border border-white/8'
-            }`}>0.3% fee</span>
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-white/15 text-white border border-white/20 flex items-center gap-1">
+            <span className="tx-pill text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1"><ShieldCheck size={11} /> 0.3% fee</span>
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-white/10 text-white border border-white/15 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-white inline-block animate-pulse" aria-hidden="true" />
               XyloNet
             </span>
           </div>
         </div>
 
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[['Route', `${fromToken.symbol} → ${toToken.symbol}`], ['Slippage', '0.5%'], ['Speed', '<30s']].map(([label, value]) => (
+            <div key={label} className="tx-metric">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
+              <div className="mt-1 text-xs font-semibold text-white truncate">{value}</div>
+            </div>
+          ))}
+        </div>
+
         {/* From */}
-        <div className={`rounded-2xl p-4 mb-2 ${glassInput}`}>
+        <div className={`rounded-2xl p-4 mb-2 tx-input-panel ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <label htmlFor="from-amount" className={`text-xs font-medium ${muted}`}>You pay</label>
             {address && (
@@ -298,12 +311,12 @@ export function SwapCard() {
         </div>
 
         {/* To */}
-        <div className={`rounded-2xl p-4 mb-4 ${glassInput}`}>
+        <div className={`rounded-2xl p-4 mb-4 tx-input-panel ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <label htmlFor="to-amount" className={`text-xs font-medium ${muted}`}>You receive</label>
             {quoteLoading && (
-              <span className={`text-[10px] animate-pulse ${muted}`} aria-live="polite">
-                Fetching quote...
+              <span className="text-[10px] animate-pulse text-arc-violet flex items-center gap-1" aria-live="polite">
+                <Sparkles size={10} /> Fetching quote...
               </span>
             )}
           </div>
@@ -329,10 +342,18 @@ export function SwapCard() {
             id="swap-fee-info"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className={`rounded-2xl p-3.5 mb-4 space-y-2 text-xs ${
+            className={`rounded-2xl p-3.5 mb-4 space-y-2 text-xs backdrop-blur-xl ${
               isDark ? 'bg-white/4 border border-white/6' : 'bg-white/5/60 border border-white/8/80'
             }`}
           >
+            <div className={`flex justify-between ${muted}`}>
+              <span>Route</span><span className="text-slate-200">{fromToken.symbol} → XyloNet → {toToken.symbol}</span>
+            </div>
+            {rate && (
+              <div className={`flex justify-between ${muted}`}>
+                <span>Rate</span><span className="text-slate-200">1 {fromToken.symbol} ≈ {rate} {toToken.symbol}</span>
+              </div>
+            )}
             <div className={`flex justify-between ${muted}`}>
               <span>Protocol fee (0.3%)</span>
               <span>{feeAmount} {fromToken.symbol}</span>
@@ -391,9 +412,7 @@ export function SwapCard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
-            }`}
+            className="tx-success rounded-2xl p-3 mb-4"
           >
             <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-white'}`}>
               <CheckCircle size={13} aria-hidden="true" /> Swap successful!

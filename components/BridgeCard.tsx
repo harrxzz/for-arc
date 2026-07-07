@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { parseUnits } from 'viem'
-import { ChevronDown, ArrowDown, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { ChevronDown, ArrowDown, Loader2, CheckCircle, AlertCircle, ShieldCheck, Clock3 } from 'lucide-react'
 import { arcTestnet, BRIDGE_SOURCE_CHAINS, FEE_RECIPIENT, BRIDGE_FEE_USDC } from '@/config/chains'
 import { useTheme } from '@/components/ThemeProvider'
 import { TokenIcon } from '@/components/TokenIcon'
@@ -116,20 +116,28 @@ export function BridgeCard() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full mx-auto">
-      <div className={`rounded-3xl p-5 ${glassCard} hover-glow`}>
+      <div className={`tx-card-shell rounded-3xl p-5 ${isDark ? 'glass-violet' : glassCard} hover-glow`}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className={`text-base font-bold ${heading}`}>Bridge</h2>
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-            isDark ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/5 text-arc-violet border border-white/8'
-          }`}>
-            Fee: $0.50 USDC
-          </span>
+          <div>
+            <h2 className={`text-base font-bold ${heading}`}>Bridge</h2>
+            <p className={`text-[11px] mt-0.5 ${muted}`}>Move USDC into Arc with CCTP rails</p>
+          </div>
+          <span className="tx-pill text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1"><ShieldCheck size={11} /> $0.50 fee</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[['Source', sourceChain.name], ['Rails', 'Circle CCTP'], ['ETA', '~20s']].map(([label, value]) => (
+            <div key={label} className="tx-metric">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
+              <div className="mt-1 text-xs font-semibold text-white truncate">{value}</div>
+            </div>
+          ))}
         </div>
 
         {/* From chain */}
-        <div className={`rounded-2xl p-4 mb-2 ${glassInput}`}>
+        <div className={`rounded-2xl p-4 mb-2 tx-input-panel ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <span className={`text-xs font-medium ${muted}`}>From</span>
             <div className="relative">
@@ -195,7 +203,7 @@ export function BridgeCard() {
 
         {/* Arrow */}
         <div className="flex justify-center my-2">
-          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center pulse-glow ${
             isDark
               ? 'bg-white/8 border border-white/10 text-arc-violet'
               : 'bg-white/90 border border-white/90 shadow-sm text-arc-violet'
@@ -205,7 +213,7 @@ export function BridgeCard() {
         </div>
 
         {/* To chain (Arc) */}
-        <div className={`rounded-2xl p-4 mb-4 ${glassInput}`}>
+        <div className={`rounded-2xl p-4 mb-4 tx-input-panel ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <span className={`text-xs font-medium ${muted}`}>To</span>
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border ${
@@ -235,9 +243,10 @@ export function BridgeCard() {
               isDark ? 'bg-white/4 border border-white/6' : 'bg-white/5/60 border border-white/8/80'
             }`}
           >
+            <div className={`flex justify-between ${muted}`}><span>Route</span><span className="text-slate-200">{sourceChain.name} → Circle CCTP → Arc</span></div>
             <div className={`flex justify-between ${muted}`}><span>Bridge fee</span><span>$0.50 USDC</span></div>
             <div className={`flex justify-between ${muted}`}><span>CCTP (Circle)</span><span className="text-white">Free</span></div>
-            <div className={`flex justify-between ${muted}`}><span>Est. time</span><span>~20 seconds</span></div>
+            <div className={`flex justify-between ${muted}`}><span className="flex items-center gap-1"><Clock3 size={11} /> Est. time</span><span>~20 seconds</span></div>
             <div className={`border-t pt-2 flex justify-between font-semibold ${
               isDark ? 'border-white/8 text-slate-200' : 'border-arc-violet/60 text-slate-700'
             }`}>
@@ -273,9 +282,7 @@ export function BridgeCard() {
         {/* Success */}
         {txHash && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className={`rounded-2xl p-3 mb-4 ${
-              isDark ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10'
-            }`}
+            className="tx-success rounded-2xl p-3 mb-4"
           >
             <p className={`text-xs font-semibold mb-1 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-white'}`}>
               <CheckCircle size={13} aria-hidden="true" /> Bridge initiated!
