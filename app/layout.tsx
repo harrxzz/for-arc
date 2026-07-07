@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'For Arc',
     description: 'Swap & Bridge USDC on Arc Network',
-    url: 'https://forarc.vercel.app',
+    url: 'https://for-arc.vercel.app',
     siteName: 'For Arc',
   },
 }

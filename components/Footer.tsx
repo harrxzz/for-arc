@@ -26,8 +26,8 @@ export function Footer() {
               <rect width="32" height="32" rx="9" fill="url(#grad2)"/>
               <defs>
                 <linearGradient id="grad2" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#3b82f6"/>
-                  <stop offset="100%" stopColor="#1d4ed8"/>
+                  <stop offset="0%" stopColor="#9F72FF"/>
+                  <stop offset="100%" stopColor="#7C4DFF"/>
                 </linearGradient>
               </defs>
               <path d="M6 23 C6 13 26 13 26 23" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
@@ -53,8 +53,8 @@ export function Footer() {
                 target="_blank"
                 className={`text-xs transition-colors ${
                   isDark
-                    ? 'text-slate-500 hover:text-arc-light'
-                    : 'text-slate-400 hover:text-arc-light'
+                    ? 'text-slate-500 hover:text-arc-violet'
+                    : 'text-slate-400 hover:text-arc-violet'
                 }`}
               >
                 {link.label}

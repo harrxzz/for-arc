@@ -204,24 +204,23 @@ export function AnimatedBg() {
       })
     }
 
-    // ── Nebula orbs (monochrome) ──
-    const orbColors = isDark
-      ? [0x111111, 0x1a1a1a, 0x0d0d0d, 0x222222]
-      : [0x1a1a1a, 0x222222, 0x111111, 0x2a2a2a]
+    // ── Ambient colored orbs ──
+    const orbDefs = [
+      { color: 0x111111, size: 12, x: -25, y: 12, z: -40, dark: 0x111111, light: 0x1a1a1a },
+      { color: 0x9F72FF, size: 14, x: 28, y: -8, z: -45, dark: 0x9F72FF, light: 0x9F72FF },
+      { color: 0x0d0d0d, size: 18, x: -15, y: -18, z: -50, dark: 0x0d0d0d, light: 0x111111 },
+      { color: 0xACC6E9, size: 16, x: 22, y: 10, z: -55, dark: 0xACC6E9, light: 0xACC6E9 },
+    ]
 
-    orbColors.forEach((color, i) => {
-      const geo = new THREE.SphereGeometry(12 + i * 4, 16, 16)
+    orbDefs.forEach(({ size, x, y, z, dark, light }, i) => {
+      const geo = new THREE.SphereGeometry(size, 16, 16)
       const mat = new THREE.MeshBasicMaterial({
-        color,
+        color: isDark ? dark : light,
         transparent: true,
-        opacity: isDark ? 0.18 : 0.22,
+        opacity: i === 1 ? 0.06 : i === 3 ? 0.05 : 0.18,
       })
       const mesh = new THREE.Mesh(geo, mat)
-      mesh.position.set(
-        [-25, 25, -15, 20][i],
-        [12, -10, -18, 8][i],
-        [-40, -45, -50, -55][i]
-      )
+      mesh.position.set(x, y, z)
       scene.add(mesh)
     })
 
@@ -236,17 +235,20 @@ export function AnimatedBg() {
       starPos[i * 3 + 1] = (Math.random() - 0.5) * 280
       starPos[i * 3 + 2] = (Math.random() - 0.5) * 280
 
-      // Star color variety: white, grey-white, silver
+      // Star color variety: white, grey-white, silver, violet
       const r = Math.random()
-      if (r < 0.6) {
+      if (r < 0.5) {
         // pure white
         starColors[i * 3] = 1; starColors[i * 3 + 1] = 1; starColors[i * 3 + 2] = 1
-      } else if (r < 0.85) {
+      } else if (r < 0.75) {
         // grey-white
         starColors[i * 3] = 0.8; starColors[i * 3 + 1] = 0.8; starColors[i * 3 + 2] = 0.8
+      } else if (r < 0.9) {
+        // violet tint
+        starColors[i * 3] = 0.8; starColors[i * 3 + 1] = 0.6; starColors[i * 3 + 2] = 1.0
       } else {
-        // silver/dim
-        starColors[i * 3] = 0.6; starColors[i * 3 + 1] = 0.6; starColors[i * 3 + 2] = 0.6
+        // light-blue tint
+        starColors[i * 3] = 0.6; starColors[i * 3 + 1] = 0.8; starColors[i * 3 + 2] = 1.0
       }
     }
 
