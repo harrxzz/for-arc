@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const FREEMODEL_KEY = process.env.FREEMODEL_API_KEY!
+const AI_KEY = process.env.FREEMODEL_API_KEY || process.env.MISTRAL_API_KEY || ''
 
 const SYSTEM_PROMPT = `You are Arc Agent, an AI that helps users execute onchain transactions on Arc Network (a stablecoin-native L1 blockchain by Circle).
 
@@ -40,26 +40,34 @@ export async function POST(req: NextRequest) {
       { role: 'user', content: message }
     ]
 
-    const res = await fetch('https://api.freemodel.dev/v1/chat/completions', {
+    // Use Mistral (reliable, free) — fallback to FreeModel if key set
+    const useMistral = !!process.env.MISTRAL_API_KEY
+    const apiUrl = useMistral
+      ? 'https://api.mistral.ai/v1/chat/completions'
+      : 'https://api.freemodel.dev/v1/chat/completions'
+    const model = useMistral ? 'mistral-small-latest' : 'claude-haiku-4-5-20251001'
+
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${FREEMODEL_KEY}`
+        'Authorization': `Bearer ${AI_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           ...messages
         ],
         max_tokens: 500,
-        temperature: 0.1
+        temperature: 0.1,
+        response_format: useMistral ? { type: 'json_object' } : undefined,
       })
     })
 
     if (!res.ok) {
       const err = await res.text()
-      console.error('FreeModel error:', err)
+      console.error('AI API error:', err)
       return NextResponse.json({ error: 'AI service unavailable. Please try again.' }, { status: 503 })
     }
 

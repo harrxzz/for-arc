@@ -7,14 +7,25 @@ import { ThemeProvider } from '@/components/ThemeProvider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'For Arc — Swap & Bridge USDC on Arc Network',
-  description: 'The easiest way to swap and bridge USDC on Arc Network. Fast, cheap, and secure.',
+  title: 'For Arc — Swap, Bridge & Send USDC on Arc Network',
+  description: 'The DeFi hub for Arc Network. Swap on XyloNet DEX, bridge USDC via Circle CCTP, send instant transfers, and manage unified balances — all with USDC as gas. No ETH needed.',
+  keywords: ['Arc Network', 'Circle', 'USDC', 'DeFi', 'bridge', 'swap', 'CCTP', 'XyloNet', 'stablecoin', 'gas'],
+  authors: [{ name: 'For Arc' }],
   openGraph: {
-    title: 'For Arc',
-    description: 'Swap & Bridge USDC on Arc Network',
+    title: 'For Arc — DeFi Hub for Arc Network',
+    description: 'Swap, bridge, send, and unify USDC across chains. Powered by Circle — pay gas in USDC, no ETH needed.',
     url: 'https://for-arc.vercel.app',
     siteName: 'For Arc',
+    type: 'website',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'For Arc — DeFi Hub for Arc Network' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'For Arc — DeFi Hub for Arc Network',
+    description: 'Swap, bridge, send, and unify USDC across chains. Powered by Circle.',
+    images: ['/og.png'],
+  },
+  metadataBase: new URL('https://for-arc.vercel.app'),
 }
 
 export default function RootLayout({

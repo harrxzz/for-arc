@@ -350,6 +350,58 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── BUILT ON ARC ── */}
+        <section className="py-16 px-4">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-10"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-live mb-4">
+                <Sparkles size={12} className="text-arc-violet" />
+                <span className="text-[10px] uppercase tracking-widest text-arc-violet font-semibold">Built on Arc</span>
+              </div>
+              <h2 className={`text-2xl sm:text-3xl font-bold mb-2 tracking-tight ${heading}`} style={{ letterSpacing: '-0.02em' }}>
+                Powered by Circle&apos;s stablecoin-native chain
+              </h2>
+              <p className={`text-xs ${muted}`}>Every feature uses real Arc Network infrastructure — no mocks, no placeholders</p>
+            </motion.div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: 'Arc RPC', value: 'rpc.testnet', href: 'https://rpc.testnet.arc.network', status: 'Live' },
+                { label: 'ArcScan', value: 'testnet', href: 'https://testnet.arcscan.app', status: 'Live' },
+                { label: 'XyloNet DEX', value: 'on-chain', href: 'https://testnet.arcscan.app', status: 'Live' },
+                { label: 'Circle CCTP', value: 'v2 API', href: 'https://developers.circle.com/stablecoins', status: 'Live' },
+              ].map(({ label, value, href, status }) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -2 }}
+                  className={`rounded-2xl p-4 transition-all hover-glow ${card} group`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className={`text-[10px] uppercase tracking-widest ${muted} text-arc-violet/70`}>{label}</div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-[9px] text-green-400 font-medium">{status}</span>
+                    </div>
+                  </div>
+                  <div className={`text-sm font-bold ${heading}`}>{value}</div>
+                  <div className="text-[10px] mt-1 text-arc-violet/50 group-hover:text-arc-violet transition-colors">↗ Open</div>
+                </motion.a>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── CTA ── */}
         <section className="py-20 px-4">
           <div className="max-w-2xl mx-auto text-center">

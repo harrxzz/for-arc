@@ -45,7 +45,8 @@ export function Footer() {
               { href: 'https://docs.arc.network', label: 'Docs' },
               { href: 'https://testnet.arcscan.app', label: 'Explorer' },
               { href: 'https://faucet.circle.com', label: 'Faucet' },
-              { href: 'https://community.arc.network', label: 'Community' },
+              { href: 'https://community.arc.io/home/clubs/architects/overview', label: 'Architects' },
+              { href: 'https://discord.gg/arcdao', label: 'Discord' },
             ].map(link => (
               <Link
                 key={link.label}
