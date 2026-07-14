@@ -5,11 +5,12 @@ import { motion, useInView, animate } from 'framer-motion'
 import Link from 'next/link'
 import {
   Coins, Zap, RefreshCw, ArrowLeftRight, ShieldCheck, BarChart2,
-  Wallet, ArrowRightLeft, CheckCircle, ArrowRight, Bot,
-  Box, Fuel, CircleDollarSign, Globe, Send, Sparkles
+  Wallet, ArrowRightLeft, CheckCircle, ArrowRight,
+  Box, Fuel, CircleDollarSign, Globe
 } from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { InteractiveArcOrb } from '@/components/InteractiveArcOrb'
 
 const ARCSCAN = 'https://testnet.arcscan.app'
 const RPC = 'https://rpc.testnet.arc.network'
@@ -68,14 +69,6 @@ const LIVE_STATS_CONFIG = [
   { label: 'Est. Transactions', key: 'totalTxs', Icon: RefreshCw },
   { label: 'ERC-20 Tokens', key: 'totalTokens', Icon: CircleDollarSign, suffix: '+' },
   { label: 'Gas Price', key: 'gasPrice', Icon: Fuel, suffix: ' Gwei' },
-]
-
-const QUICK_ACTIONS = [
-  { href: '/swap', Icon: ArrowRightLeft, label: 'Swap', desc: 'USDC ↔ EURC' },
-  { href: '/bridge', Icon: ArrowLeftRight, label: 'Bridge', desc: 'Cross-chain CCTP' },
-  { href: '/send', Icon: Send, label: 'Send', desc: 'Wallet to wallet' },
-  { href: '/unified-balance', Icon: Globe, label: 'Gateway', desc: 'Unified balance' },
-  { href: '/agent', Icon: Bot, label: 'Agent', desc: 'AI-powered executor' },
 ]
 
 // Animated counter component
@@ -166,59 +159,14 @@ export default function LandingPage() {
               Powered by Circle — pay gas in USDC, no ETH needed.
             </motion.p>
 
-            {/* Balance card mockup — Mercury style */}
+            {/* Interactive 3D Arc object */}
             <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.6 }}
-              className="max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.15, duration: 0.7, ease: 'easeOut' }}
+              className="max-w-3xl mx-auto"
             >
-              <div className="nb-card-elevated rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-                {/* Card glow */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="relative z-10">
-                  {/* Card header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center">
-                        <Wallet size={16} className="text-indigo-400" />
-                      </div>
-                      <span className="text-sm text-white/60 font-medium">For Arc Account</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
-                      <span className="text-[10px] text-white/60 font-medium">Connected</span>
-                    </div>
-                  </div>
-
-                  {/* Balance */}
-                  <div className="mb-6">
-                    <div className="text-xs text-white/40 mb-1 uppercase tracking-wider">Total Balance</div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-display text-4xl sm:text-5xl text-white" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
-                        $0.00
-                      </span>
-                      <span className="text-sm text-white/40">USDC</span>
-                    </div>
-                    <div className="text-xs text-white/30 mt-1">≈ 0.0000 ETH</div>
-                  </div>
-
-                  {/* Quick actions row */}
-                  <div className="grid grid-cols-5 gap-2">
-                    {QUICK_ACTIONS.map(({ href, Icon, label }) => (
-                      <Link key={href} href={href}>
-                        <div className="flex flex-col items-center gap-1.5 py-3 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer">
-                          <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center">
-                            <Icon size={16} className="text-white/70" />
-                          </div>
-                          <span className="text-[10px] text-white/50 font-medium">{label}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <InteractiveArcOrb />
             </motion.div>
 
             {/* CTAs */}
