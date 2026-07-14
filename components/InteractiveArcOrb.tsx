@@ -1,135 +1,152 @@
 'use client'
 
-import { useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { ArrowLeftRight, Bot, Globe, Send, Wallet, Zap } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowLeftRight, Bot, CircleDollarSign, Globe, Send, Wallet, Zap } from 'lucide-react'
 
-const actions = [
-  { Icon: ArrowLeftRight, label: 'Swap', x: -92, y: -58 },
-  { Icon: Globe, label: 'Bridge', x: 88, y: -46 },
-  { Icon: Send, label: 'Send', x: -82, y: 66 },
-  { Icon: Bot, label: 'Agent', x: 92, y: 72 },
+const cards = [
+  {
+    title: 'Swap USDC',
+    subtitle: 'XyloNet DEX',
+    icon: ArrowLeftRight,
+    accent: 'from-indigo-500/25 to-blue-500/10',
+    wide: true,
+    body: ['USDC → EURC', 'Quote: 0.9192', 'Gas: USDC'],
+  },
+  {
+    title: 'Bridge',
+    subtitle: 'Circle CCTP',
+    icon: ArrowLeftRight,
+    accent: 'from-cyan-500/20 to-indigo-500/10',
+    body: ['Base → Arc', 'ETA: ~20s', 'Native USDC'],
+  },
+  {
+    title: 'Arc Balance',
+    subtitle: 'Unified USDC',
+    icon: Wallet,
+    accent: 'from-white/12 to-indigo-500/10',
+    tall: true,
+    body: ['$0.00', 'USDC as gas', 'No ETH needed'],
+  },
+  {
+    title: 'AI Agent',
+    subtitle: 'Intent parser',
+    icon: Bot,
+    accent: 'from-violet-500/20 to-indigo-500/10',
+    wide: true,
+    body: ['“swap 10 USDC”', 'JSON intent', 'Ready'],
+  },
+  {
+    title: 'Send',
+    subtitle: 'Sub-second',
+    icon: Send,
+    accent: 'from-emerald-500/18 to-indigo-500/10',
+    body: ['0x…A19B9', 'Instant', 'Finalized'],
+  },
+  {
+    title: 'Gateway',
+    subtitle: 'Circle tooling',
+    icon: Globe,
+    accent: 'from-sky-500/20 to-indigo-500/10',
+    tall: true,
+    body: ['ETH', 'Base', 'Arbitrum', 'Arc'],
+  },
 ]
 
-export function InteractiveArcOrb() {
-  const ref = useRef<HTMLDivElement>(null)
-  const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 90, damping: 18, mass: 0.4 })
-  const sy = useSpring(my, { stiffness: 90, damping: 18, mass: 0.4 })
-  const rotateX = useTransform(sy, [-1, 1], [12, -12])
-  const rotateY = useTransform(sx, [-1, 1], [-16, 16])
-  const translateX = useTransform(sx, [-1, 1], [-28, 28])
-  const translateY = useTransform(sy, [-1, 1], [-18, 18])
-
+function PreviewCard({ card, index }: { card: typeof cards[number]; index: number }) {
+  const Icon = card.icon
   return (
-    <div
-      ref={ref}
-      className="relative h-[360px] sm:h-[430px] w-full max-w-[520px] mx-auto perspective-[1200px] select-none"
-      onPointerMove={(e) => {
-        const rect = ref.current?.getBoundingClientRect()
-        if (!rect) return
-        mx.set(((e.clientX - rect.left) / rect.width - 0.5) * 2)
-        my.set(((e.clientY - rect.top) / rect.height - 0.5) * 2)
-      }}
-      onPointerLeave={() => {
-        mx.set(0)
-        my.set(0)
-      }}
-      aria-label="Interactive 3D Arc Network visualization"
+    <motion.div
+      className={`shrink-0 rounded-[1.6rem] border border-white/10 bg-[#18181b]/90 overflow-hidden backdrop-blur-xl ${
+        card.wide ? 'w-[300px] sm:w-[380px]' : 'w-[230px] sm:w-[280px]'
+      } ${card.tall ? 'h-[250px] sm:h-[305px]' : 'h-[205px] sm:h-[250px]'}`}
+      style={{ transform: `translateZ(${(index % 3) * 18}px)` }}
+      whileHover={{ y: -8, rotateY: -5, scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 220, damping: 22 }}
     >
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center"
-        animate={{ x: [-18, 18, -18], y: [0, -10, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        <motion.div
-          style={{ rotateX, rotateY, x: translateX, y: translateY, transformStyle: 'preserve-3d' }}
-          className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px]"
-        >
-          {/* back glow */}
-          <motion.div
-            className="absolute inset-8 rounded-full bg-indigo-500/20 blur-3xl"
-            animate={{ scale: [1, 1.12, 1], opacity: [0.35, 0.55, 0.35] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ transform: 'translateZ(-60px)' }}
-          />
-
-          {/* orbit rings */}
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="absolute inset-0 rounded-full border border-white/10"
-              style={{
-                transform: `translateZ(${-20 + i * 18}px) rotateX(${62 + i * 12}deg) rotateY(${18 - i * 10}deg)`,
-              }}
-              animate={{ rotateZ: i % 2 ? 360 : -360 }}
-              transition={{ duration: 16 + i * 4, repeat: Infinity, ease: 'linear' }}
-            />
-          ))}
-
-          {/* main card / orb */}
-          <motion.div
-            className="absolute inset-[52px] rounded-[2rem] nb-card-elevated overflow-hidden"
-            style={{ transform: 'translateZ(70px)' }}
-            animate={{ rotateZ: [-1.5, 1.5, -1.5] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(99,102,241,.26),transparent_45%),radial-gradient(circle_at_10%_90%,rgba(165,168,240,.11),transparent_38%)]" />
-            <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center">
-                  <Wallet size={18} className="text-indigo-300" />
-                </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
-                  <span className="text-[10px] text-white/50">Live</span>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">Arc Balance</div>
-                <div className="font-display text-3xl sm:text-4xl text-white" style={{ fontWeight: 600 }}>$0.00</div>
-                <div className="text-xs text-white/35 mt-1">USDC as gas</div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                {['USDC', 'EURC', 'ARC'].map((t) => (
-                  <div key={t} className="rounded-xl bg-white/5 border border-white/8 px-2 py-2 text-center">
-                    <div className="text-[10px] text-white/45">{t}</div>
-                  </div>
-                ))}
-              </div>
+      <div className={`h-full relative bg-gradient-to-br ${card.accent}`}>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(255,255,255,.12),transparent_34%)]" />
+        <div className="relative h-full p-5 flex flex-col justify-between">
+          <div className="flex items-start justify-between">
+            <div className="w-11 h-11 rounded-2xl bg-white/7 border border-white/10 flex items-center justify-center">
+              <Icon size={19} className="text-indigo-200" />
             </div>
-          </motion.div>
+            <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
+              <span className="text-[10px] text-white/45">Live</span>
+            </div>
+          </div>
 
-          {/* center coin */}
-          <motion.div
-            className="absolute left-1/2 top-1/2 w-20 h-20 -ml-10 -mt-10 rounded-full bg-[#09090b] border border-indigo-400/30 flex items-center justify-center"
-            style={{ transform: 'translateZ(120px)' }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
-          >
-            <Zap size={24} className="text-indigo-300" />
-          </motion.div>
+          <div>
+            <div className="font-display text-2xl sm:text-3xl text-white leading-none" style={{ fontWeight: 600, letterSpacing: '-0.03em' }}>
+              {card.title}
+            </div>
+            <div className="text-xs text-white/40 mt-1.5">{card.subtitle}</div>
+          </div>
 
-          {/* floating action chips */}
-          {actions.map(({ Icon, label, x, y }, i) => (
-            <motion.div
-              key={label}
-              className="absolute left-1/2 top-1/2 -ml-12 -mt-5 w-24 rounded-full bg-[#18181b]/90 backdrop-blur-xl border border-white/10 px-3 py-2 flex items-center gap-2"
-              style={{ transform: `translate3d(${x}px, ${y}px, ${110 + i * 8}px)` }}
-              animate={{ y: [y, y - 8, y], x: [x, x + (i % 2 ? 8 : -8), x] }}
-              transition={{ duration: 3.6 + i * 0.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <Icon size={13} className="text-indigo-300" />
-              <span className="text-[11px] text-white/70 font-medium">{label}</span>
-            </motion.div>
-          ))}
+          <div className="grid gap-2">
+            {card.body.map((item, i) => (
+              <div key={item} className="flex items-center justify-between rounded-xl bg-black/18 border border-white/8 px-3 py-2">
+                <span className="text-[11px] text-white/45">{i === 0 ? 'Primary' : i === 1 ? 'Status' : 'Detail'}</span>
+                <span className="text-[11px] text-white/75 font-medium">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function MovingRow({ reverse = false, duration = 28, offset = 0 }: { reverse?: boolean; duration?: number; offset?: number }) {
+  const doubled = [...cards, ...cards]
+  return (
+    <motion.div
+      className="flex gap-4 sm:gap-5 w-max"
+      initial={{ x: reverse ? '-50%' : `${offset}px` }}
+      animate={{ x: reverse ? '0%' : '-50%' }}
+      transition={{ duration, repeat: Infinity, ease: 'linear' }}
+    >
+      {doubled.map((card, i) => (
+        <PreviewCard key={`${card.title}-${i}-${reverse}`} card={card} index={i} />
+      ))}
+    </motion.div>
+  )
+}
+
+export function InteractiveArcOrb() {
+  return (
+    <div className="relative h-[430px] sm:h-[520px] w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[#0b0b0f]">
+      {/* Cinematic background */}
+      <div className="absolute inset-0 nb-grid-bg opacity-60" />
+      <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-500/20 blur-[90px]" />
+      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#0b0b0f] to-transparent z-20 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#0b0b0f] to-transparent z-20 pointer-events-none" />
+
+      {/* 3D stage */}
+      <div className="absolute inset-0 flex items-center perspective-[1200px]">
+        <motion.div
+          className="w-full space-y-5 sm:space-y-6"
+          style={{ transformStyle: 'preserve-3d', rotateX: 8, rotateY: -13, rotateZ: 0.5 }}
+          animate={{ x: [-8, 12, -8], y: [0, -6, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <MovingRow duration={30} offset={0} />
+          <div className="translate-x-[-150px] sm:translate-x-[-220px]">
+            <MovingRow duration={36} offset={-160} />
+          </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      <div className="absolute left-1/2 bottom-7 h-px w-64 -translate-x-1/2 bg-gradient-to-r from-transparent via-indigo-400/25 to-transparent" />
+      {/* Foreground label */}
+      <div className="absolute left-5 bottom-5 z-30 flex items-center gap-2 rounded-full border border-white/10 bg-[#09090b]/80 px-3 py-2 backdrop-blur-xl">
+        <Zap size={13} className="text-indigo-300" />
+        <span className="text-[11px] text-white/55">Interactive Arc financial workspace</span>
+      </div>
+
+      <div className="absolute right-5 bottom-5 z-30 hidden sm:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 backdrop-blur-xl">
+        <CircleDollarSign size={13} className="text-indigo-300" />
+        <span className="text-[11px] text-white/45">USDC native</span>
+      </div>
     </div>
   )
 }
