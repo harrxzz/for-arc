@@ -40,7 +40,7 @@ export function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-xl"
+        className="fixed top-0 left-0 right-0 z-50 border-b border-white/8 bg-[#09090b]/70 backdrop-blur-2xl shadow-[0_18px_70px_rgba(0,0,0,0.28)]"
       >
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
 

@@ -11,6 +11,7 @@ import {
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { InteractiveArcOrb } from '@/components/InteractiveArcOrb'
+import { GrainCanvas } from '@/components/GrainCanvas'
 
 const ARCSCAN = 'https://testnet.arcscan.app'
 const RPC = 'https://rpc.testnet.arc.network'
@@ -109,6 +110,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative grain-overlay bg-[#09090b]">
+      <GrainCanvas />
       {/* Subtle grid bg */}
       <div className="fixed inset-0 nb-grid-bg pointer-events-none" aria-hidden="true" />
 
@@ -116,150 +118,154 @@ export default function LandingPage() {
 
       <main id="main-content" className="relative z-10">
 
-        {/* ── HERO: Neobank balance card ── */}
-        <section className="relative pt-32 pb-16 px-4">
-          {/* Subtle glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] nb-balance-glow pointer-events-none" aria-hidden="true" />
-
-          <div className="max-w-5xl mx-auto relative z-10">
-            {/* Badge */}
+        {/* ── EDITORIAL HERO — scroll-demo structure, Arc community palette ── */}
+        <section className="arc-editorial-hero relative min-h-screen overflow-hidden px-6 sm:px-12 pt-32 pb-20 flex flex-col justify-center">
+          <div className="absolute inset-0 arc-editorial-grid pointer-events-none" aria-hidden="true" />
+          <div className="relative z-10 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center mb-8"
+              className="editorial-eyebrow mb-6"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full nb-badge">
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 pulse-dot" />
-                <span className="text-xs text-indigo-300 font-medium tracking-wide">
-                  Live on Arc Testnet
-                </span>
-              </div>
+              <span className="editorial-dot" />
+              Arc community rails · stablecoin-native DeFi
             </motion.div>
 
-            {/* Headline */}
             <motion.h1
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="font-display text-5xl sm:text-7xl lg:text-8xl text-center mb-6 leading-[1.05] tracking-tight text-white"
-              style={{ fontWeight: 600, letterSpacing: '-0.03em' }}
+              className="font-display editorial-title max-w-7xl"
             >
-              Banking for{' '}
-              <span className="gradient-text">Arc Network</span>
+              The USDC<br />
+              <em>command</em> center<br />
+              for Arc.
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-lg sm:text-xl text-center text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed"
+              className="hero-sub mt-8 max-w-xl"
             >
-              Swap, bridge, send, and unify USDC across chains.
-              <br />
-              Powered by Circle — pay gas in USDC, no ETH needed.
+              Swap on XyloNet, bridge via Circle CCTP, send instantly, and manage unified balances — styled like an editorial scroll experience with Arc's community palette.
             </motion.p>
 
-            {/* Interactive 3D Arc object */}
-            <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.15, duration: 0.7, ease: 'easeOut' }}
-              className="max-w-3xl mx-auto"
-            >
-              <InteractiveArcOrb />
-            </motion.div>
-
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="flex items-center justify-center gap-3 flex-wrap mt-8"
+              transition={{ delay: 0.18 }}
+              className="mt-9 flex items-center gap-3 flex-wrap"
             >
               <Link href="/swap">
-                <button className="nb-btn-primary px-7 py-3.5 text-sm font-medium flex items-center gap-2">
-                  Start Swapping
+                <button className="editorial-btn editorial-btn-light px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] flex items-center gap-2">
+                  Start swapping
                   <ArrowRight size={15} />
                 </button>
               </Link>
               <Link href="/bridge">
-                <button className="nb-btn-secondary px-7 py-3.5 text-sm font-medium flex items-center gap-2">
+                <button className="editorial-btn editorial-btn-ghost px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] flex items-center gap-2">
                   <ArrowLeftRight size={15} />
                   Bridge USDC
                 </button>
               </Link>
             </motion.div>
           </div>
+
+          <div className="scroll-cue"><div className="bar" />Scroll</div>
         </section>
 
-        {/* ── LIVE STATS — number counters ── */}
-        <section className="py-12 px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {LIVE_STATS_CONFIG.map(({ label, key, Icon, suffix }, i) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + i * 0.05 }}
-                  className="nb-card rounded-2xl p-5"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <Icon size={14} className="text-white/30" />
-                    <span className="text-[9px] text-white/30 uppercase tracking-wider">{label}</span>
-                  </div>
-                  <div className="nb-stat text-xl text-white">
-                    {stats ? (
-                      <AnimatedCounter value={stats[key as keyof LiveStats]} suffix={suffix ?? ''} />
-                    ) : (
-                      <span className="shimmer inline-block w-16 h-5 rounded" />
-                    )}
-                  </div>
-                </motion.div>
-              ))}
+        {/* ── MARQUEE WORDMARK ── */}
+        <section className="marquee-wrap" aria-label="For Arc wordmark">
+          <motion.div
+            className="marquee-row"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ repeat: Infinity, duration: 18, ease: 'linear' }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <span key={i} className={i % 2 ? 'outline' : ''}>FOR ARC</span>
+            ))}
+          </motion.div>
+        </section>
+
+        {/* ── LIGHT FEATURE GRID — Arc community off-white ── */}
+        <section className="features-editorial px-6 sm:px-12 py-16 sm:py-28">
+          <div className="features-head">
+            <div>
+              <div className="text-xs uppercase tracking-[0.18em] opacity-60 mb-4">Product system</div>
+              <h2 className="font-display">Kenapa For Arc kerasa native</h2>
             </div>
+            <span>06 core flows</span>
+          </div>
+
+          <div className="editorial-grid-cards">
+            {FEATURES.map(({ Icon, title, desc, badge }, i) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ delay: i * 0.06, duration: 0.65, ease: 'easeOut' }}
+                className="editorial-card"
+              >
+                <div className="flex items-center justify-between mb-7">
+                  <span className="num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="badge">{badge}</span>
+                </div>
+                <Icon size={24} className="mb-7 opacity-70" />
+                <h3 className="font-display">{title}</h3>
+                <p>{desc}</p>
+              </motion.div>
+            ))}
           </div>
         </section>
 
-        {/* ── FEATURES ── */}
-        <section className="py-20 px-4">
-          <div className="max-w-5xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-12"
-            >
-              <div className="text-xs text-indigo-400 font-medium uppercase tracking-wider mb-3">Features</div>
-              <h2 className="font-display text-3xl sm:text-4xl text-white mb-2" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
-                Everything you need
-              </h2>
-              <p className="text-sm text-white/40">Built for Arc Network — the stablecoin-native L1 by Circle</p>
-            </motion.div>
+        {/* ── DARK PARALLAX ILLUSTRATION SECTION ── */}
+        <section className="illus-editorial relative min-h-screen overflow-hidden flex items-center justify-center px-6">
+          <div className="absolute inset-0 nb-grid-bg opacity-50" aria-hidden="true" />
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-20 mx-auto max-w-4xl opacity-90"
+            initial={{ y: 60, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+          >
+            <InteractiveArcOrb />
+          </motion.div>
+          <motion.div
+            className="illus-text relative z-10 text-center max-w-4xl"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="editorial-eyebrow justify-center mb-6"><span className="editorial-dot" />Live Arc data layer</div>
+            <h2 className="font-display">Background bergerak, data tetap real — block, token, gas, dan route preview dari Arc testnet.</h2>
+          </motion.div>
+        </section>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {FEATURES.map(({ Icon, title, desc, badge }, i) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                  className="nb-card rounded-2xl p-6 group"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center">
-                      <Icon size={18} className="text-white/70 group-hover:text-indigo-400 transition-colors" />
-                    </div>
-                    <span className="text-[10px] px-2.5 py-1 rounded-full font-medium bg-white/5 border border-white/8 text-white/50">
-                      {badge}
-                    </span>
-                  </div>
-                  <h3 className="text-base font-medium text-white mb-1.5" style={{ letterSpacing: '-0.01em' }}>{title}</h3>
-                  <p className="text-xs text-white/40 leading-relaxed">{desc}</p>
-                </motion.div>
-              ))}
-            </div>
+        {/* ── LIVE STATS ── */}
+        <section className="stats-editorial px-6 sm:px-12 py-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px max-w-6xl mx-auto bg-black/10 border border-black/10">
+            {LIVE_STATS_CONFIG.map(({ label, key, Icon, suffix }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="stat-editorial-card"
+              >
+                <div className="flex items-center justify-between mb-7">
+                  <Icon size={15} />
+                  <span>{label}</span>
+                </div>
+                <div className="nb-stat text-2xl sm:text-3xl">
+                  {stats ? <AnimatedCounter value={stats[key as keyof LiveStats]} suffix={suffix ?? ''} /> : <span className="shimmer inline-block w-20 h-7 rounded" />}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
 
