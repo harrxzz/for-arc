@@ -213,16 +213,16 @@ export function AgentChat() {
     <div className={`rounded-2xl flex flex-col ${card}`} style={{ height: '600px' }}>
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-white/8">
-        <div className="w-9 h-9 rounded-xl bg-arc-violet/15 flex items-center justify-center">
-          <Bot size={18} className="text-arc-violet" />
+        <div className="w-9 h-9 rounded-xl bg-arc-arc/15 flex items-center justify-center">
+          <Bot size={18} className="text-arc-arc" />
         </div>
         <div>
           <div className="text-white font-semibold text-sm">Arc Agent</div>
           <div className="text-xs text-slate-400">Powered by Claude · Arc Network</div>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-arc-violet animate-pulse" />
-          <span className="text-xs text-arc-violet">Online</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-arc-arc animate-pulse" />
+          <span className="text-xs text-arc-arc">Online</span>
         </div>
       </div>
 
@@ -231,21 +231,21 @@ export function AgentChat() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              msg.role === 'agent' ? 'bg-arc-violet/15' : 'bg-white/10'
+              msg.role === 'agent' ? 'bg-arc-arc/15' : 'bg-white/10'
             }`}>
               {msg.role === 'agent'
-                ? <Bot size={13} className="text-arc-violet" />
+                ? <Bot size={13} className="text-arc-arc" />
                 : <User size={13} className="text-white" />
               }
             </div>
             <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
-              msg.role === 'agent' ? 'bg-white/5 text-slate-200' : 'bg-arc-violet/15 text-white'
+              msg.role === 'agent' ? 'bg-white/5 text-slate-200' : 'bg-arc-arc/15 text-white'
             }`}>
               {msg.content}
               {msg.txHash && (
                 <a href={`https://testnet.arcscan.app/tx/${msg.txHash}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="block mt-2 text-xs text-arc-violet underline hover:opacity-80">
+                  className="block mt-2 text-xs text-arc-arc underline hover:opacity-80">
                   View on ArcScan →
                 </a>
               )}
@@ -256,11 +256,11 @@ export function AgentChat() {
         ))}
         {loading && (
           <div className="flex gap-3">
-            <div className="w-7 h-7 rounded-lg bg-arc-violet/15 flex items-center justify-center">
-              <Bot size={13} className="text-arc-violet" />
+            <div className="w-7 h-7 rounded-lg bg-arc-arc/15 flex items-center justify-center">
+              <Bot size={13} className="text-arc-arc" />
             </div>
             <div className="bg-white/5 rounded-2xl px-4 py-3">
-              <Loader2 size={14} className="text-arc-violet animate-spin" />
+              <Loader2 size={14} className="text-arc-arc animate-spin" />
             </div>
           </div>
         )}
@@ -283,7 +283,7 @@ export function AgentChat() {
       {pendingIntent && !loading && (
         <div className="px-4 pb-2 flex gap-2">
           <button onClick={() => sendMessage('confirm')}
-            className="flex-1 py-2 rounded-xl bg-arc-violet/20 border border-arc-violet/30 text-arc-violet text-xs font-semibold hover:bg-arc-violet/30 transition-colors">
+            className="flex-1 py-2 rounded-xl bg-arc-arc/20 border border-arc-arc/30 text-arc-arc text-xs font-semibold hover:bg-arc-arc/30 transition-colors">
             ✓ Confirm
           </button>
           <button onClick={() => sendMessage('cancel')}
@@ -301,11 +301,11 @@ export function AgentChat() {
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
             placeholder={pendingIntent ? 'Type confirm or cancel...' : 'e.g. Swap 10 USDC to EURC'}
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-arc-violet/40 transition-colors"
+            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-arc-arc/40 transition-colors"
           />
           <button onClick={() => sendMessage()} disabled={!input.trim() || loading}
-            className="w-10 h-10 rounded-xl bg-arc-violet/15 flex items-center justify-center hover:bg-arc-violet/25 transition-colors disabled:opacity-40">
-            <Send size={14} className="text-arc-violet" />
+            className="w-10 h-10 rounded-xl bg-arc-arc/15 flex items-center justify-center hover:bg-arc-arc/25 transition-colors disabled:opacity-40">
+            <Send size={14} className="text-arc-arc" />
           </button>
         </div>
       </div>

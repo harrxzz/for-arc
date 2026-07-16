@@ -142,7 +142,7 @@ export function RecentSwaps() {
           <button
             onClick={fetchSwaps}
             aria-label="Refresh recent swaps"
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-violet ${
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arc-arc ${
               isDark ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-white/5 text-slate-500'
             }`}
           >
@@ -187,7 +187,7 @@ export function RecentSwaps() {
                 {/* Token icons side by side */}
                 <div className="flex items-center flex-shrink-0">
                   <TokenIcon symbol={swap.tokenIn} size={20} />
-                  <ArrowRight size={10} className="text-arc-violet mx-1" aria-hidden="true" />
+                  <ArrowRight size={10} className="text-arc-arc mx-1" aria-hidden="true" />
                   <TokenIcon symbol={swap.tokenOut} size={20} />
                 </div>
 
@@ -208,7 +208,7 @@ export function RecentSwaps() {
                 {/* Time + link */}
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <span className={`text-[10px] ${muted}`}>{timeAgo(swap.timestamp)}</span>
-                  <ExternalLink size={10} className="text-arc-violet" aria-hidden="true" />
+                  <ExternalLink size={10} className="text-arc-arc" aria-hidden="true" />
                 </div>
               </motion.a>
             ))}

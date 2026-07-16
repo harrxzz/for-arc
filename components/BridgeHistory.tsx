@@ -83,7 +83,7 @@ export function BridgeHistory() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="w-full max-w-md mx-auto mt-4">
-      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-arc-violet/5' : 'shadow-black'}`}>
+      <div className={`border rounded-2xl shadow-xl p-5 transition-colors ${card} ${isDark ? 'shadow-arc-arc/5' : 'shadow-black'}`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className={`text-sm font-bold ${heading}`}>Bridge History</h3>
           <span className={`text-[10px] px-2 py-1 rounded-full ${isDark ? 'bg-white/10 text-slate-400' : 'bg-slate-50 text-slate-400'}`}>
@@ -93,7 +93,7 @@ export function BridgeHistory() {
 
         {loading && (
           <div className="flex items-center justify-center gap-2 py-8">
-            <Loader2 size={16} className="text-arc-violet animate-spin" />
+            <Loader2 size={16} className="text-arc-arc animate-spin" />
             <span className={`text-xs ${muted}`}>Loading...</span>
           </div>
         )}
@@ -129,7 +129,7 @@ export function BridgeHistory() {
               >
                 {/* Icon */}
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                  isDark ? 'bg-arc-violet/15 text-arc-violet' : 'bg-white/5 text-arc-violet'
+                  isDark ? 'bg-arc-arc/15 text-arc-arc' : 'bg-white/5 text-arc-arc'
                 }`}>
                   <ArrowLeftRight size={14} />
                 </div>
@@ -157,7 +157,7 @@ export function BridgeHistory() {
                   <div className={`text-xs font-bold ${heading}`}>{feeAmount} USDC</div>
                 </div>
 
-                <ExternalLink size={12} className={`flex-shrink-0 transition-colors ${muted} group-hover:text-arc-violet`} />
+                <ExternalLink size={12} className={`flex-shrink-0 transition-colors ${muted} group-hover:text-arc-arc`} />
               </motion.a>
             )
           })}

@@ -287,7 +287,7 @@ export function UnifiedBalanceCard() {
         <div className="flex items-center justify-between mb-4">
           <h2 className={`text-base font-bold ${heading}`}>Unified Balance</h2>
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-arc-violet/15 text-arc-violet border border-arc-violet/20 flex items-center gap-1">
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-arc-arc/15 text-arc-arc border border-arc-arc/20 flex items-center gap-1">
               <Globe size={11} aria-hidden="true" />
               Cross-chain
             </span>
@@ -300,7 +300,7 @@ export function UnifiedBalanceCard() {
                 className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isDark ? 'bg-white/8 hover:bg-white/15' : 'bg-slate-100 hover:bg-slate-200'}`}
                 aria-label="Refresh balances"
               >
-                <RefreshCw size={13} className={`${refreshing ? 'animate-spin' : ''} text-arc-violet`} />
+                <RefreshCw size={13} className={`${refreshing ? 'animate-spin' : ''} text-arc-arc`} />
               </motion.button>
             )}
           </div>
@@ -326,7 +326,7 @@ export function UnifiedBalanceCard() {
           {balances.map((b) => (
             <div key={b.chainId} className={`rounded-xl p-3 flex items-center justify-between ${isDark ? 'bg-white/4' : 'bg-slate-50'}`}>
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${b.chainId === 5042002 ? 'bg-arc-violet' : b.chainId === 84532 ? 'bg-arc-violet' : b.chainId === 421614 ? 'bg-arc-violet' : 'bg-slate-400'}`} />
+                <div className={`w-2 h-2 rounded-full ${b.chainId === 5042002 ? 'bg-arc-arc' : b.chainId === 84532 ? 'bg-arc-arc' : b.chainId === 421614 ? 'bg-arc-arc' : 'bg-slate-400'}`} />
                 <span className={`text-xs font-medium ${heading}`}>{CHAIN_NAMES[b.chainId]}</span>
               </div>
               <div className="text-right">
@@ -361,14 +361,14 @@ export function UnifiedBalanceCard() {
         className={`rounded-3xl p-5 ${glassCard}`}
       >
         <div className="flex items-center gap-2 mb-4">
-          <ArrowDownToLine size={16} className="text-arc-violet" />
+          <ArrowDownToLine size={16} className="text-arc-arc" />
           <h3 className={`text-sm font-bold ${heading}`}>Deposit to Gateway</h3>
         </div>
 
         {/* Info */}
-        <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-violet/8 border border-arc-violet/15' : 'bg-white/5 border border-white/10'}`}>
-          <Info size={13} className="text-arc-violet mt-0.5 flex-shrink-0" />
-          <span className={isDark ? 'text-arc-violet' : 'text-arc-violet'}>
+        <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-arc/8 border border-arc-arc/15' : 'bg-white/5 border border-white/10'}`}>
+          <Info size={13} className="text-arc-arc mt-0.5 flex-shrink-0" />
+          <span className={isDark ? 'text-arc-arc' : 'text-arc-arc'}>
             Deposit USDC from any chain into Gateway to enable instant crosschain transfers (&lt;500ms).
           </span>
         </div>
@@ -406,7 +406,7 @@ export function UnifiedBalanceCard() {
                 disabled={selectedWalletBalance <= 0}
                 className={`text-[10px] font-semibold px-2 py-0.5 rounded-md transition-colors ${
                   selectedWalletBalance > 0
-                    ? 'text-arc-violet hover:bg-arc-violet/10 cursor-pointer'
+                    ? 'text-arc-arc hover:bg-arc-arc/10 cursor-pointer'
                     : 'text-slate-500 cursor-not-allowed opacity-50'
                 }`}
                 aria-label="Use max wallet balance"

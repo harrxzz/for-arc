@@ -235,7 +235,7 @@ export function AnimatedBg() {
       starPos[i * 3 + 1] = (Math.random() - 0.5) * 280
       starPos[i * 3 + 2] = (Math.random() - 0.5) * 280
 
-      // Star color variety: white, grey-white, silver, violet
+      // Star color variety: white, grey-white, silver, arc
       const r = Math.random()
       if (r < 0.5) {
         // pure white
@@ -244,7 +244,7 @@ export function AnimatedBg() {
         // grey-white
         starColors[i * 3] = 0.8; starColors[i * 3 + 1] = 0.8; starColors[i * 3 + 2] = 0.8
       } else if (r < 0.9) {
-        // violet tint
+        // arc tint
         starColors[i * 3] = 0.8; starColors[i * 3 + 1] = 0.6; starColors[i * 3 + 2] = 1.0
       } else {
         // light-blue tint

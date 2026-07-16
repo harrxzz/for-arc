@@ -242,19 +242,19 @@ export function CrossChainSpendCard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Zap size={16} className="text-arc-violet" />
+          <Zap size={16} className="text-arc-arc" />
           <h2 className={`text-base font-bold ${heading}`}>Cross-chain Spend</h2>
         </div>
-        <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-arc-violet/15 text-arc-violet border border-arc-violet/20 flex items-center gap-1">
+        <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-arc-arc/15 text-arc-arc border border-arc-arc/20 flex items-center gap-1">
           <Zap size={11} aria-hidden="true" />
           &lt;500ms
         </span>
       </div>
 
       {/* Info */}
-      <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-violet/8 border border-arc-violet/15' : 'bg-white/5 border border-white/10'}`}>
-        <Info size={13} className="text-arc-violet mt-0.5 flex-shrink-0" />
-        <span className={isDark ? 'text-arc-violet' : 'text-arc-violet'}>
+      <div className={`rounded-xl p-3 mb-4 flex items-start gap-2 text-xs ${isDark ? 'bg-arc-arc/8 border border-arc-arc/15' : 'bg-white/5 border border-white/10'}`}>
+        <Info size={13} className="text-arc-arc mt-0.5 flex-shrink-0" />
+        <span className={isDark ? 'text-arc-arc' : 'text-arc-arc'}>
           Send USDC from your Gateway balance to any chain instantly. Recipient gets minted USDC without you holding gas on the destination chain.
         </span>
       </div>
@@ -279,7 +279,7 @@ export function CrossChainSpendCard() {
             <button
               type="button"
               onClick={() => setRecipient(address)}
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-arc-violet hover:bg-arc-violet/10 transition-colors"
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-arc-arc hover:bg-arc-arc/10 transition-colors"
               aria-label="Use my own address"
             >
               SELF
@@ -342,7 +342,7 @@ export function CrossChainSpendCard() {
                       aria-selected={destChain.id === c.id}
                       className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
                         destChain.id === c.id
-                          ? 'bg-arc-violet/15 text-arc-violet'
+                          ? 'bg-arc-arc/15 text-arc-arc'
                           : isDark ? 'text-slate-200 hover:bg-white/8' : 'text-slate-700 hover:bg-white/40'
                       }`}
                     >
@@ -359,7 +359,7 @@ export function CrossChainSpendCard() {
         </div>
         <p className={`text-[10px] ${muted}`}>
           USDC will be minted directly to the recipient on{' '}
-          <span className="text-arc-violet font-medium">{destChain.name}</span>
+          <span className="text-arc-arc font-medium">{destChain.name}</span>
         </p>
       </div>
 
@@ -371,7 +371,7 @@ export function CrossChainSpendCard() {
             <button
               type="button"
               onClick={() => setAmount(totalGateway.toString())}
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-arc-violet hover:bg-arc-violet/10 transition-colors"
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-md text-arc-arc hover:bg-arc-arc/10 transition-colors"
               aria-label="Use max Gateway balance"
             >
               MAX
@@ -411,7 +411,7 @@ export function CrossChainSpendCard() {
               type="button"
               onClick={handleEstimate}
               disabled={loading}
-              className="text-arc-violet hover:underline disabled:opacity-50 font-medium"
+              className="text-arc-arc hover:underline disabled:opacity-50 font-medium"
             >
               {step === 'estimating' ? 'Estimating…' : 'Estimate fee'}
             </button>

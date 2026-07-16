@@ -55,14 +55,14 @@ export function AgentWalletPanel() {
     <div className={`rounded-2xl p-5 ${card} space-y-4`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-arc-violet/15 flex items-center justify-center">
-            <Wallet size={15} className="text-arc-violet" />
+          <div className="w-8 h-8 rounded-xl bg-arc-arc/15 flex items-center justify-center">
+            <Wallet size={15} className="text-arc-arc" />
           </div>
           <h2 className="text-white font-bold text-sm">Agent Wallet</h2>
         </div>
         {authenticated && (
           <button onClick={fetchBalances} className="w-7 h-7 rounded-lg bg-white/8 hover:bg-white/15 flex items-center justify-center transition-colors">
-            <RefreshCw size={12} className={`text-arc-violet ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw size={12} className={`text-arc-arc ${refreshing ? 'animate-spin' : ''}`} />
           </button>
         )}
       </div>
@@ -78,9 +78,9 @@ export function AgentWalletPanel() {
         <>
           <div className="rounded-xl p-3 bg-white/4 border border-white/6">
             <div className={`text-xs ${muted} mb-1`}>Connected Address</div>
-            <div className="text-xs text-arc-violet font-mono truncate">{wallet?.address}</div>
+            <div className="text-xs text-arc-arc font-mono truncate">{wallet?.address}</div>
             <a href={`https://testnet.arcscan.app/address/${wallet?.address}`} target="_blank" rel="noopener noreferrer"
-              className={`text-[10px] ${muted} hover:text-arc-violet flex items-center gap-1 mt-1 transition-colors`}>
+              className={`text-[10px] ${muted} hover:text-arc-arc flex items-center gap-1 mt-1 transition-colors`}>
               View on ArcScan <ExternalLink size={9} />
             </a>
           </div>
@@ -95,7 +95,7 @@ export function AgentWalletPanel() {
             ))}
           </div>
 
-          <div className="rounded-xl p-3 bg-arc-violet/8 border border-arc-violet/15">
+          <div className="rounded-xl p-3 bg-arc-arc/8 border border-arc-arc/15">
             <p className={`text-[11px] ${muted} leading-relaxed`}>
               Arc Agent uses your connected wallet to execute transactions. You will be prompted to approve each action.
             </p>
@@ -106,7 +106,7 @@ export function AgentWalletPanel() {
             <div className={`text-xs font-medium ${muted}`}>Capabilities</div>
             {['Swap USDC ↔ EURC', 'Send to any address', 'Bridge cross-chain', 'Check balances'].map(cap => (
               <div key={cap} className="flex items-center gap-2 text-xs text-slate-300">
-                <div className="w-1 h-1 rounded-full bg-arc-violet" />
+                <div className="w-1 h-1 rounded-full bg-arc-arc" />
                 {cap}
               </div>
             ))}

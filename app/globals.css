@@ -3,10 +3,10 @@
 
 @theme {
   --color-arc-blue: #2F578C;
-  --color-arc-purple: #264670;
+  --color-arc-arc: #264670;
   --color-arc-blue-dark: #1E1D29;
   --color-arc-blue-light: #F1F1F3;
-  --color-arc-violet: #2F578C;
+  --color-arc-arc: #2F578C;
   --color-arc-light: #ACC6E9;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
@@ -57,7 +57,7 @@ html { scroll-behavior: smooth; }
 }
 .nb-card:hover {
   border-color: rgba(255,255,255,0.14);
-  background: #1c1c1f;
+  background: rgba(47,87,140,0.16);
 }
 
 /* ── Neobank card — elevated (balance card) ── */
@@ -73,7 +73,7 @@ html { scroll-behavior: smooth; }
   transition: border-color 0.2s ease;
 }
 .nb-input:focus-within {
-  border-color: rgba(99,102,241,0.50);
+  border-color: rgba(47,87,140,0.50);
 }
 
 /* ── Pill button — primary (filled) ── */
@@ -91,7 +91,7 @@ html { scroll-behavior: smooth; }
 }
 .nb-btn-primary:active:not(:disabled) { transform: translateY(0); }
 
-/* ── Pill button — accent (indigo) ── */
+/* ── Pill button — accent (arc) ── */
 .nb-btn-accent {
   background: var(--arc-community-blue);
   color: #ffffff;
@@ -157,15 +157,15 @@ html { scroll-behavior: smooth; }
 
 /* ── Balance card glow ── */
 .nb-balance-glow {
-  background: radial-gradient(ellipse at top right, rgba(99,102,241,0.12), transparent 60%);
+  background: radial-gradient(ellipse at top right, rgba(47,87,140,0.22), transparent 60%);
 }
 
 
 /* ── Premium Arc hero system ── */
 .arc-hero-aurora {
   background:
-    radial-gradient(circle at 18% 22%, rgba(99,102,241,0.26), transparent 32%),
-    radial-gradient(circle at 82% 18%, rgba(34,211,238,0.13), transparent 28%),
+    radial-gradient(circle at 18% 22%, rgba(47,87,140,0.26), transparent 32%),
+    radial-gradient(circle at 82% 18%, rgba(255,140,0,0.12), transparent 28%),
     radial-gradient(circle at 52% 58%, rgba(255,140,0,0.10), transparent 34%),
     linear-gradient(180deg, rgba(9,9,11,0), #09090b 82%);
 }
@@ -263,9 +263,9 @@ input[type=number] { -moz-appearance: textfield; }
   background: rgba(30,29,41,0.76);
   border: 1px solid rgba(255,255,255,0.08);
 }
-.glass-violet {
+.glass-arc {
   background: rgba(30,29,41,0.76);
-  border: 1px solid rgba(99,102,241,0.15);
+  border: 1px solid rgba(47,87,140,0.15);
 }
 .glass-light {
   background: rgba(255,255,255,0.55);
@@ -276,14 +276,14 @@ input[type=number] { -moz-appearance: textfield; }
   border: 1px solid rgba(255,255,255,0.10);
 }
 .glass-input-dark:focus-within {
-  border-color: rgba(99,102,241,0.50);
+  border-color: rgba(47,87,140,0.50);
 }
 .glass-input-light {
   background: rgba(255,255,255,0.65);
   border: 1px solid rgba(255,255,255,0.40);
 }
 .glass-input-light:focus-within {
-  border-color: rgba(99,102,241,0.45);
+  border-color: rgba(47,87,140,0.45);
 }
 .glass-btn-primary {
   background: var(--arc-community-blue);
@@ -309,25 +309,25 @@ input[type=number] { -moz-appearance: textfield; }
   background: rgba(255,255,255,0.05);
 }
 .token-ring {
-  box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+  box-shadow: 0 0 0 2px rgba(47,87,140,0.20);
 }
 .badge-live {
   background: rgba(47,87,140,0.18);
   border: 1px solid rgba(47,87,140,0.30);
   color: #dce5f2;
 }
-.glow-violet {
+.glow-arc {
   box-shadow: 0 0 20px rgba(47,87,140,0.18);
 }
-.glow-violet-strong {
+.glow-arc-strong {
   box-shadow: 0 0 30px rgba(47,87,140,0.30);
 }
 .hover-glow {
   transition: all 0.2s ease;
 }
 .hover-glow:hover {
-  border-color: rgba(99,102,241,0.25) !important;
-  background: #1c1c1f;
+  border-color: rgba(47,87,140,0.25) !important;
+  background: rgba(47,87,140,0.16);
   transform: translateY(-1px);
 }
 .gradient-text-subtle {
@@ -381,8 +381,8 @@ input[type=number] { -moz-appearance: textfield; }
   inset: -1px;
   pointer-events: none;
   background:
-    radial-gradient(circle at 20% 0%, rgba(99,102,241,0.15), transparent 34%),
-    radial-gradient(circle at 100% 20%, rgba(172,198,233,0.08), transparent 30%);
+    radial-gradient(circle at 20% 0%, rgba(47,87,140,0.15), transparent 34%),
+    radial-gradient(circle at 100% 20%, rgba(247,247,247,0.08), transparent 30%);
   opacity: .9;
 }
 .tx-card-shell > * { position: relative; z-index: 1; }
@@ -395,11 +395,11 @@ input[type=number] { -moz-appearance: textfield; }
 .tx-route-line {
   height: 1px;
   flex: 1;
-  background: linear-gradient(90deg, rgba(99,102,241,.55), rgba(172,198,233,.18));
+  background: linear-gradient(90deg, rgba(47,87,140,.55), rgba(255,140,0,.18));
 }
 .tx-pill {
-  border: 1px solid rgba(99,102,241,.18);
-  background: rgba(99,102,241,.10);
+  border: 1px solid rgba(47,87,140,.18);
+  background: rgba(47,87,140,.10);
   color: #dce5f2;
 }
 .tx-input-panel {
@@ -408,15 +408,15 @@ input[type=number] { -moz-appearance: textfield; }
   box-shadow: 0 1px 0 rgba(255,255,255,.06) inset;
 }
 .tx-input-panel:focus-within {
-  border-color: rgba(99,102,241,.42);
-  box-shadow: 0 0 0 3px rgba(99,102,241,.11), 0 1px 0 rgba(255,255,255,.08) inset;
+  border-color: rgba(47,87,140,.42);
+  box-shadow: 0 0 0 3px rgba(47,87,140,.11), 0 1px 0 rgba(255,255,255,.08) inset;
 }
 .tx-success {
-  background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(99,102,241,.10));
+  background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(47,87,140,.10));
   border: 1px solid rgba(34,197,94,.22);
 }
 .tx-warning {
-  background: linear-gradient(135deg, rgba(248,113,113,.12), rgba(99,102,241,.08));
+  background: linear-gradient(135deg, rgba(248,113,113,.12), rgba(47,87,140,.08));
   border: 1px solid rgba(248,113,113,.20);
 }
 
@@ -705,13 +705,13 @@ input[type=number] { -moz-appearance: textfield; }
 /* ── Arc community palette compatibility overrides ── */
 .nb-card,
 .glass-dark,
-.glass-violet {
+.glass-arc {
   background: rgba(30,29,41,0.78) !important;
   border-color: rgba(247,247,247,0.12) !important;
 }
 .nb-card:hover,
 .glass-dark:hover,
-.glass-violet:hover {
+.glass-arc:hover {
   background: rgba(47,87,140,0.18) !important;
   border-color: rgba(47,87,140,0.34) !important;
 }
