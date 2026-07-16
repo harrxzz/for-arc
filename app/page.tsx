@@ -193,7 +193,7 @@ export default function LandingPage() {
           <div className="features-head">
             <div>
               <div className="text-xs uppercase tracking-[0.18em] opacity-60 mb-4">Product system</div>
-              <h2 className="font-display">Kenapa For Arc kerasa native</h2>
+              <h2 className="font-display">Why For Arc feels native</h2>
             </div>
             <span>06 core flows</span>
           </div>
@@ -234,14 +234,15 @@ export default function LandingPage() {
             <InteractiveArcOrb />
           </motion.div>
           <motion.div
-            className="illus-text relative z-10 text-center max-w-4xl"
-            initial={{ opacity: 0, y: 40 }}
+            className="illus-text relative z-10 text-center"
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="editorial-eyebrow justify-center mb-6"><span className="editorial-dot" />Live Arc data layer</div>
-            <h2 className="font-display">Background bergerak, data tetap real — block, token, gas, dan route preview dari Arc testnet.</h2>
+            <div className="editorial-eyebrow justify-center rounded-full border border-white/12 bg-black/20 px-4 py-2 backdrop-blur-xl">
+              <span className="editorial-dot" />Live Arc data layer
+            </div>
           </motion.div>
         </section>
 
