@@ -261,7 +261,7 @@ export function SwapCard() {
         </div>
 
         {/* From */}
-        <div className={`rounded-2xl p-4 mb-2 tx-input-panel ${glassInput}`}>
+        <div className={`rounded-2xl py-4 pl-4 pr-7 sm:pr-8 mb-2 tx-input-panel ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <label htmlFor="from-amount" className={`text-xs font-medium ${muted}`}>You pay</label>
             {address && (
@@ -274,7 +274,7 @@ export function SwapCard() {
               </button>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 overflow-visible">
             <TokenDropdown
               selected={fromToken} other={toToken}
               show={showFromSelect} onToggle={() => setShowFromSelect(v => !v)}
@@ -287,7 +287,7 @@ export function SwapCard() {
               aria-label={`Amount of ${fromToken.symbol} to swap`}
               aria-describedby="swap-fee-info"
               autoComplete="off"
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none text-right tabular-nums placeholder:text-slate-600 ${heading}`}
+              className={`min-w-0 flex-1 max-w-[52%] sm:max-w-[58%] bg-transparent text-2xl font-bold outline-none text-right tabular-nums placeholder:text-slate-600 ${heading}`}
             />
           </div>
         </div>
@@ -311,7 +311,7 @@ export function SwapCard() {
         </div>
 
         {/* To */}
-        <div className={`rounded-2xl p-4 mb-4 tx-input-panel ${glassInput}`}>
+        <div className={`rounded-2xl py-4 pl-4 pr-7 sm:pr-8 mb-4 tx-input-panel ${glassInput}`}>
           <div className="flex items-center justify-between mb-3">
             <label htmlFor="to-amount" className={`text-xs font-medium ${muted}`}>You receive</label>
             {quoteLoading && (
@@ -320,7 +320,7 @@ export function SwapCard() {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 overflow-visible">
             <TokenDropdown
               selected={toToken} other={fromToken}
               show={showToSelect} onToggle={() => setShowToSelect(v => !v)}
@@ -331,7 +331,7 @@ export function SwapCard() {
               type="number" placeholder="0.00" value={toAmount} readOnly
               aria-label={`Amount of ${toToken.symbol} you will receive`}
               aria-live="polite"
-              className={`flex-1 bg-transparent text-2xl font-bold outline-none text-right tabular-nums placeholder:text-slate-600 ${heading}`}
+              className={`min-w-0 flex-1 max-w-[52%] sm:max-w-[58%] bg-transparent text-2xl font-bold outline-none text-right tabular-nums placeholder:text-slate-600 ${heading}`}
             />
           </div>
         </div>
