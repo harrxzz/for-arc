@@ -8,7 +8,7 @@ const cards = [
     title: 'Swap USDC',
     subtitle: 'XyloNet DEX',
     icon: ArrowLeftRight,
-    accent: 'from-indigo-500/25 to-blue-500/10',
+    accent: 'from-[rgba(47,87,140,0.25)] to-blue-500/10',
     wide: true,
     body: ['USDC → EURC', 'Quote: 0.9192', 'Gas: USDC'],
   },
@@ -16,14 +16,14 @@ const cards = [
     title: 'Bridge',
     subtitle: 'Circle CCTP',
     icon: ArrowLeftRight,
-    accent: 'from-cyan-500/20 to-indigo-500/10',
+    accent: 'from-cyan-500/20 to-[rgba(38,70,112,0.10)]',
     body: ['Base → Arc', 'ETA: ~20s', 'Native USDC'],
   },
   {
     title: 'Arc Balance',
     subtitle: 'Unified USDC',
     icon: Wallet,
-    accent: 'from-white/12 to-indigo-500/10',
+    accent: 'from-white/12 to-[rgba(38,70,112,0.10)]',
     tall: true,
     body: ['$0.00', 'USDC as gas', 'No ETH needed'],
   },
@@ -31,7 +31,7 @@ const cards = [
     title: 'AI Agent',
     subtitle: 'Intent parser',
     icon: Bot,
-    accent: 'from-violet-500/20 to-indigo-500/10',
+    accent: 'from-[rgba(47,87,140,0.20)] to-[rgba(38,70,112,0.10)]',
     wide: true,
     body: ['“swap 10 USDC”', 'JSON intent', 'Ready'],
   },
@@ -39,14 +39,14 @@ const cards = [
     title: 'Send',
     subtitle: 'Sub-second',
     icon: Send,
-    accent: 'from-emerald-500/18 to-indigo-500/10',
+    accent: 'from-emerald-500/18 to-[rgba(38,70,112,0.10)]',
     body: ['0x…A19B9', 'Instant', 'Finalized'],
   },
   {
     title: 'Gateway',
     subtitle: 'Circle tooling',
     icon: Globe,
-    accent: 'from-sky-500/20 to-indigo-500/10',
+    accent: 'from-sky-500/20 to-[rgba(38,70,112,0.10)]',
     tall: true,
     body: ['ETH', 'Base', 'Arbitrum', 'Arc'],
   },
@@ -56,7 +56,7 @@ function PreviewCard({ card, index }: { card: typeof cards[number]; index: numbe
   const Icon = card.icon
   return (
     <motion.div
-      className={`shrink-0 rounded-[1.6rem] border border-white/10 bg-[#18181b]/90 overflow-hidden backdrop-blur-xl ${
+      className={`shrink-0 rounded-[1.6rem] border border-white/10 bg-[rgba(30,29,41,0.72)]/90 overflow-hidden backdrop-blur-xl ${
         card.wide ? 'w-[300px] sm:w-[380px]' : 'w-[230px] sm:w-[280px]'
       } ${card.tall ? 'h-[250px] sm:h-[305px]' : 'h-[205px] sm:h-[250px]'}`}
       style={{ transform: `translateZ(${(index % 3) * 18}px)` }}
@@ -68,7 +68,7 @@ function PreviewCard({ card, index }: { card: typeof cards[number]; index: numbe
         <div className="relative h-full p-5 flex flex-col justify-between">
           <div className="flex items-start justify-between">
             <div className="w-11 h-11 rounded-2xl bg-white/7 border border-white/10 flex items-center justify-center">
-              <Icon size={19} className="text-indigo-200" />
+              <Icon size={19} className="text-[#dce5f2]" />
             </div>
             <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
@@ -118,7 +118,7 @@ export function InteractiveArcOrb() {
     <div className="relative h-[430px] sm:h-[520px] w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[#0b0b0f]">
       {/* Cinematic background */}
       <div className="absolute inset-0 nb-grid-bg opacity-60" />
-      <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-500/20 blur-[90px]" />
+      <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[rgba(47,87,140,0.20)] blur-[90px]" />
       <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#0b0b0f] to-transparent z-20 pointer-events-none" />
       <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#0b0b0f] to-transparent z-20 pointer-events-none" />
 
@@ -138,13 +138,13 @@ export function InteractiveArcOrb() {
       </div>
 
       {/* Foreground label */}
-      <div className="absolute left-5 bottom-5 z-30 flex items-center gap-2 rounded-full border border-white/10 bg-[#09090b]/80 px-3 py-2 backdrop-blur-xl">
-        <Zap size={13} className="text-indigo-300" />
+      <div className="absolute left-5 bottom-5 z-30 flex items-center gap-2 rounded-full border border-white/10 bg-[color:var(--arc-community-ink)]/80 px-3 py-2 backdrop-blur-xl">
+        <Zap size={13} className="text-[#cfd8e6]" />
         <span className="text-[11px] text-white/55">Interactive Arc financial workspace</span>
       </div>
 
       <div className="absolute right-5 bottom-5 z-30 hidden sm:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 backdrop-blur-xl">
-        <CircleDollarSign size={13} className="text-indigo-300" />
+        <CircleDollarSign size={13} className="text-[#cfd8e6]" />
         <span className="text-[11px] text-white/45">USDC native</span>
       </div>
     </div>

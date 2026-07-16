@@ -9,15 +9,15 @@ import { BridgeHistory } from '@/components/BridgeHistory'
 
 export default function BridgePage() {
   return (
-    <div className="min-h-screen relative grain-overlay bg-[#09090b]">
+    <div className="min-h-screen relative grain-overlay bg-[color:var(--arc-community-ink)]">
       <div className="fixed inset-0 nb-grid-bg pointer-events-none" aria-hidden="true" />
       <Header />
 
       <main id="main-content" className="relative z-10 pt-28 pb-16 px-4">
         <div className="max-w-3xl mx-auto text-center mb-10">
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full nb-badge mb-5">
-            <ArrowLeftRight size={12} className="text-indigo-400" />
-            <span className="text-xs text-indigo-300 font-medium tracking-wide">Circle CCTP</span>
+            <ArrowLeftRight size={12} className="text-[color:var(--arc-community-orange)]" />
+            <span className="text-xs text-[#cfd8e6] font-medium tracking-wide">Circle CCTP</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
@@ -66,7 +66,7 @@ export default function BridgePage() {
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-medium flex-shrink-0 ${
                       item.step === '✓'
                         ? 'bg-white/10 text-white border border-white/10'
-                        : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                        : 'bg-[rgba(47,87,140,0.10)] text-[color:var(--arc-community-orange)] border border-[rgba(47,87,140,0.20)]'
                     }`}>
                       {item.step}
                     </div>
@@ -86,7 +86,7 @@ export default function BridgePage() {
                 { Icon: ShieldCheck, title: 'Native USDC', desc: 'Not wrapped' },
               ].map(({ Icon, title, desc }) => (
                 <div key={title} className="nb-card rounded-xl p-3 text-center">
-                  <Icon size={18} className="text-indigo-400 mx-auto mb-1.5" aria-hidden="true" />
+                  <Icon size={18} className="text-[color:var(--arc-community-orange)] mx-auto mb-1.5" aria-hidden="true" />
                   <div className="text-xs font-medium text-white mb-0.5">{title}</div>
                   <div className="text-[10px] text-white/40">{desc}</div>
                 </div>
@@ -94,8 +94,8 @@ export default function BridgePage() {
             </div>
 
             <div className="nb-card rounded-xl p-4 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck size={16} className="text-indigo-400" aria-hidden="true" />
+              <div className="w-8 h-8 rounded-lg bg-[rgba(47,87,140,0.10)] border border-[rgba(47,87,140,0.20)] flex items-center justify-center flex-shrink-0">
+                <ShieldCheck size={16} className="text-[color:var(--arc-community-orange)]" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-xs font-medium text-white">Powered by Circle CCTP</div>

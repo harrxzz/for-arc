@@ -32,7 +32,7 @@ export function TokenIcon({ symbol, size = 24, className = '' }: TokenIconProps)
 
   // Fallback: colored circle with letter
   const colors: Record<string, string> = {
-    default: '#6366f1',
+    default: 'var(--arc-community-blue)',
   }
   const bg = colors[symbol] ?? colors.default
 

@@ -109,7 +109,7 @@ export default function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen relative grain-overlay bg-[#09090b]">
+    <div className="min-h-screen relative grain-overlay bg-[color:var(--arc-community-ink)]">
       <GrainCanvas />
       {/* Subtle grid bg */}
       <div className="fixed inset-0 nb-grid-bg pointer-events-none" aria-hidden="true" />
@@ -278,7 +278,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
               className="mb-12"
             >
-              <div className="text-xs text-indigo-400 font-medium uppercase tracking-wider mb-3">Guide</div>
+              <div className="text-xs text-[color:var(--arc-community-orange)] font-medium uppercase tracking-wider mb-3">Guide</div>
               <h2 className="font-display text-3xl sm:text-4xl text-white mb-2" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
                 How it works
               </h2>
@@ -295,8 +295,8 @@ export default function LandingPage() {
                   transition={{ delay: i * 0.08 }}
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                      <Icon size={18} className="text-indigo-400" />
+                    <div className="w-10 h-10 rounded-xl bg-[rgba(47,87,140,0.10)] border border-[rgba(47,87,140,0.20)] flex items-center justify-center">
+                      <Icon size={18} className="text-[color:var(--arc-community-orange)]" />
                     </div>
                     <span className="font-display text-sm text-white/30" style={{ fontWeight: 500 }}>{step}</span>
                   </div>
@@ -317,7 +317,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
               className="mb-8"
             >
-              <div className="text-xs text-indigo-400 font-medium uppercase tracking-wider mb-3">Built on Arc</div>
+              <div className="text-xs text-[color:var(--arc-community-orange)] font-medium uppercase tracking-wider mb-3">Built on Arc</div>
               <h2 className="font-display text-2xl sm:text-3xl text-white" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
                 Powered by Circle's stablecoin-native chain
               </h2>
@@ -350,7 +350,7 @@ export default function LandingPage() {
                     </div>
                   </div>
                   <div className="text-sm font-medium text-white mb-1">{value}</div>
-                  <div className="text-[10px] text-white/30 group-hover:text-indigo-400 transition-colors">↗ Open</div>
+                  <div className="text-[10px] text-white/30 group-hover:text-[color:var(--arc-community-orange)] transition-colors">↗ Open</div>
                 </motion.a>
               ))}
             </div>
@@ -366,11 +366,11 @@ export default function LandingPage() {
               viewport={{ once: true }}
               className="nb-card-elevated rounded-3xl p-10 text-center relative overflow-hidden"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-indigo-500/8 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[color:var(--arc-community-blue)]/8 rounded-full blur-3xl pointer-events-none" />
 
               <div className="relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-5">
-                  <BarChart2 size={20} className="text-indigo-400" />
+                <div className="w-12 h-12 rounded-2xl bg-[rgba(47,87,140,0.10)] border border-[rgba(47,87,140,0.20)] flex items-center justify-center mx-auto mb-5">
+                  <BarChart2 size={20} className="text-[color:var(--arc-community-orange)]" />
                 </div>
                 <h2 className="font-display text-2xl text-white mb-2" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
                   Ready to swap on Arc?

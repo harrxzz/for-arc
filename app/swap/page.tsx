@@ -10,7 +10,7 @@ import { RecentSwaps } from '@/components/RecentSwaps'
 
 export default function SwapPage() {
   return (
-    <div className="min-h-screen relative grain-overlay bg-[#09090b]">
+    <div className="min-h-screen relative grain-overlay bg-[color:var(--arc-community-ink)]">
       <div className="fixed inset-0 nb-grid-bg pointer-events-none" aria-hidden="true" />
       <Header />
 
@@ -21,8 +21,8 @@ export default function SwapPage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full nb-badge mb-5"
           >
-            <ArrowRightLeft size={12} className="text-indigo-400" />
-            <span className="text-xs text-indigo-300 font-medium tracking-wide">XyloNet DEX</span>
+            <ArrowRightLeft size={12} className="text-[color:var(--arc-community-orange)]" />
+            <span className="text-xs text-[#cfd8e6] font-medium tracking-wide">XyloNet DEX</span>
           </motion.div>
 
           <motion.h1
@@ -60,8 +60,8 @@ export default function SwapPage() {
           >
             <div className="nb-card rounded-2xl p-5">
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                  <Zap size={17} className="text-indigo-400" />
+                <div className="w-9 h-9 rounded-xl bg-[rgba(47,87,140,0.10)] border border-[rgba(47,87,140,0.20)] flex items-center justify-center flex-shrink-0">
+                  <Zap size={17} className="text-[color:var(--arc-community-orange)]" />
                 </div>
                 <div>
                   <div className="text-sm font-medium text-white">Built for stablecoin routing</div>
