@@ -6,7 +6,7 @@ import Link from 'next/link'
 import {
   Coins, Zap, RefreshCw, ArrowLeftRight, ShieldCheck, BarChart2,
   Wallet, ArrowRightLeft, CheckCircle, ArrowRight,
-  Box, Fuel, CircleDollarSign, Globe
+  Box, Fuel, CircleDollarSign, Globe, Radio, Layers3
 } from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -72,6 +72,14 @@ const LIVE_STATS_CONFIG = [
   { label: 'Gas Price', key: 'gasPrice', Icon: Fuel, suffix: ' Gwei' },
 ]
 
+const HERO_PILLS = ['Swap', 'Bridge', 'Send', 'Gateway', 'Agent']
+
+const HERO_RAILS = [
+  { label: 'Stable rails', value: 'USDC gas', Icon: Fuel },
+  { label: 'Execution', value: '<1s finality', Icon: Zap },
+  { label: 'Network', value: 'Arc testnet', Icon: Radio },
+]
+
 // Animated counter component
 function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
@@ -121,6 +129,33 @@ export default function LandingPage() {
         {/* ── EDITORIAL HERO — scroll-demo structure, Arc community palette ── */}
         <section className="arc-editorial-hero relative min-h-screen overflow-hidden px-6 sm:px-12 pt-32 pb-20 flex flex-col justify-center">
           <div className="absolute inset-0 arc-editorial-grid pointer-events-none" aria-hidden="true" />
+          <div className="hero-orb hero-orb-one" aria-hidden="true" />
+          <div className="hero-orb hero-orb-two" aria-hidden="true" />
+
+          <motion.div
+            className="hero-status-panel hidden lg:block"
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.28, duration: 0.7 }}
+          >
+            <div className="flex items-center justify-between border-b border-white/12 pb-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-white/45">Arc terminal</p>
+                <p className="mt-1 font-display text-lg text-white">Live rails</p>
+              </div>
+              <div className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-100">Online</div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {HERO_RAILS.map(({ label, value, Icon }) => (
+                <div key={label} className="hero-rail-row">
+                  <Icon size={15} />
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
           <div className="relative z-10 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: -8 }}
@@ -148,13 +183,22 @@ export default function LandingPage() {
               transition={{ delay: 0.1 }}
               className="hero-sub mt-8 max-w-xl"
             >
-              Swap on XyloNet, bridge via Circle CCTP, send instantly, and manage unified balances — styled like an editorial scroll experience with Arc's community palette.
+              A stablecoin-native command center for XyloNet swaps, Circle CCTP bridging, instant sends, and unified balances — built around Arc's USDC gas UX.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.18 }}
+              transition={{ delay: 0.14 }}
+              className="hero-pill-row mt-7"
+            >
+              {HERO_PILLS.map((pill) => <span key={pill}>{pill}</span>)}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
               className="mt-9 flex items-center gap-3 flex-wrap"
             >
               <Link href="/swap">
@@ -325,13 +369,13 @@ export default function LandingPage() {
               <p className="text-sm text-white/40 mt-1">Every feature uses real Arc Network infrastructure — no mocks, no placeholders</p>
             </motion.div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="infra-grid">
               {[
-                { label: 'Arc RPC', value: 'rpc.testnet', href: 'https://rpc.testnet.arc.network', status: 'Live' },
-                { label: 'ArcScan', value: 'testnet', href: 'https://testnet.arcscan.app', status: 'Live' },
-                { label: 'XyloNet DEX', value: 'on-chain', href: 'https://testnet.arcscan.app', status: 'Live' },
-                { label: 'Circle CCTP', value: 'v2 API', href: 'https://developers.circle.com/stablecoins', status: 'Live' },
-              ].map(({ label, value, href, status }, i) => (
+                { label: 'Arc RPC', value: 'rpc.testnet', href: 'https://rpc.testnet.arc.network', status: 'Live', Icon: Radio },
+                { label: 'ArcScan', value: 'testnet', href: 'https://testnet.arcscan.app', status: 'Live', Icon: Box },
+                { label: 'XyloNet DEX', value: 'on-chain', href: 'https://testnet.arcscan.app', status: 'Live', Icon: ArrowRightLeft },
+                { label: 'Circle CCTP', value: 'v2 API', href: 'https://developers.circle.com/stablecoins', status: 'Live', Icon: Layers3 },
+              ].map(({ label, value, href, status, Icon }, i) => (
                 <motion.a
                   key={label}
                   href={href}
@@ -341,17 +385,18 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
-                  className="nb-card rounded-2xl p-5 group block"
+                  className="infra-card group"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] text-white/30 uppercase tracking-wider">{label}</span>
-                    <div className="flex items-center gap-1">
+                  <div className="infra-card-top">
+                    <div className="infra-icon"><Icon size={17} /></div>
+                    <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
-                      <span className="text-[9px] text-green-400 font-medium">{status}</span>
+                      <span>{status}</span>
                     </div>
                   </div>
-                  <div className="text-sm font-medium text-white mb-1">{value}</div>
-                  <div className="text-[10px] text-white/30 group-hover:text-[color:var(--arc-community-orange)] transition-colors">↗ Open</div>
+                  <span className="infra-label">{label}</span>
+                  <div className="infra-value">{value}</div>
+                  <div className="infra-link">Open resource ↗</div>
                 </motion.a>
               ))}
             </div>
