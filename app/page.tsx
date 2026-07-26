@@ -6,7 +6,7 @@ import Link from 'next/link'
 import {
   Coins, Zap, RefreshCw, ArrowLeftRight, ShieldCheck, BarChart2,
   Wallet, ArrowRightLeft, CheckCircle, ArrowRight,
-  Box, Fuel, CircleDollarSign, Globe, Radio, Layers3
+  Box, Fuel, CircleDollarSign, Globe, Radio, Layers3, Route, Gauge, TerminalSquare
 } from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -59,17 +59,38 @@ const FEATURES = [
   { Icon: ShieldCheck, title: 'Circle Infrastructure', desc: "Built on Circle's audited, battle-tested blockchain infrastructure.", badge: 'Audited' },
 ]
 
-const HOW_IT_WORKS = [
-  { step: '01', Icon: Wallet, title: 'Connect Wallet', desc: 'Connect MetaMask, OKX, Rabby, or any EVM wallet. Or use email/Google via Privy.' },
-  { step: '02', Icon: ArrowRightLeft, title: 'Swap or Bridge', desc: 'Swap tokens on Arc via XyloNet DEX, or bridge USDC from other chains.' },
-  { step: '03', Icon: CheckCircle, title: 'Done in seconds', desc: 'Transactions confirm in under 1 second. Gas paid in USDC — no ETH needed.' },
-]
-
 const LIVE_STATS_CONFIG = [
   { label: 'Latest Block', key: 'blockNumber', Icon: Box },
   { label: 'Est. Transactions', key: 'totalTxs', Icon: RefreshCw },
   { label: 'ERC-20 Tokens', key: 'totalTokens', Icon: CircleDollarSign, suffix: '+' },
   { label: 'Gas Price', key: 'gasPrice', Icon: Fuel, suffix: ' Gwei' },
+]
+
+const WORKBENCH_STEPS = [
+  {
+    step: '01',
+    lane: 'Prepare',
+    title: 'Connect once',
+    desc: 'Wallet or Privy session becomes the control point for swap, bridge, send, and Gateway balance views.',
+    metric: 'EVM ready',
+    Icon: Wallet,
+  },
+  {
+    step: '02',
+    lane: 'Route',
+    title: 'Pick the rail',
+    desc: 'Choose XyloNet swap, Circle CCTP bridge, direct send, or Gateway deposit without leaving the Arc context.',
+    metric: '4 flows',
+    Icon: Route,
+  },
+  {
+    step: '03',
+    lane: 'Execute',
+    title: 'Confirm on-chain',
+    desc: 'Preview fees, sign from the wallet, and use USDC-native gas so execution stays readable for stablecoin users.',
+    metric: 'USDC gas',
+    Icon: Gauge,
+  },
 ]
 
 const HERO_PILLS = ['Swap', 'Bridge', 'Send', 'Gateway', 'Agent']
@@ -314,40 +335,47 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── HOW IT WORKS ── */}
-        <section className="py-20 px-4">
-          <div className="max-w-3xl mx-auto">
+        {/* ── HALLMARK WORKBENCH FLOW ── */}
+        <section className="workbench-flow px-6 sm:px-12 py-18 sm:py-28">
+          <div className="workbench-shell">
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mb-12"
+              className="workbench-copy"
             >
-              <div className="text-xs text-[color:var(--arc-community-orange)] font-medium uppercase tracking-wider mb-3">Guide</div>
-              <h2 className="font-display text-3xl sm:text-4xl text-white mb-2" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>
-                How it works
-              </h2>
-              <p className="text-sm text-white/40">Three steps to start swapping on Arc</p>
+              <div className="editorial-eyebrow">
+                <span className="editorial-dot" />Guided execution
+              </div>
+              <h2 className="font-display">One console, every Arc rail.</h2>
+              <p>
+                Instead of a generic feature tour, For Arc is structured like an operator workbench: connect once, route the intent, then confirm with live Arc infrastructure.
+              </p>
+              <div className="workbench-terminal" aria-label="Arc execution checklist">
+                <div><TerminalSquare size={14} /> for-arc / route-preview</div>
+                <code>wallet.connected → quote.ready → sign → arcscan.link</code>
+              </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {HOW_IT_WORKS.map(({ step, Icon, title, desc }, i) => (
-                <motion.div
+            <div className="workbench-steps">
+              {WORKBENCH_STEPS.map(({ step, lane, Icon, title, desc, metric }, i) => (
+                <motion.article
                   key={step}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ delay: i * 0.08, duration: 0.55 }}
+                  className="workbench-step"
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-[rgba(47,87,140,0.10)] border border-[rgba(47,87,140,0.20)] flex items-center justify-center">
-                      <Icon size={18} className="text-[color:var(--arc-community-orange)]" />
-                    </div>
-                    <span className="font-display text-sm text-white/30" style={{ fontWeight: 500 }}>{step}</span>
+                  <div className="workbench-step-top">
+                    <span>{step}</span>
+                    <strong>{lane}</strong>
                   </div>
-                  <h3 className="text-base font-medium text-white mb-1.5">{title}</h3>
-                  <p className="text-xs text-white/40 leading-relaxed">{desc}</p>
-                </motion.div>
+                  <div className="workbench-icon"><Icon size={20} /></div>
+                  <h3>{title}</h3>
+                  <p>{desc}</p>
+                  <div className="workbench-metric">{metric}</div>
+                </motion.article>
               ))}
             </div>
           </div>
