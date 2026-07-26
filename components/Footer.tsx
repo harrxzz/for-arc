@@ -29,16 +29,18 @@ export function Footer() {
 
           <div className="flex items-center gap-6">
             {[
-              { href: 'https://docs.arc.network', label: 'Docs' },
-              { href: 'https://testnet.arcscan.app', label: 'Explorer' },
-              { href: 'https://faucet.circle.com', label: 'Faucet' },
-              { href: 'https://community.arc.io/home/clubs/architects/overview', label: 'Architects' },
-              { href: 'https://discord.gg/arcdao', label: 'Discord' },
+              { href: 'https://docs.arc.network', label: 'Docs', external: true },
+              { href: 'https://testnet.arcscan.app', label: 'Explorer', external: true },
+              { href: 'https://faucet.circle.com', label: 'Faucet', external: true },
+              { href: 'https://community.arc.io/home/clubs/architects/overview', label: 'Architects', external: true },
+              { href: '/privacy', label: 'Privacy', external: false },
+              { href: '/terms', label: 'Terms', external: false },
             ].map(link => (
               <Link
                 key={link.label}
                 href={link.href}
-                target="_blank"
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
                 className="text-xs text-white/40 hover:text-[color:var(--arc-community-orange)] transition-colors"
               >
                 {link.label}

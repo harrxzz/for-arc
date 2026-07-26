@@ -32,8 +32,19 @@ export async function POST(req: NextRequest) {
   try {
     const { message, history } = await req.json()
 
+    if (typeof message !== 'string' || !message.trim()) {
+      return NextResponse.json({ error: 'message required' }, { status: 400 })
+    }
+
+    if (!AI_KEY) {
+      return NextResponse.json(
+        { error: 'AI agent is not configured. Set MISTRAL_API_KEY or FREEMODEL_API_KEY.' },
+        { status: 503 }
+      )
+    }
+
     const messages = [
-      ...(history || []).slice(-6).map((m: any) => ({
+      ...(Array.isArray(history) ? history : []).slice(-6).map((m: any) => ({
         role: m.role === 'agent' ? 'assistant' : 'user',
         content: m.content
       })),
