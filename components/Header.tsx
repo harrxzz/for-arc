@@ -17,6 +17,12 @@ export function Header() {
   const shortAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : null
 
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [walletMenuOpen, setWalletMenuOpen] = useState(false)
+
+  const handleLogout = () => {
+    setWalletMenuOpen(false)
+    logout()
+  }
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -97,24 +103,67 @@ export function Header() {
             {ready && (
               <>
                 {authenticated && shortAddress ? (
-                  <div className="flex items-center gap-1.5">
-                    <motion.div
+                  <div className="relative flex items-center gap-1.5">
+                    <motion.button
+                      type="button"
+                      onClick={() => setWalletMenuOpen((open) => !open)}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono border bg-[rgba(47,87,140,0.20)] border-[rgba(47,87,140,0.42)] text-[#dce5f2]"
-                      aria-label={`Connected wallet: ${address}`}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="group flex items-center gap-2 rounded-full border border-[rgba(47,87,140,0.42)] bg-[rgba(47,87,140,0.20)] px-3 py-1.5 text-xs font-mono text-[#dce5f2] transition-colors hover:border-[rgba(247,247,247,0.18)] hover:bg-[rgba(47,87,140,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--arc-community-orange)]"
+                      aria-label={`Wallet menu for ${address}`}
+                      aria-haspopup="menu"
+                      aria-expanded={walletMenuOpen}
                     >
-                      <div className="w-1.5 h-1.5 rounded-full bg-[color:var(--arc-community-orange)]" />
-                      {shortAddress}
-                    </motion.div>
-                    <motion.button
-                      onClick={logout}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="px-2.5 py-1.5 text-xs rounded-full text-white/40 hover:text-red-400 hover:bg-red-500/5 transition-colors"
-                    >
-                      <ChevronDown size={13} />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--arc-community-orange)]" aria-hidden="true" />
+                      <span>{shortAddress}</span>
+                      <ChevronDown
+                        size={13}
+                        className={`text-white/42 transition-transform ${walletMenuOpen ? 'rotate-180' : ''}`}
+                        aria-hidden="true"
+                      />
                     </motion.button>
+
+                    <AnimatePresence>
+                      {walletMenuOpen && (
+                        <>
+                          <button
+                            type="button"
+                            className="fixed inset-0 z-40 cursor-default bg-transparent"
+                            aria-label="Close wallet menu"
+                            onClick={() => setWalletMenuOpen(false)}
+                          />
+                          <motion.div
+                            role="menu"
+                            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                            transition={{ duration: 0.16 }}
+                            className="absolute right-0 top-[calc(100%+10px)] z-50 w-64 overflow-hidden rounded-2xl border border-white/10 bg-[rgba(18,24,38,0.96)] p-2 text-left shadow-[0_22px_70px_rgba(0,0,0,0.42)] backdrop-blur-2xl"
+                          >
+                            <div className="px-3 py-2">
+                              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/38">Connected wallet</p>
+                              <p className="mt-1 truncate font-mono text-xs text-white/82" title={address}>{address}</p>
+                              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[rgba(247,247,247,0.10)] bg-white/[0.04] px-2 py-1 text-[11px] font-medium text-white/58">
+                                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--arc-community-orange)]" />
+                                Arc Testnet
+                              </div>
+                            </div>
+                            <div className="my-1 h-px bg-white/8" />
+                            <button
+                              type="button"
+                              role="menuitem"
+                              onClick={handleLogout}
+                              className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/10 hover:text-red-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60"
+                            >
+                              <span>Disconnect wallet</span>
+                              <span className="text-xs text-red-300/55">sign out</span>
+                            </button>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ) : (
                   <motion.button
