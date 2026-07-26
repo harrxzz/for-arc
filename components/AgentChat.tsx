@@ -193,7 +193,16 @@ export function AgentChat() {
       })
       const { intent, error } = await res.json()
 
-      if (error) { addAgentMsg(`Error: ${error}`); setLoading(false); return }
+      if (error) {
+        addAgentMsg(
+          res.status === 503
+            ? 'Arc Agent is temporarily offline. Swap, bridge, send, and balance pages still work while the AI key is being configured.'
+            : `Error: ${error}`,
+          { status: 'error' }
+        )
+        setLoading(false)
+        return
+      }
 
       if (intent.action === 'unknown') {
         addAgentMsg(intent.params?.message || "I didn't understand that. Try: \"Swap 10 USDC to EURC\"")

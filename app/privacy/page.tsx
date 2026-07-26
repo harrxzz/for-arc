@@ -1,5 +1,17 @@
+import type { Metadata } from 'next'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy — For Arc',
+  description: 'Privacy details for For Arc, including wallet, transaction, infrastructure, and AI-agent data surfaces used by the Arc testnet app.',
+  alternates: { canonical: '/privacy' },
+  openGraph: {
+    title: 'Privacy Policy — For Arc',
+    description: 'Privacy details for the For Arc community app on Arc testnet.',
+    url: '/privacy',
+  },
+}
 
 const sections = [
   {

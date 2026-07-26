@@ -1,5 +1,17 @@
+import type { Metadata } from 'next'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+
+export const metadata: Metadata = {
+  title: 'Terms of Use — For Arc',
+  description: 'Basic terms for using For Arc, a community-built Arc testnet app for swaps, bridging, sending, balances, and AI-assisted intents.',
+  alternates: { canonical: '/terms' },
+  openGraph: {
+    title: 'Terms of Use — For Arc',
+    description: 'Terms for the For Arc community app on Arc testnet.',
+    url: '/terms',
+  },
+}
 
 const sections = [
   {
